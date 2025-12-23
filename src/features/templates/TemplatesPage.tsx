@@ -1,0 +1,145 @@
+import { useState } from 'react'
+import { useTemplates } from './useTemplates'
+import { TemplateForm } from './TemplateForm'
+import { TemplateCard } from './TemplateCard'
+import * as api from './api'
+import type { TemplateWithExercises } from './api'
+
+export function TemplatesPage() {
+  const { templates, isLoading, error, refresh } = useTemplates()
+  const [mode, setMode] = useState<'list' | 'create' | 'edit'>('list')
+  const [editingTemplate, setEditingTemplate] = useState<TemplateWithExercises | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleCreate = async (
+    template: { name: string; day_of_week: number | null; notes: string | null },
+    exercises: Parameters<typeof api.createTemplate>[1]
+  ) => {
+    setIsSubmitting(true)
+    try {
+      await api.createTemplate(template, exercises)
+      await refresh()
+      setMode('list')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleUpdate = async (
+    template: { name: string; day_of_week: number | null; notes: string | null },
+    exercises: Parameters<typeof api.createTemplate>[1]
+  ) => {
+    if (!editingTemplate) return
+    setIsSubmitting(true)
+    try {
+      await api.updateTemplate(editingTemplate.id, template, exercises)
+      await refresh()
+      setMode('list')
+      setEditingTemplate(null)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this template? This cannot be undone.')) return
+    await api.deleteTemplate(id)
+    await refresh()
+  }
+
+  const handleDuplicate = async (id: string) => {
+    await api.duplicateTemplate(id)
+    await refresh()
+  }
+
+  const handleEdit = (template: TemplateWithExercises) => {
+    setEditingTemplate(template)
+    setMode('edit')
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-gray-600">Loading templates...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        Failed to load templates: {error.message}
+      </div>
+    )
+  }
+
+  if (mode === 'create') {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold text-gray-900">Create Template</h1>
+        <TemplateForm
+          onSubmit={handleCreate}
+          onCancel={() => setMode('list')}
+          isSubmitting={isSubmitting}
+        />
+      </div>
+    )
+  }
+
+  if (mode === 'edit' && editingTemplate) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold text-gray-900">Edit Template</h1>
+        <TemplateForm
+          initialData={editingTemplate}
+          onSubmit={handleUpdate}
+          onCancel={() => {
+            setMode('list')
+            setEditingTemplate(null)
+          }}
+          isSubmitting={isSubmitting}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-900">Workout Templates</h1>
+        <button
+          onClick={() => setMode('create')}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
+        >
+          New Template
+        </button>
+      </div>
+
+      {templates.length === 0 ? (
+        <div className="bg-white rounded-lg shadow p-6 text-center">
+          <p className="text-gray-500 mb-4">
+            No templates yet. Create your first workout template!
+          </p>
+          <button
+            onClick={() => setMode('create')}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
+          >
+            Create Template
+          </button>
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2">
+          {templates.map((template) => (
+            <TemplateCard
+              key={template.id}
+              template={template}
+              onEdit={() => handleEdit(template)}
+              onDelete={() => handleDelete(template.id)}
+              onDuplicate={() => handleDuplicate(template.id)}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+/* Base styles */
+body {
+  @apply bg-gray-50 text-gray-900 antialiased;
+  min-height: 100vh;
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  @apply outline-2 outline-offset-2 outline-blue-500;
+}
