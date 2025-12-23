@@ -12,7 +12,7 @@ export function TemplatesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleCreate = async (
-    template: { name: string; day_of_week: number | null; notes: string | null },
+    template: { name: string; notes: string | null },
     exercises: Parameters<typeof api.createTemplate>[1]
   ) => {
     setIsSubmitting(true)
@@ -26,7 +26,7 @@ export function TemplatesPage() {
   }
 
   const handleUpdate = async (
-    template: { name: string; day_of_week: number | null; notes: string | null },
+    template: { name: string; notes: string | null },
     exercises: Parameters<typeof api.createTemplate>[1]
   ) => {
     if (!editingTemplate) return
@@ -114,6 +114,10 @@ export function TemplatesPage() {
           New Template
         </button>
       </div>
+
+      <p className="text-sm text-gray-600">
+        Templates are reusable workout plans. Schedule them on specific days in the Schedule tab.
+      </p>
 
       {templates.length === 0 ? (
         <div className="bg-white rounded-lg shadow p-6 text-center">

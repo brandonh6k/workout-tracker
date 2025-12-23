@@ -1,7 +1,5 @@
 import type { TemplateWithExercises } from './api'
 
-const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
 type Props = {
   template: TemplateWithExercises
   onEdit: () => void
@@ -10,19 +8,11 @@ type Props = {
 }
 
 export function TemplateCard({ template, onEdit, onDelete, onDuplicate }: Props) {
-  const dayLabel =
-    template.day_of_week !== null ? DAYS_OF_WEEK[template.day_of_week] : null
-
   return (
     <div className="bg-white rounded-lg shadow p-4 space-y-3">
       <div className="flex items-start justify-between">
         <div>
           <h3 className="font-semibold text-gray-900">{template.name}</h3>
-          {dayLabel && (
-            <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded">
-              {dayLabel}
-            </span>
-          )}
         </div>
 
         <div className="flex gap-1">
@@ -81,11 +71,7 @@ export function TemplateCard({ template, onEdit, onDelete, onDuplicate }: Props)
             <li key={exercise.id} className="flex justify-between">
               <span>{exercise.exercise_name}</span>
               <span className="text-gray-400">
-                {exercise.target_sets}x
-                {exercise.target_reps_min}
-                {exercise.target_reps_max && exercise.target_reps_max !== exercise.target_reps_min
-                  ? `-${exercise.target_reps_max}`
-                  : ''}
+                {exercise.target_sets}x{exercise.target_reps}
               </span>
             </li>
           ))}

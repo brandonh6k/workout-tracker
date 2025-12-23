@@ -4,6 +4,7 @@ import { useAuth } from '../features/auth'
 const navItems = [
   { to: '/', label: 'Dashboard' },
   { to: '/templates', label: 'Templates' },
+  { to: '/schedule', label: 'Schedule' },
   { to: '/history', label: 'History' },
 ]
 

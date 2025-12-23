@@ -1,16 +1,17 @@
 import { useNavigate } from 'react-router-dom'
-import { useTemplates, WeeklyCalendar, type TemplateWithExercises } from '../templates'
+import { useSchedule, type ScheduledWorkoutWithDetails } from '../schedule'
+import { WeeklyCalendar } from '../templates'
 
 export function DashboardPage() {
-  const { templates, isLoading, error } = useTemplates()
+  const { scheduledWorkouts, isLoading, error } = useSchedule()
   const navigate = useNavigate()
 
   const today = new Date().getDay()
-  const todaysTemplates = templates.filter((t) => t.day_of_week === today)
+  const todaysWorkouts = scheduledWorkouts.filter((w) => w.day_of_week === today)
 
-  const handleSelectTemplate = (template: TemplateWithExercises) => {
-    // TODO: Navigate to start workout with this template
-    console.log('Selected template:', template.name)
+  const handleSelectWorkout = (workout: ScheduledWorkoutWithDetails) => {
+    // TODO: Navigate to start workout with this scheduled workout
+    console.log('Selected workout:', workout.template.name)
   }
 
   if (isLoading) {
@@ -39,45 +40,46 @@ export function DashboardPage() {
           Today's Workout
         </h2>
 
-        {todaysTemplates.length > 0 ? (
+        {todaysWorkouts.length > 0 ? (
           <div className="space-y-3">
-            {todaysTemplates.map((template) => (
+            {todaysWorkouts.map((workout) => (
               <div
-                key={template.id}
+                key={workout.id}
                 className="border border-gray-200 rounded-lg p-4"
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="font-medium text-gray-900">{template.name}</h3>
+                    <h3 className="font-medium text-gray-900">{workout.template.name}</h3>
                     <p className="text-sm text-gray-500 mt-1">
-                      {template.template_exercises.length} exercises
+                      {workout.template.template_exercises.length} exercises
                     </p>
                   </div>
                   <button
-                    onClick={() => handleSelectTemplate(template)}
+                    onClick={() => handleSelectWorkout(workout)}
                     className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium text-sm"
                   >
                     Start Workout
                   </button>
                 </div>
 
-                {template.template_exercises.length > 0 && (
+                {workout.template.template_exercises.length > 0 && (
                   <ul className="mt-3 text-sm text-gray-600 space-y-1">
-                    {template.template_exercises.slice(0, 5).map((ex) => (
-                      <li key={ex.id} className="flex justify-between">
-                        <span>{ex.exercise_name}</span>
-                        <span className="text-gray-400">
-                          {ex.target_sets}x{ex.target_reps_min}
-                          {ex.target_reps_max &&
-                          ex.target_reps_max !== ex.target_reps_min
-                            ? `-${ex.target_reps_max}`
-                            : ''}
-                        </span>
-                      </li>
-                    ))}
-                    {template.template_exercises.length > 5 && (
+                    {workout.template.template_exercises.slice(0, 5).map((ex) => {
+                      const scheduledEx = workout.scheduled_exercises.find(
+                        (se) => se.exercise_name === ex.exercise_name
+                      )
+                      return (
+                        <li key={ex.id} className="flex justify-between">
+                          <span>{ex.exercise_name}</span>
+                          <span className="text-gray-400">
+                            {scheduledEx?.target_weight ?? 0}# - {ex.target_sets}x{ex.target_reps}
+                          </span>
+                        </li>
+                      )
+                    })}
+                    {workout.template.template_exercises.length > 5 && (
                       <li className="text-gray-400 italic">
-                        +{template.template_exercises.length - 5} more
+                        +{workout.template.template_exercises.length - 5} more
                       </li>
                     )}
                   </ul>
@@ -87,12 +89,12 @@ export function DashboardPage() {
           </div>
         ) : (
           <div>
-            <p className="text-gray-500 mb-4">No workout planned for today</p>
+            <p className="text-gray-500 mb-4">No workout scheduled for today</p>
             <button
-              onClick={() => navigate('/templates')}
+              onClick={() => navigate('/schedule')}
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 font-medium text-sm"
             >
-              View Templates
+              Schedule a Workout
             </button>
           </div>
         )}
@@ -104,8 +106,8 @@ export function DashboardPage() {
           Weekly Schedule
         </h2>
         <WeeklyCalendar
-          templates={templates}
-          onSelectTemplate={handleSelectTemplate}
+          scheduledWorkouts={scheduledWorkouts}
+          onSelectWorkout={handleSelectWorkout}
         />
       </div>
 

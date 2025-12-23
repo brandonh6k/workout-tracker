@@ -3,29 +3,18 @@ import { ExerciseAutocomplete } from '../../components/ExerciseAutocomplete'
 import type { TemplateWithExercises } from './api'
 import type { TemplateExerciseInsert } from '../../types'
 
-const DAYS_OF_WEEK = [
-  { value: 0, label: 'Sunday' },
-  { value: 1, label: 'Monday' },
-  { value: 2, label: 'Tuesday' },
-  { value: 3, label: 'Wednesday' },
-  { value: 4, label: 'Thursday' },
-  { value: 5, label: 'Friday' },
-  { value: 6, label: 'Saturday' },
-]
-
 type ExerciseFormData = {
   id: string // Local ID for React key
   exercise_name: string
   target_sets: number
-  target_reps_min: number
-  target_reps_max: number | null
+  target_reps: number
   notes: string
 }
 
 type Props = {
   initialData?: TemplateWithExercises
   onSubmit: (
-    template: { name: string; day_of_week: number | null; notes: string | null },
+    template: { name: string; notes: string | null },
     exercises: Omit<TemplateExerciseInsert, 'template_id'>[]
   ) => Promise<void>
   onCancel: () => void
@@ -39,17 +28,13 @@ export function TemplateForm({
   isSubmitting = false,
 }: Props) {
   const [name, setName] = useState(initialData?.name ?? '')
-  const [dayOfWeek, setDayOfWeek] = useState<number | null>(
-    initialData?.day_of_week ?? null
-  )
   const [notes, setNotes] = useState(initialData?.notes ?? '')
   const [exercises, setExercises] = useState<ExerciseFormData[]>(
     initialData?.template_exercises.map((ex) => ({
       id: ex.id,
       exercise_name: ex.exercise_name,
       target_sets: ex.target_sets,
-      target_reps_min: ex.target_reps_min,
-      target_reps_max: ex.target_reps_max,
+      target_reps: ex.target_reps,
       notes: ex.notes ?? '',
     })) ?? []
   )
@@ -62,8 +47,7 @@ export function TemplateForm({
         id: crypto.randomUUID(),
         exercise_name: '',
         target_sets: 3,
-        target_reps_min: 8,
-        target_reps_max: 12,
+        target_reps: 8,
         notes: '',
       },
     ])
@@ -108,14 +92,12 @@ export function TemplateForm({
       await onSubmit(
         {
           name: name.trim(),
-          day_of_week: dayOfWeek,
           notes: notes.trim() || null,
         },
         validExercises.map((ex, index) => ({
           exercise_name: ex.exercise_name.trim(),
           target_sets: ex.target_sets,
-          target_reps_min: ex.target_reps_min,
-          target_reps_max: ex.target_reps_max,
+          target_reps: ex.target_reps,
           order_index: index,
           notes: ex.notes.trim() || null,
         }))
@@ -146,30 +128,9 @@ export function TemplateForm({
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g., Monday - Lower Body"
+            placeholder="e.g., Lower Body"
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
           />
-        </div>
-
-        <div>
-          <label htmlFor="dayOfWeek" className="block text-sm font-medium text-gray-700">
-            Day of Week (optional)
-          </label>
-          <select
-            id="dayOfWeek"
-            value={dayOfWeek ?? ''}
-            onChange={(e) =>
-              setDayOfWeek(e.target.value ? parseInt(e.target.value) : null)
-            }
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="">No specific day</option>
-            {DAYS_OF_WEEK.map((day) => (
-              <option key={day.value} value={day.value}>
-                {day.label}
-              </option>
-            ))}
-          </select>
         </div>
 
         <div>
@@ -331,20 +292,8 @@ function ExerciseRow({
             type="number"
             min={1}
             max={100}
-            value={exercise.target_reps_min}
-            onChange={(e) => onUpdate({ target_reps_min: parseInt(e.target.value) || 1 })}
-            className="w-16 px-2 py-1 border border-gray-300 rounded text-center"
-          />
-          <span className="text-gray-400">-</span>
-          <input
-            type="number"
-            min={1}
-            max={100}
-            value={exercise.target_reps_max ?? exercise.target_reps_min}
-            onChange={(e) => {
-              const val = parseInt(e.target.value)
-              onUpdate({ target_reps_max: val || null })
-            }}
+            value={exercise.target_reps}
+            onChange={(e) => onUpdate({ target_reps: parseInt(e.target.value) || 1 })}
             className="w-16 px-2 py-1 border border-gray-300 rounded text-center"
           />
         </div>

@@ -36,7 +36,6 @@ export type Database = {
           id: string
           user_id: string
           name: string
-          day_of_week: number | null
           notes: string | null
           created_at: string
         }
@@ -44,7 +43,6 @@ export type Database = {
           id?: string
           user_id: string
           name: string
-          day_of_week?: number | null
           notes?: string | null
           created_at?: string
         }
@@ -52,7 +50,6 @@ export type Database = {
           id?: string
           user_id?: string
           name?: string
-          day_of_week?: number | null
           notes?: string | null
           created_at?: string
         }
@@ -64,8 +61,7 @@ export type Database = {
           template_id: string
           exercise_name: string
           target_sets: number
-          target_reps_min: number
-          target_reps_max: number | null
+          target_reps: number
           order_index: number
           notes: string | null
         }
@@ -74,8 +70,7 @@ export type Database = {
           template_id: string
           exercise_name: string
           target_sets: number
-          target_reps_min: number
-          target_reps_max?: number | null
+          target_reps: number
           order_index: number
           notes?: string | null
         }
@@ -84,10 +79,57 @@ export type Database = {
           template_id?: string
           exercise_name?: string
           target_sets?: number
-          target_reps_min?: number
-          target_reps_max?: number | null
+          target_reps?: number
           order_index?: number
           notes?: string | null
+        }
+        Relationships: []
+      }
+      scheduled_workouts: {
+        Row: {
+          id: string
+          user_id: string
+          template_id: string
+          day_of_week: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          template_id: string
+          day_of_week: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          template_id?: string
+          day_of_week?: number
+          created_at?: string
+        }
+        Relationships: []
+      }
+      scheduled_exercises: {
+        Row: {
+          id: string
+          scheduled_workout_id: string
+          exercise_name: string
+          target_weight: number
+          order_index: number
+        }
+        Insert: {
+          id?: string
+          scheduled_workout_id: string
+          exercise_name: string
+          target_weight?: number
+          order_index: number
+        }
+        Update: {
+          id?: string
+          scheduled_workout_id?: string
+          exercise_name?: string
+          target_weight?: number
+          order_index?: number
         }
         Relationships: []
       }
@@ -180,6 +222,8 @@ export type Database = {
 export type Exercise = Database['public']['Tables']['exercises']['Row']
 export type WorkoutTemplate = Database['public']['Tables']['workout_templates']['Row']
 export type TemplateExercise = Database['public']['Tables']['template_exercises']['Row']
+export type ScheduledWorkout = Database['public']['Tables']['scheduled_workouts']['Row']
+export type ScheduledExercise = Database['public']['Tables']['scheduled_exercises']['Row']
 export type WorkoutSession = Database['public']['Tables']['workout_sessions']['Row']
 export type LoggedSet = Database['public']['Tables']['logged_sets']['Row']
 
@@ -187,5 +231,7 @@ export type LoggedSet = Database['public']['Tables']['logged_sets']['Row']
 export type ExerciseInsert = Database['public']['Tables']['exercises']['Insert']
 export type WorkoutTemplateInsert = Database['public']['Tables']['workout_templates']['Insert']
 export type TemplateExerciseInsert = Database['public']['Tables']['template_exercises']['Insert']
+export type ScheduledWorkoutInsert = Database['public']['Tables']['scheduled_workouts']['Insert']
+export type ScheduledExerciseInsert = Database['public']['Tables']['scheduled_exercises']['Insert']
 export type WorkoutSessionInsert = Database['public']['Tables']['workout_sessions']['Insert']
 export type LoggedSetInsert = Database['public']['Tables']['logged_sets']['Insert']

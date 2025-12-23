@@ -15,8 +15,7 @@ export async function getTemplates(): Promise<TemplateWithExercises[]> {
   const { data: templates, error: templatesError } = await supabase
     .from('workout_templates')
     .select('*')
-    .order('day_of_week', { ascending: true, nullsFirst: false })
-    .order('created_at', { ascending: false })
+    .order('name')
 
   if (templatesError) throw templatesError
   if (!templates || templates.length === 0) return []
@@ -74,7 +73,7 @@ export async function getTemplate(id: string): Promise<TemplateWithExercises | n
 }
 
 export async function createTemplate(
-  template: { name: string; day_of_week?: number | null; notes?: string | null },
+  template: { name: string; notes?: string | null },
   exercises: Omit<TemplateExerciseInsert, 'template_id'>[]
 ): Promise<TemplateWithExercises> {
   const { data: { user } } = await supabase.auth.getUser()
@@ -86,7 +85,6 @@ export async function createTemplate(
     .insert({
       user_id: user.id,
       name: template.name,
-      day_of_week: template.day_of_week ?? null,
       notes: template.notes ?? null,
     })
     .select()
@@ -101,8 +99,7 @@ export async function createTemplate(
       template_id: newTemplate.id,
       exercise_name: ex.exercise_name,
       target_sets: ex.target_sets,
-      target_reps_min: ex.target_reps_min,
-      target_reps_max: ex.target_reps_max ?? null,
+      target_reps: ex.target_reps,
       order_index: ex.order_index ?? index,
       notes: ex.notes ?? null,
     }))
@@ -124,7 +121,7 @@ export async function createTemplate(
 
 export async function updateTemplate(
   id: string,
-  template: { name?: string; day_of_week?: number | null; notes?: string | null },
+  template: { name?: string; notes?: string | null },
   exercises?: Omit<TemplateExerciseInsert, 'template_id'>[]
 ): Promise<TemplateWithExercises> {
   // Update template
@@ -132,7 +129,6 @@ export async function updateTemplate(
     .from('workout_templates')
     .update({
       name: template.name,
-      day_of_week: template.day_of_week,
       notes: template.notes,
     })
     .eq('id', id)
@@ -158,8 +154,7 @@ export async function updateTemplate(
         template_id: id,
         exercise_name: ex.exercise_name,
         target_sets: ex.target_sets,
-        target_reps_min: ex.target_reps_min,
-        target_reps_max: ex.target_reps_max ?? null,
+        target_reps: ex.target_reps,
         order_index: ex.order_index ?? index,
         notes: ex.notes ?? null,
       }))
@@ -205,14 +200,12 @@ export async function duplicateTemplate(id: string): Promise<TemplateWithExercis
   return createTemplate(
     {
       name: `${original.name} (Copy)`,
-      day_of_week: original.day_of_week,
       notes: original.notes,
     },
     original.template_exercises.map((ex) => ({
       exercise_name: ex.exercise_name,
       target_sets: ex.target_sets,
-      target_reps_min: ex.target_reps_min,
-      target_reps_max: ex.target_reps_max,
+      target_reps: ex.target_reps,
       order_index: ex.order_index,
       notes: ex.notes,
     }))

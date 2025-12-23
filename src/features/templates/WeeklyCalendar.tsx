@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import type { TemplateWithExercises } from './api'
+import type { ScheduledWorkoutWithDetails } from '../schedule'
 
 const DAYS_OF_WEEK = [
   { value: 0, label: 'Sunday', short: 'Sun' },
@@ -12,17 +12,17 @@ const DAYS_OF_WEEK = [
 ]
 
 type Props = {
-  templates: TemplateWithExercises[]
-  onSelectTemplate?: (template: TemplateWithExercises) => void
+  scheduledWorkouts: ScheduledWorkoutWithDetails[]
+  onSelectWorkout?: (workout: ScheduledWorkoutWithDetails) => void
 }
 
-export function WeeklyCalendar({ templates, onSelectTemplate }: Props) {
+export function WeeklyCalendar({ scheduledWorkouts, onSelectWorkout }: Props) {
   const today = new Date().getDay()
 
-  // Group templates by day of week
-  const templatesByDay = DAYS_OF_WEEK.map((day) => ({
+  // Group workouts by day of week
+  const workoutsByDay = DAYS_OF_WEEK.map((day) => ({
     ...day,
-    templates: templates.filter((t) => t.day_of_week === day.value),
+    workouts: scheduledWorkouts.filter((w) => w.day_of_week === day.value),
   }))
 
   return (
@@ -44,30 +44,30 @@ export function WeeklyCalendar({ templates, onSelectTemplate }: Props) {
       </div>
 
       <div className="grid grid-cols-7 min-h-[120px]">
-        {templatesByDay.map((day) => (
+        {workoutsByDay.map((day) => (
           <div
             key={day.value}
             className={`border-r last:border-r-0 border-gray-100 p-2 ${
               day.value === today ? 'bg-blue-50/50' : ''
             }`}
           >
-            {day.templates.length === 0 ? (
+            {day.workouts.length === 0 ? (
               <div className="text-xs text-gray-400 italic text-center mt-4">
                 Rest
               </div>
             ) : (
               <div className="space-y-2">
-                {day.templates.map((template) => (
+                {day.workouts.map((workout) => (
                   <button
-                    key={template.id}
-                    onClick={() => onSelectTemplate?.(template)}
+                    key={workout.id}
+                    onClick={() => onSelectWorkout?.(workout)}
                     className="w-full text-left p-2 rounded bg-blue-100 hover:bg-blue-200 transition-colors"
                   >
                     <div className="text-xs font-medium text-blue-900 truncate">
-                      {template.name}
+                      {workout.template.name}
                     </div>
                     <div className="text-xs text-blue-600">
-                      {template.template_exercises.length} exercises
+                      {workout.template.template_exercises.length} exercises
                     </div>
                   </button>
                 ))}
@@ -77,41 +77,14 @@ export function WeeklyCalendar({ templates, onSelectTemplate }: Props) {
         ))}
       </div>
 
-      {/* Unscheduled templates */}
-      {templates.some((t) => t.day_of_week === null) && (
-        <div className="border-t border-gray-200 p-4">
-          <div className="text-sm font-medium text-gray-700 mb-2">
-            Unscheduled Templates
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {templates
-              .filter((t) => t.day_of_week === null)
-              .map((template) => (
-                <button
-                  key={template.id}
-                  onClick={() => onSelectTemplate?.(template)}
-                  className="text-left px-3 py-2 rounded bg-gray-100 hover:bg-gray-200 transition-colors"
-                >
-                  <div className="text-sm font-medium text-gray-900">
-                    {template.name}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {template.template_exercises.length} exercises
-                  </div>
-                </button>
-              ))}
-          </div>
-        </div>
-      )}
-
-      {templates.length === 0 && (
-        <div className="p-8 text-center">
-          <p className="text-gray-500 mb-4">No workout templates yet</p>
+      {scheduledWorkouts.length === 0 && (
+        <div className="p-8 text-center border-t border-gray-100">
+          <p className="text-gray-500 mb-4">No workouts scheduled yet</p>
           <Link
-            to="/templates"
+            to="/schedule"
             className="text-blue-600 hover:text-blue-700 font-medium"
           >
-            Create your first template
+            Schedule your first workout
           </Link>
         </div>
       )}
