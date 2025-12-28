@@ -150,16 +150,7 @@ export function TemplateForm({
 
       {/* Exercises */}
       <div className="bg-white rounded-lg shadow p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Exercises</h2>
-          <button
-            type="button"
-            onClick={addExercise}
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-          >
-            + Add Exercise
-          </button>
-        </div>
+        <h2 className="text-lg font-semibold text-gray-900">Exercises</h2>
 
         {exercises.length === 0 ? (
           <p className="text-gray-500 italic py-4 text-center">
@@ -180,6 +171,16 @@ export function TemplateForm({
             ))}
           </div>
         )}
+
+        <div className="flex justify-end pt-2">
+          <button
+            type="button"
+            onClick={addExercise}
+            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+          >
+            + Add Exercise
+          </button>
+        </div>
       </div>
 
       {/* Actions */}
