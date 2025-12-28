@@ -1,17 +1,39 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSchedule, type ScheduledWorkoutWithDetails } from '../schedule'
 import { WeeklyCalendar } from '../templates'
+import { ActiveWorkout } from '../workouts'
 
 export function DashboardPage() {
-  const { scheduledWorkouts, isLoading, error } = useSchedule()
+  const { scheduledWorkouts, isLoading, error, refresh } = useSchedule()
   const navigate = useNavigate()
+  const [activeWorkout, setActiveWorkout] = useState<ScheduledWorkoutWithDetails | null>(null)
 
   const today = new Date().getDay()
   const todaysWorkouts = scheduledWorkouts.filter((w) => w.day_of_week === today)
 
-  const handleSelectWorkout = (workout: ScheduledWorkoutWithDetails) => {
-    // TODO: Navigate to start workout with this scheduled workout
-    console.log('Selected workout:', workout.template.name)
+  const handleStartWorkout = (workout: ScheduledWorkoutWithDetails) => {
+    setActiveWorkout(workout)
+  }
+
+  const handleWorkoutComplete = () => {
+    setActiveWorkout(null)
+    refresh()
+  }
+
+  const handleWorkoutCancel = () => {
+    setActiveWorkout(null)
+  }
+
+  // Show active workout in full screen mode
+  if (activeWorkout) {
+    return (
+      <ActiveWorkout
+        scheduledWorkout={activeWorkout}
+        onComplete={handleWorkoutComplete}
+        onCancel={handleWorkoutCancel}
+      />
+    )
   }
 
   if (isLoading) {
@@ -55,7 +77,7 @@ export function DashboardPage() {
                     </p>
                   </div>
                   <button
-                    onClick={() => handleSelectWorkout(workout)}
+                    onClick={() => handleStartWorkout(workout)}
                     className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium text-sm"
                   >
                     Start Workout
@@ -107,7 +129,7 @@ export function DashboardPage() {
         </h2>
         <WeeklyCalendar
           scheduledWorkouts={scheduledWorkouts}
-          onSelectWorkout={handleSelectWorkout}
+          onSelectWorkout={handleStartWorkout}
         />
       </div>
 
