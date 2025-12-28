@@ -14,6 +14,7 @@ type ExerciseState = {
   targetSets: number
   targetReps: number
   targetWeight: number
+  isAmrap: boolean
   sets: SetData[]
 }
 
@@ -24,6 +25,8 @@ type WorkoutState = {
   currentSetIndex: number
   startTime: number
   restTimerEnd: number | null
+  lastCompletedReps: number | null // For AMRAP: reps from the set we just finished
+  lastCompletedIsAmrap: boolean // Was the last completed set an AMRAP?
 }
 
 type Props = {
@@ -56,6 +59,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
             targetSets: ex.target_sets,
             targetReps: ex.target_reps,
             targetWeight,
+            isAmrap: ex.is_amrap,
             sets: Array.from({ length: ex.target_sets }, () => ({
               reps: ex.target_reps,
               weight: targetWeight,
@@ -71,6 +75,8 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
           currentSetIndex: 0,
           startTime: Date.now(),
           restTimerEnd: null,
+          lastCompletedReps: null,
+          lastCompletedIsAmrap: false,
         })
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to start workout')
@@ -117,7 +123,17 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
         const newExercises = [...prev.exercises]
         const exercise = { ...newExercises[prev.currentExerciseIndex] }
         const sets = [...exercise.sets]
+        const completedReps = sets[prev.currentSetIndex].reps
         sets[prev.currentSetIndex] = { ...sets[prev.currentSetIndex], id: loggedSet.id, completed: true }
+        
+        // For AMRAP: if there's a next set in this exercise, default it to the reps we just did
+        if (exercise.isAmrap && prev.currentSetIndex + 1 < exercise.targetSets) {
+          sets[prev.currentSetIndex + 1] = {
+            ...sets[prev.currentSetIndex + 1],
+            reps: completedReps,
+          }
+        }
+        
         exercise.sets = sets
         newExercises[prev.currentExerciseIndex] = exercise
 
@@ -137,6 +153,8 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
           currentExerciseIndex: nextExerciseIndex,
           currentSetIndex: nextSetIndex,
           restTimerEnd: Date.now() + 90 * 1000, // 90 second rest
+          lastCompletedReps: completedReps,
+          lastCompletedIsAmrap: exercise.isAmrap,
         }
       })
 
@@ -285,9 +303,36 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
       {restTimeRemaining > 0 && (
         <div className="absolute inset-0 bg-gray-900/95 flex flex-col items-center justify-center z-10">
           <div className="text-gray-400 text-lg mb-2">Rest</div>
-          <div className="text-8xl font-bold text-white mb-8">
+          <div className="text-8xl font-bold text-white mb-4">
             {Math.floor(restTimeRemaining / 60)}:{(restTimeRemaining % 60).toString().padStart(2, '0')}
           </div>
+          
+          {/* AMRAP rep adjustment during rest */}
+          {currentExercise.isAmrap && (
+            <div className="bg-gray-800 rounded-lg p-4 mb-6">
+              <div className="text-gray-400 text-sm mb-2 text-center">
+                Next set reps (AMRAP)
+              </div>
+              <div className="flex items-center justify-center gap-4">
+                <button
+                  onClick={() => handleAdjustReps(-1)}
+                  className="w-12 h-12 bg-gray-700 rounded-lg text-xl hover:bg-gray-600"
+                >
+                  -1
+                </button>
+                <div className="w-20 text-center text-3xl font-bold">
+                  {currentSet.reps}
+                </div>
+                <button
+                  onClick={() => handleAdjustReps(1)}
+                  className="w-12 h-12 bg-gray-700 rounded-lg text-xl hover:bg-gray-600"
+                >
+                  +1
+                </button>
+              </div>
+            </div>
+          )}
+          
           <button
             onClick={handleSkipRest}
             className="px-6 py-3 bg-gray-700 rounded-lg text-lg hover:bg-gray-600"
@@ -300,9 +345,12 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center p-4">
         {/* Exercise Name */}
-        <h1 className="text-2xl font-bold text-center mb-2">
+        <h1 className="text-2xl font-bold text-center mb-1">
           {currentExercise.name}
         </h1>
+        {currentExercise.isAmrap && (
+          <div className="text-sm text-orange-400 mb-2">AMRAP</div>
+        )}
 
         {/* Set Progress */}
         <div className="flex gap-2 mb-8">

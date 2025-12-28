@@ -100,6 +100,7 @@ export async function createTemplate(
       exercise_name: ex.exercise_name,
       target_sets: ex.target_sets,
       target_reps: ex.target_reps,
+      is_amrap: ex.is_amrap ?? false,
       order_index: ex.order_index ?? index,
       notes: ex.notes ?? null,
     }))
@@ -155,6 +156,7 @@ export async function updateTemplate(
         exercise_name: ex.exercise_name,
         target_sets: ex.target_sets,
         target_reps: ex.target_reps,
+        is_amrap: ex.is_amrap ?? false,
         order_index: ex.order_index ?? index,
         notes: ex.notes ?? null,
       }))
@@ -206,6 +208,7 @@ export async function duplicateTemplate(id: string): Promise<TemplateWithExercis
       exercise_name: ex.exercise_name,
       target_sets: ex.target_sets,
       target_reps: ex.target_reps,
+      is_amrap: ex.is_amrap,
       order_index: ex.order_index,
       notes: ex.notes,
     }))

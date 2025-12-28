@@ -8,6 +8,7 @@ type ExerciseFormData = {
   exercise_name: string
   target_sets: number
   target_reps: number
+  is_amrap: boolean
   notes: string
 }
 
@@ -35,6 +36,7 @@ export function TemplateForm({
       exercise_name: ex.exercise_name,
       target_sets: ex.target_sets,
       target_reps: ex.target_reps,
+      is_amrap: ex.is_amrap,
       notes: ex.notes ?? '',
     })) ?? []
   )
@@ -48,6 +50,7 @@ export function TemplateForm({
         exercise_name: '',
         target_sets: 3,
         target_reps: 8,
+        is_amrap: false,
         notes: '',
       },
     ])
@@ -98,6 +101,7 @@ export function TemplateForm({
           exercise_name: ex.exercise_name.trim(),
           target_sets: ex.target_sets,
           target_reps: ex.target_reps,
+          is_amrap: ex.is_amrap,
           order_index: index,
           notes: ex.notes.trim() || null,
         }))
@@ -288,7 +292,9 @@ function ExerciseRow({
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Reps:</label>
+          <label className="text-sm text-gray-600">
+            {exercise.is_amrap ? 'Min reps:' : 'Reps:'}
+          </label>
           <input
             type="number"
             min={1}
@@ -298,6 +304,16 @@ function ExerciseRow({
             className="w-16 px-2 py-1 border border-gray-300 rounded text-center"
           />
         </div>
+
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={exercise.is_amrap}
+            onChange={(e) => onUpdate({ is_amrap: e.target.checked })}
+            className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+          />
+          <span className="text-sm text-gray-600">AMRAP</span>
+        </label>
 
         <div className="flex-1 min-w-[150px]">
           <input

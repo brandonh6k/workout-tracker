@@ -64,6 +64,7 @@ export type Database = {
           target_reps: number
           order_index: number
           notes: string | null
+          is_amrap: boolean
         }
         Insert: {
           id?: string
@@ -73,6 +74,7 @@ export type Database = {
           target_reps: number
           order_index: number
           notes?: string | null
+          is_amrap?: boolean
         }
         Update: {
           id?: string
@@ -82,6 +84,7 @@ export type Database = {
           target_reps?: number
           order_index?: number
           notes?: string | null
+          is_amrap?: boolean
         }
         Relationships: []
       }
