@@ -54,11 +54,28 @@ export function ConfirmDialog({
 
   if (!isOpen) return null
 
-  const confirmButtonStyles = {
-    danger: 'bg-red-600 hover:bg-red-700 text-white',
-    warning: 'bg-yellow-600 hover:bg-yellow-700 text-white',
-    default: 'bg-blue-600 hover:bg-blue-700 text-white',
+  const variantStyles = {
+    danger: {
+      button: 'bg-red-600 hover:bg-red-700 text-white',
+      header: 'bg-red-50',
+      title: 'text-red-900',
+      message: 'text-red-700',
+    },
+    warning: {
+      button: 'bg-yellow-600 hover:bg-yellow-700 text-white',
+      header: 'bg-yellow-50',
+      title: 'text-yellow-900',
+      message: 'text-yellow-700',
+    },
+    default: {
+      button: 'bg-blue-600 hover:bg-blue-700 text-white',
+      header: 'bg-white',
+      title: 'text-gray-900',
+      message: 'text-gray-600',
+    },
   }
+
+  const styles = variantStyles[variant]
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -76,11 +93,11 @@ export function ConfirmDialog({
         aria-labelledby="dialog-title"
         className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 overflow-hidden"
       >
-        <div className="p-6">
-          <h2 id="dialog-title" className="text-lg font-semibold text-gray-900 mb-2">
+        <div className={`p-6 ${styles.header}`}>
+          <h2 id="dialog-title" className={`text-lg font-semibold mb-2 ${styles.title}`}>
             {title}
           </h2>
-          <p className="text-gray-600">{message}</p>
+          <p className={styles.message}>{message}</p>
         </div>
 
         <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100">
@@ -93,7 +110,7 @@ export function ConfirmDialog({
           <button
             ref={confirmButtonRef}
             onClick={onConfirm}
-            className={`px-4 py-2 rounded-md font-medium text-sm ${confirmButtonStyles[variant]}`}
+            className={`px-4 py-2 rounded-md font-medium text-sm ${styles.button}`}
           >
             {confirmLabel}
           </button>
