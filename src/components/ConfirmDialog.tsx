@@ -58,18 +58,21 @@ export function ConfirmDialog({
     danger: {
       button: 'bg-red-600 hover:bg-red-700 text-white',
       header: 'bg-red-50',
+      footer: 'bg-red-100 border-red-200',
       title: 'text-red-900',
       message: 'text-red-700',
     },
     warning: {
       button: 'bg-yellow-600 hover:bg-yellow-700 text-white',
       header: 'bg-yellow-50',
+      footer: 'bg-yellow-100 border-yellow-200',
       title: 'text-yellow-900',
       message: 'text-yellow-700',
     },
     default: {
       button: 'bg-blue-600 hover:bg-blue-700 text-white',
       header: 'bg-white',
+      footer: 'bg-gray-50 border-gray-100',
       title: 'text-gray-900',
       message: 'text-gray-600',
     },
@@ -100,7 +103,7 @@ export function ConfirmDialog({
           <p className={styles.message}>{message}</p>
         </div>
 
-        <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100">
+        <div className={`flex justify-end gap-3 px-6 py-4 border-t ${styles.footer}`}>
           <button
             onClick={onCancel}
             className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 font-medium text-sm"
