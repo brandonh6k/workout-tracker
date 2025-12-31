@@ -1,16 +1,41 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSchedule, type ScheduledWorkoutWithDetails } from '../schedule'
 import { WeeklyCalendar } from '../templates'
 import { ActiveWorkout } from '../workouts'
+import {
+  getProgressComparison,
+  getRecentWorkouts,
+  type ExerciseComparison,
+  type RecentWorkout,
+} from '../progress'
 
 export function DashboardPage() {
   const { scheduledWorkouts, isLoading, error, refresh } = useSchedule()
   const navigate = useNavigate()
   const [activeWorkout, setActiveWorkout] = useState<ScheduledWorkoutWithDetails | null>(null)
+  const [comparison, setComparison] = useState<ExerciseComparison[]>([])
+  const [recentWorkouts, setRecentWorkouts] = useState<RecentWorkout[]>([])
 
   const today = new Date().getDay()
   const todaysWorkouts = scheduledWorkouts.filter((w) => w.day_of_week === today)
+
+  // Load comparison and recent workouts data
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [comparisonData, recentData] = await Promise.all([
+          getProgressComparison(4),
+          getRecentWorkouts(5),
+        ])
+        setComparison(comparisonData)
+        setRecentWorkouts(recentData)
+      } catch (err) {
+        console.error('Failed to load dashboard data:', err)
+      }
+    }
+    loadData()
+  }, [])
 
   const handleStartWorkout = (workout: ScheduledWorkoutWithDetails) => {
     setActiveWorkout(workout)
@@ -133,12 +158,95 @@ export function DashboardPage() {
         />
       </div>
 
-      {/* Recent Workouts Placeholder */}
+      {/* Progress Comparison */}
+      {comparison.length > 0 && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            This Week vs 4 Weeks Ago
+          </h2>
+          <div className="space-y-3">
+            {comparison.slice(0, 5).map((item) => (
+              <ComparisonRow key={item.exerciseName} item={item} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Recent Workouts */}
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Recent Workouts
         </h2>
-        <p className="text-gray-500 italic">No workouts logged yet</p>
+        {recentWorkouts.length > 0 ? (
+          <div className="space-y-3">
+            {recentWorkouts.map((workout) => (
+              <RecentWorkoutRow key={workout.id} workout={workout} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500 italic">No workouts logged yet</p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function ComparisonRow({ item }: { item: ExerciseComparison }) {
+  const hasChange = item.change !== null
+  const isPositive = hasChange && item.change! > 0
+  const isNegative = hasChange && item.change! < 0
+
+  return (
+    <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+      <div className="flex-1 min-w-0">
+        <div className="font-medium text-gray-900 truncate">{item.exerciseName}</div>
+        <div className="text-sm text-gray-500">
+          {item.currentWeek ? `${item.currentWeek.e1rm}#` : '—'}
+          {item.pastWeek && (
+            <span className="text-gray-400"> vs {item.pastWeek.e1rm}#</span>
+          )}
+        </div>
+      </div>
+      {hasChange && (
+        <div
+          className={`text-sm font-medium px-2 py-1 rounded ${
+            isPositive
+              ? 'bg-green-100 text-green-700'
+              : isNegative
+                ? 'bg-red-100 text-red-700'
+                : 'bg-gray-100 text-gray-600'
+          }`}
+        >
+          {isPositive && '+'}
+          {item.change}%
+        </div>
+      )}
+      {!hasChange && item.currentWeek && !item.pastWeek && (
+        <div className="text-xs text-gray-400 italic">new</div>
+      )}
+    </div>
+  )
+}
+
+function RecentWorkoutRow({ workout }: { workout: RecentWorkout }) {
+  const date = new Date(workout.date)
+  const formatted = date.toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  })
+
+  return (
+    <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+      <div>
+        <div className="font-medium text-gray-900">
+          {workout.templateName ?? 'Ad-hoc Workout'}
+        </div>
+        <div className="text-sm text-gray-500">{formatted}</div>
+      </div>
+      <div className="text-right text-sm text-gray-500">
+        <div>{workout.exerciseCount} exercises</div>
+        <div>{workout.totalVolume.toLocaleString()}# volume</div>
       </div>
     </div>
   )

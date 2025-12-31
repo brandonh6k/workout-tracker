@@ -1,6 +1,20 @@
 import { useState, useEffect, useMemo } from 'react'
-import { getExerciseHistory, getExerciseStats, calculateEstimated1RM } from './api'
-import type { ExerciseHistoryEntry, ExerciseStats } from './api'
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from 'recharts'
+import {
+  getExerciseHistory,
+  getExerciseStats,
+  getExerciseProgressData,
+  calculateEstimated1RM,
+} from './api'
+import type { ExerciseHistoryEntry, ExerciseStats, ProgressDataPoint } from './api'
 import type { ExerciseType } from '../../types'
 
 type Props = {
@@ -8,6 +22,8 @@ type Props = {
   exerciseType: ExerciseType
   onBack: () => void
 }
+
+type ChartMetric = 'e1rm' | 'weight' | 'volume'
 
 // Get the best e1RM for a session
 function getSessionBest1RM(entry: ExerciseHistoryEntry): number {
@@ -19,21 +35,31 @@ function getSessionBest1RM(entry: ExerciseHistoryEntry): number {
   return best
 }
 
+// Format date for chart display
+function formatChartDate(dateStr: string): string {
+  const date = new Date(dateStr)
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
 export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Props) {
   const [history, setHistory] = useState<ExerciseHistoryEntry[]>([])
   const [stats, setStats] = useState<ExerciseStats | null>(null)
+  const [progressData, setProgressData] = useState<ProgressDataPoint[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [chartMetric, setChartMetric] = useState<ChartMetric>('e1rm')
 
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true)
       try {
-        const [historyData, statsData] = await Promise.all([
+        const [historyData, statsData, chartData] = await Promise.all([
           getExerciseHistory(exerciseName),
           getExerciseStats(exerciseName),
+          getExerciseProgressData(exerciseName),
         ])
         setHistory(historyData)
         setStats(statsData)
+        setProgressData(chartData)
       } catch (err) {
         console.error('Failed to load exercise history:', err)
       } finally {
@@ -107,6 +133,39 @@ export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Prop
               <StatCard label="Coming Soon" value="--" sublabel="(cardio stats)" />
             </>
           )}
+        </div>
+      )}
+
+      {/* Progress Chart - only for weighted/bodyweight with enough data */}
+      {progressData.length >= 2 && exerciseType !== 'cardio' && (
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-semibold text-gray-900">Progress</h2>
+            {exerciseType === 'weighted' && (
+              <div className="flex gap-1">
+                <MetricButton
+                  label="e1RM"
+                  active={chartMetric === 'e1rm'}
+                  onClick={() => setChartMetric('e1rm')}
+                />
+                <MetricButton
+                  label="Weight"
+                  active={chartMetric === 'weight'}
+                  onClick={() => setChartMetric('weight')}
+                />
+                <MetricButton
+                  label="Volume"
+                  active={chartMetric === 'volume'}
+                  onClick={() => setChartMetric('volume')}
+                />
+              </div>
+            )}
+          </div>
+          <ProgressChart
+            data={progressData}
+            metric={exerciseType === 'bodyweight' ? 'volume' : chartMetric}
+            exerciseType={exerciseType}
+          />
         </div>
       )}
 
@@ -193,5 +252,98 @@ function SetBadge({ set, isBest }: { set: { weight: number; reps: number; set_nu
     >
       {set.weight}# x {set.reps}
     </span>
+  )
+}
+
+function MetricButton({
+  label,
+  active,
+  onClick,
+}: {
+  label: string
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-2 py-1 text-xs rounded transition-colors ${
+        active
+          ? 'bg-blue-600 text-white'
+          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+      }`}
+    >
+      {label}
+    </button>
+  )
+}
+
+function ProgressChart({
+  data,
+  metric,
+  exerciseType,
+}: {
+  data: ProgressDataPoint[]
+  metric: ChartMetric
+  exerciseType: ExerciseType
+}) {
+  const chartData = data.map((d) => ({
+    date: formatChartDate(d.date),
+    value:
+      metric === 'e1rm'
+        ? d.e1rm
+        : metric === 'weight'
+          ? d.bestWeight
+          : d.totalVolume,
+  }))
+
+  const label =
+    metric === 'e1rm'
+      ? 'Est. 1RM'
+      : metric === 'weight'
+        ? 'Best Weight'
+        : exerciseType === 'bodyweight'
+          ? 'Total Reps'
+          : 'Session Volume'
+
+  const unit = exerciseType === 'bodyweight' && metric === 'volume' ? '' : '#'
+
+  return (
+    <div className="h-48">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <XAxis
+            dataKey="date"
+            tick={{ fontSize: 12, fill: '#6b7280' }}
+            tickLine={false}
+            axisLine={{ stroke: '#e5e7eb' }}
+          />
+          <YAxis
+            tick={{ fontSize: 12, fill: '#6b7280' }}
+            tickLine={false}
+            axisLine={{ stroke: '#e5e7eb' }}
+            width={40}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: '#fff',
+              border: '1px solid #e5e7eb',
+              borderRadius: '6px',
+              fontSize: '12px',
+            }}
+            formatter={(value) => [`${value}${unit}`, label]}
+          />
+          <Line
+            type="monotone"
+            dataKey="value"
+            stroke="#2563eb"
+            strokeWidth={2}
+            dot={{ fill: '#2563eb', strokeWidth: 0, r: 3 }}
+            activeDot={{ r: 5, fill: '#1d4ed8' }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
   )
 }
