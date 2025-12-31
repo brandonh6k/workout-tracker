@@ -513,3 +513,91 @@ export async function getWeeklyVolume(weeks = 8): Promise<{ weekStart: string; v
     .map(([weekStart, volume]) => ({ weekStart, volume }))
     .sort((a, b) => a.weekStart.localeCompare(b.weekStart))
 }
+
+// Get this week vs last week volume comparison
+export type WeeklyVolumeComparison = {
+  thisWeek: number
+  lastWeek: number
+  change: number | null // percentage
+  thisWeekSessions: number
+  lastWeekSessions: number
+}
+
+export async function getWeeklyVolumeComparison(): Promise<WeeklyVolumeComparison> {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+
+  const now = new Date()
+  
+  // Get start of this week (Sunday)
+  const thisWeekStart = new Date(now)
+  thisWeekStart.setDate(now.getDate() - now.getDay())
+  thisWeekStart.setHours(0, 0, 0, 0)
+
+  // Get start of last week
+  const lastWeekStart = new Date(thisWeekStart)
+  lastWeekStart.setDate(lastWeekStart.getDate() - 7)
+
+  // Get sessions from both weeks
+  const { data: sessions } = await supabase
+    .from('workout_sessions')
+    .select('id, date')
+    .eq('user_id', user.id)
+    .eq('completed', true)
+    .gte('date', lastWeekStart.toISOString().split('T')[0])
+
+  if (!sessions || sessions.length === 0) {
+    return { thisWeek: 0, lastWeek: 0, change: null, thisWeekSessions: 0, lastWeekSessions: 0 }
+  }
+
+  const thisWeekSessions = sessions.filter(
+    (s) => new Date(s.date) >= thisWeekStart
+  )
+  const lastWeekSessions = sessions.filter(
+    (s) => new Date(s.date) >= lastWeekStart && new Date(s.date) < thisWeekStart
+  )
+
+  const sessionIds = sessions.map((s) => s.id)
+
+  const { data: sets } = await supabase
+    .from('logged_sets')
+    .select('session_id, weight, reps')
+    .in('session_id', sessionIds)
+
+  if (!sets) {
+    return { 
+      thisWeek: 0, 
+      lastWeek: 0, 
+      change: null, 
+      thisWeekSessions: thisWeekSessions.length, 
+      lastWeekSessions: lastWeekSessions.length 
+    }
+  }
+
+  const thisWeekSessionIds = new Set(thisWeekSessions.map((s) => s.id))
+  const lastWeekSessionIds = new Set(lastWeekSessions.map((s) => s.id))
+
+  let thisWeekVolume = 0
+  let lastWeekVolume = 0
+
+  for (const set of sets) {
+    const volume = set.weight * set.reps
+    if (thisWeekSessionIds.has(set.session_id)) {
+      thisWeekVolume += volume
+    } else if (lastWeekSessionIds.has(set.session_id)) {
+      lastWeekVolume += volume
+    }
+  }
+
+  const change = lastWeekVolume > 0
+    ? Math.round(((thisWeekVolume - lastWeekVolume) / lastWeekVolume) * 100)
+    : null
+
+  return {
+    thisWeek: thisWeekVolume,
+    lastWeek: lastWeekVolume,
+    change,
+    thisWeekSessions: thisWeekSessions.length,
+    lastWeekSessions: lastWeekSessions.length,
+  }
+}

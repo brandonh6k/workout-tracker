@@ -29,8 +29,12 @@
 
 - [ ] **Cardio stats**: Best duration, best distance, best pace, total sessions.
 
+## Ad-hoc Workouts
+
+- [ ] **Ad-hoc workout session**: Start an empty workout without a pre-planned template. Add exercises on the fly, log sets dynamically. Useful for days when you deviate from the plan.
+
 ## Future Phases
 
-- Phase 2: Workout Logging
-- Phase 3: Progress Tracking
-- Phase 4: Dashboard + Polish
+- [x] Phase 2: Workout Logging
+- [x] Phase 3: Progress Tracking
+- [x] Phase 4: Dashboard + Polish

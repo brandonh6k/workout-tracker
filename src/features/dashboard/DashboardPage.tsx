@@ -6,8 +6,10 @@ import { ActiveWorkout } from '../workouts'
 import {
   getProgressComparison,
   getRecentWorkouts,
+  getWeeklyVolumeComparison,
   type ExerciseComparison,
   type RecentWorkout,
+  type WeeklyVolumeComparison,
 } from '../progress'
 
 export function DashboardPage() {
@@ -16,6 +18,7 @@ export function DashboardPage() {
   const [activeWorkout, setActiveWorkout] = useState<ScheduledWorkoutWithDetails | null>(null)
   const [comparison, setComparison] = useState<ExerciseComparison[]>([])
   const [recentWorkouts, setRecentWorkouts] = useState<RecentWorkout[]>([])
+  const [weeklyVolume, setWeeklyVolume] = useState<WeeklyVolumeComparison | null>(null)
 
   const today = new Date().getDay()
   const todaysWorkouts = scheduledWorkouts.filter((w) => w.day_of_week === today)
@@ -24,12 +27,14 @@ export function DashboardPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [comparisonData, recentData] = await Promise.all([
+        const [comparisonData, recentData, volumeData] = await Promise.all([
           getProgressComparison(4),
           getRecentWorkouts(5),
+          getWeeklyVolumeComparison(),
         ])
         setComparison(comparisonData)
         setRecentWorkouts(recentData)
+        setWeeklyVolume(volumeData)
       } catch (err) {
         console.error('Failed to load dashboard data:', err)
       }
@@ -137,15 +142,57 @@ export function DashboardPage() {
         ) : (
           <div>
             <p className="text-gray-500 mb-4">No workout scheduled for today</p>
-            <button
-              onClick={() => navigate('/schedule')}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 font-medium text-sm"
-            >
-              Schedule a Workout
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => navigate('/schedule')}
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 font-medium text-sm"
+              >
+                Schedule a Workout
+              </button>
+            </div>
           </div>
         )}
       </div>
+
+      {/* Weekly Volume Stats */}
+      {weeklyVolume && (weeklyVolume.thisWeek > 0 || weeklyVolume.lastWeek > 0) && (
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white rounded-lg shadow p-4">
+            <div className="text-sm text-gray-500">This Week</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {weeklyVolume.thisWeek.toLocaleString()}#
+            </div>
+            <div className="text-xs text-gray-400">
+              {weeklyVolume.thisWeekSessions} session{weeklyVolume.thisWeekSessions !== 1 ? 's' : ''}
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow p-4">
+            <div className="text-sm text-gray-500">Last Week</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {weeklyVolume.lastWeek.toLocaleString()}#
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-400">
+                {weeklyVolume.lastWeekSessions} session{weeklyVolume.lastWeekSessions !== 1 ? 's' : ''}
+              </span>
+              {weeklyVolume.change !== null && (
+                <span
+                  className={`text-xs font-medium px-1.5 py-0.5 rounded ${
+                    weeklyVolume.change > 0
+                      ? 'bg-green-100 text-green-700'
+                      : weeklyVolume.change < 0
+                        ? 'bg-red-100 text-red-700'
+                        : 'bg-gray-100 text-gray-600'
+                  }`}
+                >
+                  {weeklyVolume.change > 0 && '+'}
+                  {weeklyVolume.change}%
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Weekly Calendar */}
       <div>
