@@ -7,7 +7,7 @@ import * as api from './api'
 import type { TemplateWithExercises } from './api'
 
 export function TemplatesPage() {
-  const { templates, isLoading, error, refresh } = useTemplates()
+  const { templates, isLoading, error, refresh, optimisticDelete, optimisticDuplicate } = useTemplates()
   const [mode, setMode] = useState<'list' | 'create' | 'edit'>('list')
   const [editingTemplate, setEditingTemplate] = useState<TemplateWithExercises | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -49,14 +49,12 @@ export function TemplatesPage() {
 
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return
-    await api.deleteTemplate(deleteTarget.id)
     setDeleteTarget(null)
-    await refresh()
+    await optimisticDelete(deleteTarget.id)
   }
 
-  const handleDuplicate = async (id: string) => {
-    await api.duplicateTemplate(id)
-    await refresh()
+  const handleDuplicate = async (template: TemplateWithExercises) => {
+    await optimisticDuplicate(template)
   }
 
   const handleEdit = (template: TemplateWithExercises) => {
@@ -146,7 +144,7 @@ export function TemplatesPage() {
               template={template}
               onEdit={() => handleEdit(template)}
               onDelete={() => handleDeleteClick(template)}
-              onDuplicate={() => handleDuplicate(template.id)}
+              onDuplicate={() => handleDuplicate(template)}
             />
           ))}
         </div>
