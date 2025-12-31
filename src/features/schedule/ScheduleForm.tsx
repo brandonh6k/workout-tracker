@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import type { TemplateWithExercises } from '../templates'
 import type { ScheduledWorkoutWithDetails } from './api'
+import { ErrorMessage } from '../../components/ErrorMessage'
 import * as api from './api'
 
 type ExerciseWeight = {
@@ -100,11 +101,7 @@ export function ScheduleForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-          {error}
-        </div>
-      )}
+      {error && <ErrorMessage message={error} />}
 
       {/* Template selection */}
       <div className="bg-white rounded-lg shadow p-6">

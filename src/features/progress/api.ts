@@ -1,4 +1,5 @@
 import { supabase } from '../../lib/supabase'
+import { groupBy } from '../../lib/utils'
 import type { LoggedSet, ExerciseType } from '../../types'
 
 export type ExerciseHistoryEntry = {
@@ -439,15 +440,10 @@ export async function getRecentWorkouts(limit = 5): Promise<RecentWorkout[]> {
   }))
 
   // Group sets by session
-  const sessionSets = new Map<string, typeof sets>()
-  for (const set of sets) {
-    const existing = sessionSets.get(set.session_id) ?? []
-    existing.push(set)
-    sessionSets.set(set.session_id, existing)
-  }
+  const sessionSets = groupBy(sets, (set) => set.session_id)
 
   return sessions.map((s) => {
-    const setsForSession = sessionSets.get(s.id) ?? []
+    const setsForSession = sessionSets[s.id] ?? []
     const exerciseNames = new Set(setsForSession.map((set) => set.exercise_name))
     const totalVolume = setsForSession.reduce((sum, set) => sum + set.weight * set.reps, 0)
 

@@ -1,4 +1,5 @@
 import { supabase } from '../../lib/supabase'
+import { groupBy } from '../../lib/utils'
 import type {
   WorkoutTemplate,
   TemplateExercise,
@@ -31,14 +32,7 @@ export async function getTemplates(): Promise<TemplateWithExercises[]> {
   if (exercisesError) throw exercisesError
 
   // Group exercises by template
-  const exercisesByTemplate = (exercises ?? []).reduce(
-    (acc, ex) => {
-      if (!acc[ex.template_id]) acc[ex.template_id] = []
-      acc[ex.template_id].push(ex)
-      return acc
-    },
-    {} as Record<string, TemplateExercise[]>
-  )
+  const exercisesByTemplate = groupBy(exercises ?? [], (ex) => ex.template_id)
 
   return templates.map((template) => ({
     ...template,

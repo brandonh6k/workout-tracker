@@ -33,6 +33,12 @@
 
 - [ ] **Ad-hoc workout session**: Start an empty workout without a pre-planned template. Add exercises on the fly, log sets dynamically. Useful for days when you deviate from the plan.
 
+## Code Quality / Refactoring
+
+- [ ] **useReducer for ActiveWorkout**: The `ActiveWorkout` component has complex nested state with 12+ setState calls. Refactoring to `useReducer` would centralize state mutations, simplify rollback logic, and make the component easier to test.
+
+- [ ] **Data fetching hooks for Dashboard/Progress**: Extract `useDashboardData()` and `useExerciseHistory(exerciseName)` hooks to separate data fetching concerns from UI components. Currently, `DashboardPage` and `ExerciseHistoryView` have parallel API calls mixed into the component.
+
 ## Future Phases
 
 - [x] Phase 2: Workout Logging

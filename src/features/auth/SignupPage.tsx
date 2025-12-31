@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from './AuthContext'
+import { ErrorMessage } from '../../components/ErrorMessage'
 
 export function SignupPage() {
   const [email, setEmail] = useState('')
@@ -67,11 +68,7 @@ export function SignupPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
-          )}
+          {error && <ErrorMessage message={error} />}
 
           <div className="space-y-4">
             <div>

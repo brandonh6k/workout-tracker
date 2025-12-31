@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { getRecentWorkouts, type WorkoutSessionWithSets } from './api'
 import { getLoggedExercises, ExerciseHistoryView, type LoggedExerciseInfo } from '../progress'
 import type { ExerciseType } from '../../types'
+import { formatWorkoutDate, groupBy } from '../../lib/utils'
 
 type ViewMode = { type: 'list' } | { type: 'exercise'; name: string; exerciseType: ExerciseType }
 
@@ -107,22 +108,10 @@ export function HistoryPage() {
 }
 
 function WorkoutRow({ workout }: { workout: WorkoutSessionWithSets }) {
-  const date = new Date(workout.date)
-  const formatted = date.toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  })
+  const formatted = formatWorkoutDate(workout.date)
 
   // Group sets by exercise
-  const exerciseGroups = workout.logged_sets.reduce(
-    (acc, set) => {
-      if (!acc[set.exercise_name]) acc[set.exercise_name] = []
-      acc[set.exercise_name].push(set)
-      return acc
-    },
-    {} as Record<string, typeof workout.logged_sets>
-  )
+  const exerciseGroups = groupBy(workout.logged_sets, (set) => set.exercise_name)
 
   const exerciseCount = Object.keys(exerciseGroups).length
   const totalSets = workout.logged_sets.length

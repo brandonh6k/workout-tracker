@@ -16,6 +16,7 @@ import {
 } from './api'
 import type { ExerciseHistoryEntry, ExerciseStats, ProgressDataPoint } from './api'
 import type { ExerciseType } from '../../types'
+import { formatShortDate, formatWorkoutDate } from '../../lib/utils'
 
 type Props = {
   exerciseName: string
@@ -35,11 +36,7 @@ function getSessionBest1RM(entry: ExerciseHistoryEntry): number {
   return best
 }
 
-// Format date for chart display
-function formatChartDate(dateStr: string): string {
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-}
+
 
 export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Props) {
   const [history, setHistory] = useState<ExerciseHistoryEntry[]>([])
@@ -204,12 +201,7 @@ function StatCard({ label, value, sublabel }: { label: string; value: string; su
 }
 
 function HistoryEntry({ entry, isPR }: { entry: ExerciseHistoryEntry; isPR: boolean }) {
-  const date = new Date(entry.date)
-  const formatted = date.toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  })
+  const formatted = formatWorkoutDate(entry.date)
 
   // Find best set of this session (by estimated 1RM)
   let bestSet = entry.sets[0]
@@ -288,7 +280,7 @@ function ProgressChart({
   exerciseType: ExerciseType
 }) {
   const chartData = data.map((d) => ({
-    date: formatChartDate(d.date),
+    date: formatShortDate(d.date),
     value:
       metric === 'e1rm'
         ? d.e1rm

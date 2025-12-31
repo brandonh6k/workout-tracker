@@ -11,6 +11,8 @@ import {
   type RecentWorkout,
   type WeeklyVolumeComparison,
 } from '../progress'
+import { formatWorkoutDate } from '../../lib/utils'
+import { ErrorMessage } from '../../components/ErrorMessage'
 
 export function DashboardPage() {
   const { scheduledWorkouts, isLoading, error, refresh } = useSchedule()
@@ -75,11 +77,7 @@ export function DashboardPage() {
   }
 
   if (error) {
-    return (
-      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-        Failed to load data: {error.message}
-      </div>
-    )
+    return <ErrorMessage message={`Failed to load data: ${error.message}`} />
   }
 
   return (
@@ -276,12 +274,7 @@ function ComparisonRow({ item }: { item: ExerciseComparison }) {
 }
 
 function RecentWorkoutRow({ workout }: { workout: RecentWorkout }) {
-  const date = new Date(workout.date)
-  const formatted = date.toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  })
+  const formatted = formatWorkoutDate(workout.date)
 
   return (
     <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">

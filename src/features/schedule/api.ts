@@ -1,4 +1,5 @@
 import { supabase } from '../../lib/supabase'
+import { groupBy } from '../../lib/utils'
 import type {
   ScheduledWorkout,
   ScheduledExercise,
@@ -55,28 +56,9 @@ export async function getScheduledWorkouts(): Promise<ScheduledWorkoutWithDetail
   if (scheduledExError) throw scheduledExError
 
   // Build lookup maps
-  const templatesById = (templates ?? []).reduce(
-    (acc, t) => ({ ...acc, [t.id]: t }),
-    {} as Record<string, WorkoutTemplate>
-  )
-
-  const templateExercisesByTemplateId = (templateExercises ?? []).reduce(
-    (acc, ex) => {
-      if (!acc[ex.template_id]) acc[ex.template_id] = []
-      acc[ex.template_id].push(ex)
-      return acc
-    },
-    {} as Record<string, TemplateExercise[]>
-  )
-
-  const scheduledExercisesByScheduledId = (scheduledExercises ?? []).reduce(
-    (acc, ex) => {
-      if (!acc[ex.scheduled_workout_id]) acc[ex.scheduled_workout_id] = []
-      acc[ex.scheduled_workout_id].push(ex)
-      return acc
-    },
-    {} as Record<string, ScheduledExercise[]>
-  )
+  const templatesById = Object.fromEntries((templates ?? []).map((t) => [t.id, t]))
+  const templateExercisesByTemplateId = groupBy(templateExercises ?? [], (ex) => ex.template_id)
+  const scheduledExercisesByScheduledId = groupBy(scheduledExercises ?? [], (ex) => ex.scheduled_workout_id)
 
   return scheduled.map((s) => ({
     ...s,

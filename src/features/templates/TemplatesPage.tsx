@@ -3,6 +3,7 @@ import { useTemplates } from './useTemplates'
 import { TemplateForm } from './TemplateForm'
 import { TemplateCard } from './TemplateCard'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
+import { ErrorMessage } from '../../components/ErrorMessage'
 import * as api from './api'
 import type { TemplateWithExercises } from './api'
 
@@ -71,11 +72,7 @@ export function TemplatesPage() {
   }
 
   if (error) {
-    return (
-      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-        Failed to load templates: {error.message}
-      </div>
-    )
+    return <ErrorMessage message={`Failed to load templates: ${error.message}`} />
   }
 
   if (mode === 'create') {
