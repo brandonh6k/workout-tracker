@@ -23,6 +23,12 @@
 
 - [ ] **1-button-per-set logging flow**: Gold standard is Next/Done button for 95% of sets. Pre-filled from scheduled weights. Only tap into details for exceptions (weight change, rep variance, notes). Rest timer starts automatically on set completion.
 
+## Cardio Support
+
+- [ ] **Cardio logging flow**: Different UI for cardio exercises (duration, distance, pace instead of weight/reps). Fields already in `logged_sets` (duration_seconds, distance_meters) but logging UI not implemented.
+
+- [ ] **Cardio stats**: Best duration, best distance, best pace, total sessions.
+
 ## Future Phases
 
 - Phase 2: Workout Logging

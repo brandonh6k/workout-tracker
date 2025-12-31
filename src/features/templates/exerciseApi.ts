@@ -1,5 +1,5 @@
 import { supabase } from '../../lib/supabase'
-import type { Exercise } from '../../types'
+import type { Exercise, ExerciseType } from '../../types'
 
 export async function getExercises(): Promise<Exercise[]> {
   const { data, error } = await supabase
@@ -29,6 +29,7 @@ export async function searchExercises(query: string): Promise<Exercise[]> {
 
 export async function createCustomExercise(
   name: string,
+  exerciseType: ExerciseType = 'weighted',
   category?: string
 ): Promise<Exercise> {
   const { data: { user } } = await supabase.auth.getUser()
@@ -41,6 +42,7 @@ export async function createCustomExercise(
       name: name.trim(),
       category: category ?? null,
       is_custom: true,
+      exercise_type: exerciseType,
     })
     .select()
     .single()

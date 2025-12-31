@@ -1,6 +1,8 @@
 // Database types for Supabase
 // These mirror the SQL schema and provide type safety
 
+export type ExerciseType = 'weighted' | 'bodyweight' | 'cardio'
+
 export type Database = {
   public: {
     Tables: {
@@ -11,6 +13,7 @@ export type Database = {
           name: string
           category: string | null
           is_custom: boolean
+          exercise_type: ExerciseType
           created_at: string
         }
         Insert: {
@@ -19,6 +22,7 @@ export type Database = {
           name: string
           category?: string | null
           is_custom?: boolean
+          exercise_type?: ExerciseType
           created_at?: string
         }
         Update: {
@@ -27,6 +31,7 @@ export type Database = {
           name?: string
           category?: string | null
           is_custom?: boolean
+          exercise_type?: ExerciseType
           created_at?: string
         }
         Relationships: []
@@ -179,6 +184,8 @@ export type Database = {
           reps: number
           rpe: number | null
           notes: string | null
+          duration_seconds: number | null
+          distance_meters: number | null
           created_at: string
         }
         Insert: {
@@ -190,6 +197,8 @@ export type Database = {
           reps: number
           rpe?: number | null
           notes?: string | null
+          duration_seconds?: number | null
+          distance_meters?: number | null
           created_at?: string
         }
         Update: {
@@ -201,6 +210,8 @@ export type Database = {
           reps?: number
           rpe?: number | null
           notes?: string | null
+          duration_seconds?: number | null
+          distance_meters?: number | null
           created_at?: string
         }
         Relationships: []

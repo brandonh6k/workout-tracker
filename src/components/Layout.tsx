@@ -6,6 +6,7 @@ const navItems = [
   { to: '/templates', label: 'Templates' },
   { to: '/schedule', label: 'Schedule' },
   { to: '/history', label: 'History' },
+  { to: '/admin', label: 'Admin' },
 ]
 
 export function Layout() {
