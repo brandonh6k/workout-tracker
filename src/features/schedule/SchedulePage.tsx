@@ -37,7 +37,7 @@ export function SchedulePage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-gray-600">Loading...</div>
+        <div className="text-gray-600 dark:text-gray-300">Loading...</div>
       </div>
     )
   }
@@ -46,7 +46,7 @@ export function SchedulePage() {
   if (addingToDay !== null || editingSchedule) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           {editingSchedule ? 'Edit Scheduled Workout' : `Schedule for ${DAYS_OF_WEEK[addingToDay!].label}`}
         </h1>
         <ScheduleForm
@@ -74,15 +74,15 @@ export function SchedulePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Weekly Schedule</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Weekly Schedule</h1>
       </div>
 
-      <p className="text-sm text-gray-600">
+      <p className="text-sm text-gray-600 dark:text-gray-300">
         Schedule your templates for specific days and set target weights for each exercise.
       </p>
 
       {templates.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-6 text-center">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
           <p className="text-gray-500 mb-4">
             Create some templates first before scheduling workouts.
           </p>
@@ -92,7 +92,7 @@ export function SchedulePage() {
           {scheduleByDay.map((day) => (
             <div
               key={day.value}
-              className={`bg-white rounded-lg shadow p-4 ${
+              className={`bg-white dark:bg-gray-800 rounded-lg shadow p-4 ${
                 day.value === today ? 'ring-2 ring-blue-500' : ''
               }`}
             >
@@ -120,14 +120,14 @@ export function SchedulePage() {
                   {day.workouts.map((scheduled) => (
                     <div
                       key={scheduled.id}
-                      className="border border-gray-200 rounded-lg p-3"
+                      className="border border-gray-200 dark:border-gray-700 rounded-lg p-3"
                     >
                       <div className="flex items-start justify-between">
                         <div>
-                          <h3 className="font-medium text-gray-900">
+                          <h3 className="font-medium text-gray-900 dark:text-white">
                             {scheduled.template.name}
                           </h3>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
                             {scheduled.template.template_exercises.length} exercises
                           </p>
                         </div>
@@ -162,7 +162,7 @@ export function SchedulePage() {
                           return (
                             <li key={ex.id} className="flex justify-between">
                               <span>{ex.exercise_name}</span>
-                              <span className="text-gray-400">
+                              <span className="text-gray-400 dark:text-gray-500">
                                 {scheduledEx?.target_weight ?? 0}# - {ex.target_sets}x{ex.target_reps}
                               </span>
                             </li>

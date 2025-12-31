@@ -30,7 +30,7 @@ export function SetDisplay({
           adjustMode === 'weight' ? 'text-blue-400' : 'hover:text-gray-300'
         }`}
       >
-        {weight}<span className="text-3xl text-gray-400">#</span>
+        {weight}<span className="text-3xl text-gray-400 dark:text-gray-500">#</span>
       </button>
 
       {/* Weight adjustment controls */}

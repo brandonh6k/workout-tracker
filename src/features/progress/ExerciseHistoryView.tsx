@@ -89,7 +89,7 @@ export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Prop
   }, [history])
 
   if (isLoading) {
-    return <div className="text-gray-500">Loading...</div>
+    return <div className="text-gray-500 dark:text-gray-400 dark:text-gray-500">Loading...</div>
   }
 
   return (
@@ -102,7 +102,7 @@ export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Prop
         >
           &larr; Back
         </button>
-        <h1 className="text-2xl font-bold text-gray-900">{exerciseName}</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{exerciseName}</h1>
       </div>
 
       {/* Stats Cards - different stats for different exercise types */}
@@ -135,9 +135,9 @@ export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Prop
 
       {/* Progress Chart - only for weighted/bodyweight with enough data */}
       {progressData.length >= 2 && exerciseType !== 'cardio' && (
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-900">Progress</h2>
+            <h2 className="font-semibold text-gray-900 dark:text-white">Progress</h2>
             {exerciseType === 'weighted' && (
               <div className="flex gap-1">
                 <MetricButton
@@ -167,9 +167,9 @@ export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Prop
       )}
 
       {/* History List */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="px-4 py-3 border-b border-gray-200">
-          <h2 className="font-semibold text-gray-900">History</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="font-semibold text-gray-900 dark:text-white">History</h2>
         </div>
         
         {history.length === 0 ? (
@@ -192,10 +192,10 @@ export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Prop
 
 function StatCard({ label, value, sublabel }: { label: string; value: string; sublabel?: string }) {
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <div className="text-sm text-gray-500">{label}</div>
-      <div className="text-2xl font-bold text-gray-900">{value}</div>
-      {sublabel && <div className="text-xs text-gray-400">{sublabel}</div>}
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+      <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">{label}</div>
+      <div className="text-2xl font-bold text-gray-900 dark:text-white">{value}</div>
+      {sublabel && <div className="text-xs text-gray-400 dark:text-gray-500">{sublabel}</div>}
     </div>
   )
 }
@@ -217,7 +217,7 @@ function HistoryEntry({ entry, isPR }: { entry: ExerciseHistoryEntry; isPR: bool
   return (
     <div className="px-4 py-3">
       <div className="flex items-center justify-between mb-2">
-        <div className="font-medium text-gray-900">{formatted}</div>
+        <div className="font-medium text-gray-900 dark:text-white">{formatted}</div>
         {isPR && (
           <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full font-medium">
             PR
@@ -239,7 +239,7 @@ function SetBadge({ set, isBest }: { set: { weight: number; reps: number; set_nu
       className={`text-sm px-2 py-1 rounded ${
         isBest
           ? 'bg-blue-100 text-blue-800 font-medium'
-          : 'bg-gray-100 text-gray-700'
+          : 'bg-gray-100 dark:bg-gray-700 text-gray-700'
       }`}
     >
       {set.weight}# x {set.reps}
@@ -262,7 +262,7 @@ function MetricButton({
       className={`px-2 py-1 text-xs rounded transition-colors ${
         active
           ? 'bg-blue-600 text-white'
-          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 hover:bg-gray-200'
       }`}
     >
       {label}

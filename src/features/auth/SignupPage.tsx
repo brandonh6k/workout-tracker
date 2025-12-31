@@ -42,7 +42,7 @@ export function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
         <div className="max-w-md w-full text-center space-y-4">
           <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
             Check your email to confirm your account!
@@ -56,13 +56,13 @@ export function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h1 className="text-3xl font-bold text-center text-gray-900">
+          <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white">
             Workout Tracker
           </h1>
-          <h2 className="mt-2 text-center text-gray-600">
+          <h2 className="mt-2 text-center text-gray-600 dark:text-gray-300">
             Create your account
           </h2>
         </div>
@@ -125,7 +125,7 @@ export function SignupPage() {
             {isLoading ? 'Creating account...' : 'Sign up'}
           </button>
 
-          <p className="text-center text-sm text-gray-600">
+          <p className="text-center text-sm text-gray-600 dark:text-gray-300">
             Already have an account?{' '}
             <Link to="/login" className="text-blue-600 hover:text-blue-500 font-medium">
               Sign in

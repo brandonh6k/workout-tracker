@@ -9,10 +9,10 @@ type Props = {
 
 export function TemplateCard({ template, onEdit, onDelete, onDuplicate }: Props) {
   return (
-    <div className="bg-white rounded-lg shadow p-4 space-y-3">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-3">
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="font-semibold text-gray-900">{template.name}</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white">{template.name}</h3>
         </div>
 
         <div className="flex gap-1">
@@ -62,7 +62,7 @@ export function TemplateCard({ template, onEdit, onDelete, onDuplicate }: Props)
       </div>
 
       {template.notes && (
-        <p className="text-sm text-gray-500">{template.notes}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">{template.notes}</p>
       )}
 
       {template.template_exercises.length > 0 ? (
@@ -70,7 +70,7 @@ export function TemplateCard({ template, onEdit, onDelete, onDuplicate }: Props)
           {template.template_exercises.map((exercise) => (
             <li key={exercise.id} className="flex justify-between">
               <span>{exercise.exercise_name}</span>
-              <span className="text-gray-400">
+              <span className="text-gray-400 dark:text-gray-500">
                 {exercise.target_sets}x{exercise.target_reps}
               </span>
             </li>

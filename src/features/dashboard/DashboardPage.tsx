@@ -71,7 +71,7 @@ export function DashboardPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-gray-600">Loading...</div>
+        <div className="text-gray-600 dark:text-gray-300">Loading...</div>
       </div>
     )
   }
@@ -82,10 +82,10 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
 
       {/* Today's Workout */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Today's Workout
         </h2>
@@ -95,11 +95,11 @@ export function DashboardPage() {
             {todaysWorkouts.map((workout) => (
               <div
                 key={workout.id}
-                className="border border-gray-200 rounded-lg p-4"
+                className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="font-medium text-gray-900">{workout.template.name}</h3>
+                    <h3 className="font-medium text-gray-900 dark:text-white">{workout.template.name}</h3>
                     <p className="text-sm text-gray-500 mt-1">
                       {workout.template.template_exercises.length} exercises
                     </p>
@@ -121,7 +121,7 @@ export function DashboardPage() {
                       return (
                         <li key={ex.id} className="flex justify-between">
                           <span>{ex.exercise_name}</span>
-                          <span className="text-gray-400">
+                          <span className="text-gray-400 dark:text-gray-500">
                             {scheduledEx?.target_weight ?? 0}# - {ex.target_sets}x{ex.target_reps}
                           </span>
                         </li>
@@ -143,7 +143,7 @@ export function DashboardPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => navigate('/schedule')}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 font-medium text-sm"
+                className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 rounded-md hover:bg-gray-200 font-medium text-sm"
               >
                 Schedule a Workout
               </button>
@@ -155,22 +155,22 @@ export function DashboardPage() {
       {/* Weekly Volume Stats */}
       {weeklyVolume && (weeklyVolume.thisWeek > 0 || weeklyVolume.lastWeek > 0) && (
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm text-gray-500">This Week</div>
-            <div className="text-2xl font-bold text-gray-900">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+            <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">This Week</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">
               {weeklyVolume.thisWeek.toLocaleString()}#
             </div>
-            <div className="text-xs text-gray-400">
+            <div className="text-xs text-gray-400 dark:text-gray-500">
               {weeklyVolume.thisWeekSessions} session{weeklyVolume.thisWeekSessions !== 1 ? 's' : ''}
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm text-gray-500">Last Week</div>
-            <div className="text-2xl font-bold text-gray-900">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+            <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Last Week</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">
               {weeklyVolume.lastWeek.toLocaleString()}#
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-gray-400 dark:text-gray-500">
                 {weeklyVolume.lastWeekSessions} session{weeklyVolume.lastWeekSessions !== 1 ? 's' : ''}
               </span>
               {weeklyVolume.change !== null && (
@@ -180,7 +180,7 @@ export function DashboardPage() {
                       ? 'bg-green-100 text-green-700'
                       : weeklyVolume.change < 0
                         ? 'bg-red-100 text-red-700'
-                        : 'bg-gray-100 text-gray-600'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600'
                   }`}
                 >
                   {weeklyVolume.change > 0 && '+'}
@@ -205,7 +205,7 @@ export function DashboardPage() {
 
       {/* Progress Comparison */}
       {comparison.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             This Week vs 4 Weeks Ago
           </h2>
@@ -218,7 +218,7 @@ export function DashboardPage() {
       )}
 
       {/* Recent Workouts */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Recent Workouts
         </h2>
@@ -245,10 +245,10 @@ function ComparisonRow({ item }: { item: ExerciseComparison }) {
     <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
       <div className="flex-1 min-w-0">
         <div className="font-medium text-gray-900 truncate">{item.exerciseName}</div>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
           {item.currentWeek ? `${item.currentWeek.e1rm}#` : '—'}
           {item.pastWeek && (
-            <span className="text-gray-400"> vs {item.pastWeek.e1rm}#</span>
+            <span className="text-gray-400 dark:text-gray-500"> vs {item.pastWeek.e1rm}#</span>
           )}
         </div>
       </div>
@@ -259,7 +259,7 @@ function ComparisonRow({ item }: { item: ExerciseComparison }) {
               ? 'bg-green-100 text-green-700'
               : isNegative
                 ? 'bg-red-100 text-red-700'
-                : 'bg-gray-100 text-gray-600'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-600'
           }`}
         >
           {isPositive && '+'}
@@ -279,12 +279,12 @@ function RecentWorkoutRow({ workout }: { workout: RecentWorkout }) {
   return (
     <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
       <div>
-        <div className="font-medium text-gray-900">
+        <div className="font-medium text-gray-900 dark:text-white">
           {workout.templateName ?? 'Ad-hoc Workout'}
         </div>
-        <div className="text-sm text-gray-500">{formatted}</div>
+        <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">{formatted}</div>
       </div>
-      <div className="text-right text-sm text-gray-500">
+      <div className="text-right text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
         <div>{workout.exerciseCount} exercises</div>
         <div>{workout.totalVolume.toLocaleString()}# volume</div>
       </div>

@@ -117,8 +117,8 @@ export function TemplateForm({
       {error && <ErrorMessage message={error} />}
 
       {/* Template details */}
-      <div className="bg-white rounded-lg shadow p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">Template Details</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Template Details</h2>
 
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -150,8 +150,8 @@ export function TemplateForm({
       </div>
 
       {/* Exercises */}
-      <div className="bg-white rounded-lg shadow p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">Exercises</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Exercises</h2>
 
         {exercises.length === 0 ? (
           <p className="text-gray-500 italic py-4 text-center">
@@ -190,7 +190,7 @@ export function TemplateForm({
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium disabled:opacity-50"
+          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 dark:bg-gray-900 font-medium disabled:opacity-50"
         >
           Cancel
         </button>
@@ -224,7 +224,7 @@ function ExerciseRow({
   onMove,
 }: ExerciseRowProps) {
   return (
-    <div className="border border-gray-200 rounded-lg p-4 space-y-3">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-3">
       <div className="flex items-start gap-3">
         {/* Reorder buttons */}
         <div className="flex flex-col gap-1">
@@ -277,7 +277,7 @@ function ExerciseRow({
       {/* Sets and reps */}
       <div className="flex flex-wrap gap-3 pl-9">
         <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Sets:</label>
+          <label className="text-sm text-gray-600 dark:text-gray-300">Sets:</label>
           <input
             type="number"
             min={1}
@@ -289,7 +289,7 @@ function ExerciseRow({
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">
+          <label className="text-sm text-gray-600 dark:text-gray-300">
             {exercise.is_amrap ? 'Min reps:' : 'Reps:'}
           </label>
           <input
@@ -309,7 +309,7 @@ function ExerciseRow({
             onChange={(e) => onUpdate({ is_amrap: e.target.checked })}
             className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
           />
-          <span className="text-sm text-gray-600">AMRAP</span>
+          <span className="text-sm text-gray-600 dark:text-gray-300">AMRAP</span>
         </label>
 
         <div className="flex-1 min-w-[150px]">

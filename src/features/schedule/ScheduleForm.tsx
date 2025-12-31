@@ -104,7 +104,7 @@ export function ScheduleForm({
       {error && <ErrorMessage message={error} />}
 
       {/* Template selection */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
         <label htmlFor="template" className="block text-sm font-medium text-gray-700 mb-2">
           Select Template
         </label>
@@ -126,9 +126,9 @@ export function ScheduleForm({
 
       {/* Exercise weights */}
       {selectedTemplate && (
-        <div className="bg-white rounded-lg shadow p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Target Weights</h2>
-          <p className="text-sm text-gray-600">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Target Weights</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             Set the target weight for each exercise. These will be pre-filled when you start the workout.
           </p>
 
@@ -141,11 +141,11 @@ export function ScheduleForm({
               return (
                 <div
                   key={ex.id}
-                  className="flex items-center justify-between gap-4 p-3 border border-gray-200 rounded-lg"
+                  className="flex items-center justify-between gap-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg"
                 >
                   <div className="flex-1">
-                    <div className="font-medium text-gray-900">{ex.exercise_name}</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="font-medium text-gray-900 dark:text-white">{ex.exercise_name}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                       {ex.target_sets} sets x {ex.target_reps} reps
                     </div>
                   </div>
@@ -167,7 +167,7 @@ export function ScheduleForm({
                       }
                       className="w-20 px-2 py-1 border border-gray-300 rounded text-center"
                     />
-                    <span className="text-gray-500">#</span>
+                    <span className="text-gray-500 dark:text-gray-400 dark:text-gray-500">#</span>
                     <button
                       type="button"
                       onClick={() => updateWeight(ex.exercise_name, weight + 5)}
@@ -189,7 +189,7 @@ export function ScheduleForm({
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium disabled:opacity-50"
+          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 dark:bg-gray-900 font-medium disabled:opacity-50"
         >
           Cancel
         </button>

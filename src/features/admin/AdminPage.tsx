@@ -139,12 +139,12 @@ export function AdminPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Admin</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Admin</h1>
 
-      <div className="bg-white rounded-lg shadow">
-        <div className="px-4 py-3 border-b border-gray-200">
-          <h2 className="font-semibold text-gray-900">Exercise Library</h2>
-          <p className="text-sm text-gray-500">Manage exercise types, categories, and custom exercises</p>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="font-semibold text-gray-900 dark:text-white">Exercise Library</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Manage exercise types, categories, and custom exercises</p>
         </div>
 
         {/* Filters */}
@@ -166,7 +166,7 @@ export function AdminPage() {
                 className={`px-3 py-1 text-sm rounded-full ${
                   typeFilter === f
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 {f.charAt(0).toUpperCase() + f.slice(1)} ({typeCounts[f]})
@@ -183,7 +183,7 @@ export function AdminPage() {
                 className={`px-2 py-0.5 text-xs rounded-full ${
                   categoryFilter === null
                     ? 'bg-gray-600 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 All
@@ -195,7 +195,7 @@ export function AdminPage() {
                   className={`px-2 py-0.5 text-xs rounded-full ${
                     categoryFilter === cat
                       ? 'bg-gray-600 text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
                   {cat}
@@ -207,7 +207,7 @@ export function AdminPage() {
 
         {/* Exercise List */}
         {isLoading ? (
-          <div className="p-4 text-gray-500">Loading...</div>
+          <div className="p-4 text-gray-500 dark:text-gray-400 dark:text-gray-500">Loading...</div>
         ) : filteredExercises.length === 0 ? (
           <div className="p-4 text-gray-500 italic">No exercises found</div>
         ) : (
@@ -290,14 +290,14 @@ function MergeDialog({
     <div className="fixed inset-0 z-40 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onCancel} />
 
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+      <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4">
         <CloseButton onClick={onCancel} />
 
         {step === 'select' ? (
           <>
-            <div className="px-4 py-3 border-b border-gray-200 pr-10">
-              <h3 className="font-semibold text-gray-900">Merge Exercise</h3>
-              <p className="text-sm text-gray-500">Merge "{source.name}" into another exercise</p>
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 pr-10">
+              <h3 className="font-semibold text-gray-900 dark:text-white">Merge Exercise</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Merge "{source.name}" into another exercise</p>
             </div>
 
             <div className="p-4 space-y-3">
@@ -313,7 +313,7 @@ function MergeDialog({
                 autoFocus
               />
 
-              <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-lg">
+              <div className="max-h-60 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg">
                 {filteredExercises.length === 0 ? (
                   <div className="p-3 text-sm text-gray-500 italic">No exercises found</div>
                 ) : (
@@ -322,11 +322,11 @@ function MergeDialog({
                       key={exercise.id}
                       onClick={() => setSelectedTarget(exercise.name)}
                       className={`w-full px-3 py-2 text-left text-sm flex items-center justify-between ${
-                        selectedTarget === exercise.name ? 'bg-blue-50 text-blue-900' : 'hover:bg-gray-50'
+                        selectedTarget === exercise.name ? 'bg-blue-50 text-blue-900' : 'hover:bg-gray-50 dark:bg-gray-900'
                       }`}
                     >
                       <span>{exercise.name}</span>
-                      {exercise.is_custom && <span className="text-xs text-gray-400">custom</span>}
+                      {exercise.is_custom && <span className="text-xs text-gray-400 dark:text-gray-500">custom</span>}
                     </button>
                   ))
                 )}
@@ -339,7 +339,7 @@ function MergeDialog({
               )}
             </div>
 
-            <div className="px-4 py-3 border-t border-gray-200 flex justify-end gap-2">
+            <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
               <button onClick={onCancel} className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm">
                 Cancel
               </button>
@@ -354,8 +354,8 @@ function MergeDialog({
           </>
         ) : (
           <>
-            <div className="px-4 py-3 border-b border-gray-200 pr-10">
-              <h3 className="font-semibold text-gray-900">Confirm Merge</h3>
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 pr-10">
+              <h3 className="font-semibold text-gray-900 dark:text-white">Confirm Merge</h3>
             </div>
 
             <div className="p-4 space-y-4">
@@ -376,7 +376,7 @@ function MergeDialog({
               <p className="text-sm text-red-600 font-medium">This action cannot be undone.</p>
             </div>
 
-            <div className="px-4 py-3 border-t border-gray-200 flex justify-end gap-2">
+            <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
               <button onClick={() => setStep('select')} className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm">
                 Back
               </button>
@@ -426,11 +426,11 @@ function EditDialog({
     <div className="fixed inset-0 z-40 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onCancel} />
 
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+      <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4">
         <CloseButton onClick={onCancel} />
 
-        <div className="px-4 py-3 border-b border-gray-200 pr-10">
-          <h3 className="font-semibold text-gray-900">Edit Exercise</h3>
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 pr-10">
+          <h3 className="font-semibold text-gray-900 dark:text-white">Edit Exercise</h3>
         </div>
 
         <div className="p-4 space-y-4">
@@ -478,11 +478,11 @@ function EditDialog({
           </div>
 
           {exercise.is_custom && (
-            <p className="text-xs text-gray-500">This is a custom exercise you created.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">This is a custom exercise you created.</p>
           )}
         </div>
 
-        <div className="px-4 py-3 border-t border-gray-200 flex justify-end gap-2">
+        <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
           <button onClick={onCancel} className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm">
             Cancel
           </button>
@@ -548,7 +548,7 @@ function ExerciseRow({
               value={exercise.category ?? ''}
               onChange={(e) => handleCategoryChange(e.target.value)}
               onBlur={() => setEditingCategory(false)}
-              className="text-xs border border-gray-300 rounded px-1.5 py-0.5 text-gray-600"
+              className="text-xs border border-gray-300 rounded px-1.5 py-0.5 text-gray-600 dark:text-gray-300"
               autoFocus
             >
               <option value="">none</option>
@@ -561,8 +561,8 @@ function ExerciseRow({
               onClick={() => setEditingCategory(true)}
               className={`text-xs px-2 py-0.5 rounded-full ${
                 exercise.category
-                  ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  : 'bg-gray-50 text-gray-400 hover:bg-gray-100 border border-dashed border-gray-300'
+                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-600 hover:bg-gray-200'
+                  : 'bg-gray-50 dark:bg-gray-900 text-gray-400 hover:bg-gray-100 dark:bg-gray-700 border border-dashed border-gray-300'
               }`}
               title="Click to change category"
             >
@@ -607,7 +607,7 @@ function ExerciseRow({
         {/* Edit icon */}
         <button
           onClick={onEdit}
-          className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+          className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:bg-gray-700 rounded"
           title="Edit exercise"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

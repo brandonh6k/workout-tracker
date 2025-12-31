@@ -15,7 +15,7 @@
 
 - [ ] **Configurable rest periods**: Rest time should be set per-exercise in the template (not hardcoded 90s). Compounds may need 3min, isolation 60s. Add `rest_seconds` column to `template_exercises`.
 
-- [ ] **Dark mode toggle**: Add light/dark theme toggle. Save preference to localStorage. Because OMG MY EYES.
+- [x] **Dark mode toggle**: Add light/dark theme toggle. Save preference to localStorage. Because OMG MY EYES.
 
 - [ ] **Rest day marking**: Visual indicator on weekly calendar for intentional rest days vs. unscheduled days.
 

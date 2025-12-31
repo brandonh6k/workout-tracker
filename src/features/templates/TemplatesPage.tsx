@@ -66,7 +66,7 @@ export function TemplatesPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-gray-600">Loading templates...</div>
+        <div className="text-gray-600 dark:text-gray-300">Loading templates...</div>
       </div>
     )
   }
@@ -78,7 +78,7 @@ export function TemplatesPage() {
   if (mode === 'create') {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">Create Template</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create Template</h1>
         <TemplateForm
           onSubmit={handleCreate}
           onCancel={() => setMode('list')}
@@ -91,7 +91,7 @@ export function TemplatesPage() {
   if (mode === 'edit' && editingTemplate) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">Edit Template</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Edit Template</h1>
         <TemplateForm
           initialData={editingTemplate}
           onSubmit={handleUpdate}
@@ -108,7 +108,7 @@ export function TemplatesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Workout Templates</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Workout Templates</h1>
         <button
           onClick={() => setMode('create')}
           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
@@ -117,12 +117,12 @@ export function TemplatesPage() {
         </button>
       </div>
 
-      <p className="text-sm text-gray-600">
+      <p className="text-sm text-gray-600 dark:text-gray-300">
         Templates are reusable workout plans. Schedule them on specific days in the Schedule tab.
       </p>
 
       {templates.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-6 text-center">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
           <p className="text-gray-500 mb-4">
             No templates yet. Create your first workout template!
           </p>

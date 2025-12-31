@@ -145,7 +145,7 @@ export function ExerciseAutocomplete({
       {isOpen && (suggestions.length > 0 || showCreateOption) && (
         <ul
           ref={listRef}
-          className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto"
+          className="absolute z-10 w-full mt-1 bg-white border border-gray-200 dark:border-gray-700 rounded-md shadow-lg max-h-60 overflow-auto"
         >
           {suggestions.map((exercise, index) => (
             <li
@@ -154,17 +154,17 @@ export function ExerciseAutocomplete({
               className={`px-3 py-2 cursor-pointer ${
                 index === highlightedIndex
                   ? 'bg-blue-50 text-blue-900'
-                  : 'hover:bg-gray-50'
+                  : 'hover:bg-gray-50 dark:bg-gray-900'
               }`}
             >
               <span className="font-medium">{exercise.name}</span>
               {exercise.category && (
-                <span className="ml-2 text-sm text-gray-500">
+                <span className="ml-2 text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   {exercise.category}
                 </span>
               )}
               {exercise.is_custom && (
-                <span className="ml-2 text-xs text-gray-400">(custom)</span>
+                <span className="ml-2 text-xs text-gray-400 dark:text-gray-500">(custom)</span>
               )}
             </li>
           ))}
@@ -175,7 +175,7 @@ export function ExerciseAutocomplete({
               className={`px-3 py-2 cursor-pointer border-t border-gray-100 ${
                 highlightedIndex === suggestions.length
                   ? 'bg-blue-50 text-blue-900'
-                  : 'hover:bg-gray-50'
+                  : 'hover:bg-gray-50 dark:bg-gray-900'
               }`}
             >
               <span className="text-blue-600">+ Create "{value.trim()}"</span>
@@ -192,7 +192,7 @@ export function ExerciseAutocomplete({
 
       {/* Type selector modal for new exercises */}
       {showTypeSelector && (
-        <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg p-3">
+        <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 dark:border-gray-700 rounded-md shadow-lg p-3">
           <div className="text-sm font-medium text-gray-700 mb-2">
             Create "{pendingName}" as:
           </div>
@@ -200,7 +200,7 @@ export function ExerciseAutocomplete({
             <button
               type="button"
               onClick={() => handleConfirmCreate('weighted')}
-              className="w-full px-3 py-2 text-left text-sm rounded hover:bg-gray-100 flex items-center gap-2"
+              className="w-full px-3 py-2 text-left text-sm rounded hover:bg-gray-100 dark:bg-gray-700 flex items-center gap-2"
             >
               <span className="w-2 h-2 rounded-full bg-gray-400" />
               Weighted (barbells, dumbbells, machines)
@@ -208,7 +208,7 @@ export function ExerciseAutocomplete({
             <button
               type="button"
               onClick={() => handleConfirmCreate('bodyweight')}
-              className="w-full px-3 py-2 text-left text-sm rounded hover:bg-gray-100 flex items-center gap-2"
+              className="w-full px-3 py-2 text-left text-sm rounded hover:bg-gray-100 dark:bg-gray-700 flex items-center gap-2"
             >
               <span className="w-2 h-2 rounded-full bg-green-500" />
               Bodyweight (dips, pull-ups, push-ups)
@@ -216,7 +216,7 @@ export function ExerciseAutocomplete({
             <button
               type="button"
               onClick={() => handleConfirmCreate('cardio')}
-              className="w-full px-3 py-2 text-left text-sm rounded hover:bg-gray-100 flex items-center gap-2"
+              className="w-full px-3 py-2 text-left text-sm rounded hover:bg-gray-100 dark:bg-gray-700 flex items-center gap-2"
             >
               <span className="w-2 h-2 rounded-full bg-blue-500" />
               Cardio (running, rowing, cycling)

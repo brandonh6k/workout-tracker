@@ -26,8 +26,8 @@ export function WeeklyCalendar({ scheduledWorkouts, onSelectWorkout }: Props) {
   }))
 
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
-      <div className="grid grid-cols-7 border-b border-gray-200">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+      <div className="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700">
         {DAYS_OF_WEEK.map((day) => (
           <div
             key={day.value}

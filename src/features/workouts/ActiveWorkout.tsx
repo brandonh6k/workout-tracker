@@ -340,10 +340,10 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
         <button onClick={handleAbandon} className="text-gray-400 hover:text-white">
           X Cancel
         </button>
-        <div className="text-sm text-gray-400">
+        <div className="text-sm text-gray-400 dark:text-gray-500">
           {completedExercises}/{totalExercises} exercises
         </div>
-        <div className="text-sm text-gray-400">
+        <div className="text-sm text-gray-400 dark:text-gray-500">
           {Math.round((Date.now() - state.startTime) / 60000)}m
         </div>
       </header>
