@@ -15,6 +15,10 @@
 
 - [ ] **Configurable rest periods**: Rest time should be set per-exercise in the template (not hardcoded 90s). Compounds may need 3min, isolation 60s. Add `rest_seconds` column to `template_exercises`.
 
+- [ ] **Dark mode toggle**: Add light/dark theme toggle. Save preference to localStorage. Because OMG MY EYES.
+
+- [ ] **Rest day marking**: Visual indicator on weekly calendar for intentional rest days vs. unscheduled days.
+
 ## Content / Exercise Library
 
 - [ ] **Exercise info links / how-tos**: Add reference links, images, or instructional content for each exercise. Similar to Strengthlevel exercise pages - form cues, muscle groups, video demos, etc.
@@ -32,6 +36,18 @@
 ## Ad-hoc Workouts
 
 - [ ] **Ad-hoc workout session**: Start an empty workout without a pre-planned template. Add exercises on the fly, log sets dynamically. Useful for days when you deviate from the plan.
+
+## Logging Enhancements
+
+- [ ] **RPE/RIR per set**: Optional field to log Rate of Perceived Exertion (1-10) or Reps in Reserve. Useful for tracking intensity beyond just weight/reps.
+
+- [ ] **Notes per set**: Optional notes field for individual sets (e.g., "form felt off", "left knee twinge"). Currently only template-level notes exist.
+
+## Data & Infrastructure
+
+- [ ] **Offline support / PWA**: Make app installable and functional offline. Use IndexedDB for local storage, sync when back online. Critical for basement/garage gyms with spotty WiFi.
+
+- [ ] **Data export (CSV/JSON)**: Allow users to export their workout history. User owns their data.
 
 ## Code Quality / Refactoring
 
