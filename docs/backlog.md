@@ -55,6 +55,10 @@
 
 - [ ] **Data fetching hooks for Dashboard/Progress**: Extract `useDashboardData()` and `useExerciseHistory(exerciseName)` hooks to separate data fetching concerns from UI components. Currently, `DashboardPage` and `ExerciseHistoryView` have parallel API calls mixed into the component.
 
+## Performance
+
+- [ ] **Code splitting / lazy loading**: Bundle is ~850KB which triggers Vite's size warning. Use `React.lazy()` to split by route and lazy-load heavy dependencies (Recharts is ~300KB). Target: under 500KB initial bundle.
+
 ## Testing
 
 - [ ] **API layer tests**: Add tests for API functions with Supabase mocking. Would require setting up a mock Supabase client or using MSW (Mock Service Worker) to intercept requests.
