@@ -10,6 +10,7 @@ type ExerciseFormData = {
   target_sets: number
   target_reps: number
   is_amrap: boolean
+  rest_seconds: number
   notes: string
 }
 
@@ -38,6 +39,7 @@ export function TemplateForm({
       target_sets: ex.target_sets,
       target_reps: ex.target_reps,
       is_amrap: ex.is_amrap,
+      rest_seconds: ex.rest_seconds ?? 90,
       notes: ex.notes ?? '',
     })) ?? []
   )
@@ -52,6 +54,7 @@ export function TemplateForm({
         target_sets: 3,
         target_reps: 8,
         is_amrap: false,
+        rest_seconds: 90,
         notes: '',
       },
     ])
@@ -103,6 +106,7 @@ export function TemplateForm({
           target_sets: ex.target_sets,
           target_reps: ex.target_reps,
           is_amrap: ex.is_amrap,
+          rest_seconds: ex.rest_seconds,
           order_index: index,
           notes: ex.notes.trim() || null,
         }))
@@ -311,6 +315,23 @@ function ExerciseRow({
           />
           <span className="text-sm text-gray-600 dark:text-gray-300">AMRAP</span>
         </label>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600 dark:text-gray-300">Rest:</label>
+          <select
+            value={exercise.rest_seconds}
+            onChange={(e) => onUpdate({ rest_seconds: parseInt(e.target.value) })}
+            className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          >
+            <option value={60}>1:00</option>
+            <option value={90}>1:30</option>
+            <option value={120}>2:00</option>
+            <option value={150}>2:30</option>
+            <option value={180}>3:00</option>
+            <option value={240}>4:00</option>
+            <option value={300}>5:00</option>
+          </select>
+        </div>
 
         <div className="flex-1 min-w-[150px]">
           <input

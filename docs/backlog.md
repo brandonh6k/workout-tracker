@@ -13,7 +13,7 @@
 
 - [ ] **Remove rep ranges from logging**: You did X reps, not a range. Simplify to single value.
 
-- [ ] **Configurable rest periods**: Rest time should be set per-exercise in the template (not hardcoded 90s). Compounds may need 3min, isolation 60s. Add `rest_seconds` column to `template_exercises`.
+- [x] **Configurable rest periods**: Rest time should be set per-exercise in the template (not hardcoded 90s). Compounds may need 3min, isolation 60s. Add `rest_seconds` column to `template_exercises`.
 
 - [x] **Dark mode toggle**: Add light/dark theme toggle. Save preference to localStorage. Because OMG MY EYES.
 

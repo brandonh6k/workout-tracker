@@ -16,6 +16,7 @@ type ExerciseState = {
   targetReps: number
   targetWeight: number
   isAmrap: boolean
+  restSeconds: number
   sets: SetData[]
 }
 
@@ -66,6 +67,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
             targetReps: ex.target_reps,
             targetWeight,
             isAmrap: ex.is_amrap,
+            restSeconds: ex.rest_seconds ?? 90,
             sets: Array.from({ length: ex.target_sets }, () => ({
               reps: ex.target_reps,
               weight: targetWeight,
@@ -160,7 +162,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
           exercises: newExercises,
           currentExerciseIndex: nextExerciseIndex,
           currentSetIndex: nextSetIndex,
-          restTimerEnd: Date.now() + 90 * 1000,
+          restTimerEnd: Date.now() + exercise.restSeconds * 1000,
           lastCompleted: {
             exerciseIndex: prev.currentExerciseIndex,
             setIndex: prev.currentSetIndex,

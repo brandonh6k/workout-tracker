@@ -27,43 +27,40 @@ export function WeeklyCalendar({ scheduledWorkouts, onSelectWorkout }: Props) {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-      <div className="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700">
-        {DAYS_OF_WEEK.map((day) => (
-          <div
-            key={day.value}
-            className={`px-2 py-3 text-center text-sm font-medium ${
-              day.value === today
-                ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-                : 'text-gray-700 dark:text-gray-300'
-            }`}
-          >
-            <span className="hidden sm:inline">{day.label}</span>
-            <span className="sm:hidden">{day.short}</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-7 min-h-[120px]">
+      {/* Mobile: Stacked list */}
+      <div className="sm:hidden divide-y divide-gray-100 dark:divide-gray-700">
         {workoutsByDay.map((day) => (
           <div
             key={day.value}
-            className={`border-r last:border-r-0 border-gray-100 dark:border-gray-700 p-2 ${
-              day.value === today ? 'bg-blue-50/50 dark:bg-blue-900/20' : ''
-            }`}
+            className={`p-3 ${day.value === today ? 'bg-blue-50/50 dark:bg-blue-900/20' : ''}`}
           >
+            <div className="flex items-center justify-between">
+              <span
+                className={`text-sm font-medium ${
+                  day.value === today
+                    ? 'text-blue-700 dark:text-blue-300'
+                    : 'text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                {day.label}
+                {day.value === today && (
+                  <span className="ml-2 text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded">
+                    Today
+                  </span>
+                )}
+              </span>
+            </div>
             {day.workouts.length === 0 ? (
-              <div className="text-xs text-gray-400 dark:text-gray-500 italic text-center mt-4">
-                Rest
-              </div>
+              <div className="text-xs text-gray-400 dark:text-gray-500 italic mt-1">Rest day</div>
             ) : (
-              <div className="space-y-2">
+              <div className="mt-2 space-y-2">
                 {day.workouts.map((workout) => (
                   <button
                     key={workout.id}
                     onClick={() => onSelectWorkout?.(workout)}
                     className="w-full text-left p-2 rounded bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 transition-colors"
                   >
-                    <div className="text-xs font-medium text-blue-900 dark:text-blue-100 truncate">
+                    <div className="text-sm font-medium text-blue-900 dark:text-blue-100">
                       {workout.template.name}
                     </div>
                     <div className="text-xs text-blue-600 dark:text-blue-300">
@@ -75,6 +72,58 @@ export function WeeklyCalendar({ scheduledWorkouts, onSelectWorkout }: Props) {
             )}
           </div>
         ))}
+      </div>
+
+      {/* Desktop: 7-column grid */}
+      <div className="hidden sm:block">
+        <div className="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700">
+          {DAYS_OF_WEEK.map((day) => (
+            <div
+              key={day.value}
+              className={`px-2 py-3 text-center text-sm font-medium ${
+                day.value === today
+                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                  : 'text-gray-700 dark:text-gray-300'
+              }`}
+            >
+              {day.label}
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-7 min-h-[120px]">
+          {workoutsByDay.map((day) => (
+            <div
+              key={day.value}
+              className={`border-r last:border-r-0 border-gray-100 dark:border-gray-700 p-2 ${
+                day.value === today ? 'bg-blue-50/50 dark:bg-blue-900/20' : ''
+              }`}
+            >
+              {day.workouts.length === 0 ? (
+                <div className="text-xs text-gray-400 dark:text-gray-500 italic text-center mt-4">
+                  Rest
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {day.workouts.map((workout) => (
+                    <button
+                      key={workout.id}
+                      onClick={() => onSelectWorkout?.(workout)}
+                      className="w-full text-left p-2 rounded bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 transition-colors"
+                    >
+                      <div className="text-xs font-medium text-blue-900 dark:text-blue-100 truncate">
+                        {workout.template.name}
+                      </div>
+                      <div className="text-xs text-blue-600 dark:text-blue-300">
+                        {workout.template.template_exercises.length} exercises
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {scheduledWorkouts.length === 0 && (
