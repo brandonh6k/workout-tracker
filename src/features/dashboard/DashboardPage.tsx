@@ -86,7 +86,7 @@ export function DashboardPage() {
 
       {/* Today's Workout */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Today's Workout
         </h2>
 
@@ -100,7 +100,7 @@ export function DashboardPage() {
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="font-medium text-gray-900 dark:text-white">{workout.template.name}</h3>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                       {workout.template.template_exercises.length} exercises
                     </p>
                   </div>
@@ -113,7 +113,7 @@ export function DashboardPage() {
                 </div>
 
                 {workout.template.template_exercises.length > 0 && (
-                  <ul className="mt-3 text-sm text-gray-600 space-y-1">
+                  <ul className="mt-3 text-sm text-gray-600 dark:text-gray-300 space-y-1">
                     {workout.template.template_exercises.slice(0, 5).map((ex) => {
                       const scheduledEx = workout.scheduled_exercises.find(
                         (se) => se.exercise_name === ex.exercise_name
@@ -128,7 +128,7 @@ export function DashboardPage() {
                       )
                     })}
                     {workout.template.template_exercises.length > 5 && (
-                      <li className="text-gray-400 italic">
+                      <li className="text-gray-400 dark:text-gray-500 italic">
                         +{workout.template.template_exercises.length - 5} more
                       </li>
                     )}
@@ -139,11 +139,11 @@ export function DashboardPage() {
           </div>
         ) : (
           <div>
-            <p className="text-gray-500 mb-4">No workout scheduled for today</p>
+            <p className="text-gray-500 dark:text-gray-400 mb-4">No workout scheduled for today</p>
             <div className="flex gap-3">
               <button
                 onClick={() => navigate('/schedule')}
-                className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 rounded-md hover:bg-gray-200 font-medium text-sm"
+                className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 font-medium text-sm"
               >
                 Schedule a Workout
               </button>
@@ -156,7 +156,7 @@ export function DashboardPage() {
       {weeklyVolume && (weeklyVolume.thisWeek > 0 || weeklyVolume.lastWeek > 0) && (
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-            <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">This Week</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">This Week</div>
             <div className="text-2xl font-bold text-gray-900 dark:text-white">
               {weeklyVolume.thisWeek.toLocaleString()}#
             </div>
@@ -165,7 +165,7 @@ export function DashboardPage() {
             </div>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-            <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Last Week</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">Last Week</div>
             <div className="text-2xl font-bold text-gray-900 dark:text-white">
               {weeklyVolume.lastWeek.toLocaleString()}#
             </div>
@@ -177,10 +177,10 @@ export function DashboardPage() {
                 <span
                   className={`text-xs font-medium px-1.5 py-0.5 rounded ${
                     weeklyVolume.change > 0
-                      ? 'bg-green-100 text-green-700'
+                      ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300'
                       : weeklyVolume.change < 0
-                        ? 'bg-red-100 text-red-700'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600'
+                        ? 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
                   }`}
                 >
                   {weeklyVolume.change > 0 && '+'}
@@ -194,7 +194,7 @@ export function DashboardPage() {
 
       {/* Weekly Calendar */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Weekly Schedule
         </h2>
         <WeeklyCalendar
@@ -206,7 +206,7 @@ export function DashboardPage() {
       {/* Progress Comparison */}
       {comparison.length > 0 && (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             This Week vs 4 Weeks Ago
           </h2>
           <div className="space-y-3">
@@ -219,7 +219,7 @@ export function DashboardPage() {
 
       {/* Recent Workouts */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Recent Workouts
         </h2>
         {recentWorkouts.length > 0 ? (
@@ -229,7 +229,7 @@ export function DashboardPage() {
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 italic">No workouts logged yet</p>
+          <p className="text-gray-500 dark:text-gray-400 italic">No workouts logged yet</p>
         )}
       </div>
     </div>
@@ -242,10 +242,10 @@ function ComparisonRow({ item }: { item: ExerciseComparison }) {
   const isNegative = hasChange && item.change! < 0
 
   return (
-    <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+    <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-gray-900 truncate">{item.exerciseName}</div>
-        <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
+        <div className="font-medium text-gray-900 dark:text-white truncate">{item.exerciseName}</div>
+        <div className="text-sm text-gray-500 dark:text-gray-400">
           {item.currentWeek ? `${item.currentWeek.e1rm}#` : '—'}
           {item.pastWeek && (
             <span className="text-gray-400 dark:text-gray-500"> vs {item.pastWeek.e1rm}#</span>
@@ -256,10 +256,10 @@ function ComparisonRow({ item }: { item: ExerciseComparison }) {
         <div
           className={`text-sm font-medium px-2 py-1 rounded ${
             isPositive
-              ? 'bg-green-100 text-green-700'
+              ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300'
               : isNegative
-                ? 'bg-red-100 text-red-700'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-600'
+                ? 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
           }`}
         >
           {isPositive && '+'}
@@ -267,7 +267,7 @@ function ComparisonRow({ item }: { item: ExerciseComparison }) {
         </div>
       )}
       {!hasChange && item.currentWeek && !item.pastWeek && (
-        <div className="text-xs text-gray-400 italic">new</div>
+        <div className="text-xs text-gray-400 dark:text-gray-500 italic">new</div>
       )}
     </div>
   )
@@ -277,14 +277,14 @@ function RecentWorkoutRow({ workout }: { workout: RecentWorkout }) {
   const formatted = formatWorkoutDate(workout.date)
 
   return (
-    <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+    <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
       <div>
         <div className="font-medium text-gray-900 dark:text-white">
           {workout.templateName ?? 'Ad-hoc Workout'}
         </div>
-        <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">{formatted}</div>
+        <div className="text-sm text-gray-500 dark:text-gray-400">{formatted}</div>
       </div>
-      <div className="text-right text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
+      <div className="text-right text-sm text-gray-500 dark:text-gray-400">
         <div>{workout.exerciseCount} exercises</div>
         <div>{workout.totalVolume.toLocaleString()}# volume</div>
       </div>

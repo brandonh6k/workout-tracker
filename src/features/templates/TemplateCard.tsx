@@ -62,11 +62,11 @@ export function TemplateCard({ template, onEdit, onDelete, onDuplicate }: Props)
       </div>
 
       {template.notes && (
-        <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">{template.notes}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{template.notes}</p>
       )}
 
       {template.template_exercises.length > 0 ? (
-        <ul className="text-sm text-gray-600 space-y-1">
+        <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
           {template.template_exercises.map((exercise) => (
             <li key={exercise.id} className="flex justify-between">
               <span>{exercise.exercise_name}</span>
@@ -77,7 +77,7 @@ export function TemplateCard({ template, onEdit, onDelete, onDuplicate }: Props)
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-gray-400 italic">No exercises</p>
+        <p className="text-sm text-gray-400 dark:text-gray-500 italic">No exercises</p>
       )}
     </div>
   )

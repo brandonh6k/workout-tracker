@@ -1,14 +1,11 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Base styles */
 body {
-  @apply bg-gray-50 text-gray-900 antialiased;
+  @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased;
   min-height: 100vh;
-}
-
-/* Dark mode base */
-.dark body {
-  @apply bg-gray-900 text-gray-100;
 }
 
 /* Focus styles for accessibility */

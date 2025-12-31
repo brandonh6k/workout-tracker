@@ -123,7 +123,7 @@ export function TemplatesPage() {
 
       {templates.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
-          <p className="text-gray-500 mb-4">
+          <p className="text-gray-500 dark:text-gray-400 mb-4">
             No templates yet. Create your first workout template!
           </p>
           <button

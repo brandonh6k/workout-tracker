@@ -89,7 +89,7 @@ export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Prop
   }, [history])
 
   if (isLoading) {
-    return <div className="text-gray-500 dark:text-gray-400 dark:text-gray-500">Loading...</div>
+    return <div className="text-gray-500 dark:text-gray-400">Loading...</div>
   }
 
   return (
@@ -98,7 +98,7 @@ export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Prop
       <div className="flex items-center gap-4">
         <button
           onClick={onBack}
-          className="text-gray-500 hover:text-gray-700"
+          className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
         >
           &larr; Back
         </button>
@@ -173,9 +173,9 @@ export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Prop
         </div>
         
         {history.length === 0 ? (
-          <div className="p-4 text-gray-500 italic">No history for this exercise</div>
+          <div className="p-4 text-gray-500 dark:text-gray-400 italic">No history for this exercise</div>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-gray-100 dark:divide-gray-700">
             {history.map((entry) => (
               <HistoryEntry
                 key={entry.sessionId}
@@ -193,7 +193,7 @@ export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Prop
 function StatCard({ label, value, sublabel }: { label: string; value: string; sublabel?: string }) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-      <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">{label}</div>
+      <div className="text-sm text-gray-500 dark:text-gray-400">{label}</div>
       <div className="text-2xl font-bold text-gray-900 dark:text-white">{value}</div>
       {sublabel && <div className="text-xs text-gray-400 dark:text-gray-500">{sublabel}</div>}
     </div>
@@ -219,7 +219,7 @@ function HistoryEntry({ entry, isPR }: { entry: ExerciseHistoryEntry; isPR: bool
       <div className="flex items-center justify-between mb-2">
         <div className="font-medium text-gray-900 dark:text-white">{formatted}</div>
         {isPR && (
-          <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full font-medium">
+          <span className="text-xs bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200 px-2 py-0.5 rounded-full font-medium">
             PR
           </span>
         )}
@@ -238,8 +238,8 @@ function SetBadge({ set, isBest }: { set: { weight: number; reps: number; set_nu
     <span
       className={`text-sm px-2 py-1 rounded ${
         isBest
-          ? 'bg-blue-100 text-blue-800 font-medium'
-          : 'bg-gray-100 dark:bg-gray-700 text-gray-700'
+          ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 font-medium'
+          : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
       }`}
     >
       {set.weight}# x {set.reps}
@@ -262,7 +262,7 @@ function MetricButton({
       className={`px-2 py-1 text-xs rounded transition-colors ${
         active
           ? 'bg-blue-600 text-white'
-          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 hover:bg-gray-200'
+          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
       }`}
     >
       {label}

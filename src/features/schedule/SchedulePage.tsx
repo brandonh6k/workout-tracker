@@ -83,7 +83,7 @@ export function SchedulePage() {
 
       {templates.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
-          <p className="text-gray-500 mb-4">
+          <p className="text-gray-500 dark:text-gray-400 mb-4">
             Create some templates first before scheduling workouts.
           </p>
         </div>
@@ -97,24 +97,24 @@ export function SchedulePage() {
               }`}
             >
               <div className="flex items-center justify-between mb-3">
-                <h2 className={`font-semibold ${day.value === today ? 'text-blue-600' : 'text-gray-900'}`}>
+                <h2 className={`font-semibold ${day.value === today ? 'text-blue-600 dark:text-blue-400' : 'text-gray-900 dark:text-white'}`}>
                   {day.label}
                   {day.value === today && (
-                    <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                    <span className="ml-2 text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded">
                       Today
                     </span>
                   )}
                 </h2>
                 <button
                   onClick={() => setAddingToDay(day.value)}
-                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
                 >
                   + Add Workout
                 </button>
               </div>
 
               {day.workouts.length === 0 ? (
-                <p className="text-sm text-gray-400 italic">Rest day</p>
+                <p className="text-sm text-gray-400 dark:text-gray-500 italic">Rest day</p>
               ) : (
                 <div className="space-y-3">
                   {day.workouts.map((scheduled) => (
@@ -127,14 +127,14 @@ export function SchedulePage() {
                           <h3 className="font-medium text-gray-900 dark:text-white">
                             {scheduled.template.name}
                           </h3>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             {scheduled.template.template_exercises.length} exercises
                           </p>
                         </div>
                         <div className="flex gap-1">
                           <button
                             onClick={() => setEditingSchedule(scheduled)}
-                            className="p-1 text-gray-400 hover:text-blue-600"
+                            className="p-1 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400"
                             title="Edit weights"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,7 +143,7 @@ export function SchedulePage() {
                           </button>
                           <button
                             onClick={() => handleUnschedule(scheduled.id)}
-                            className="p-1 text-gray-400 hover:text-red-600"
+                            className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400"
                             title="Remove from schedule"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,7 +154,7 @@ export function SchedulePage() {
                       </div>
 
                       {/* Show exercises with weights */}
-                      <ul className="mt-2 text-sm text-gray-600 space-y-1">
+                      <ul className="mt-2 text-sm text-gray-600 dark:text-gray-300 space-y-1">
                         {scheduled.template.template_exercises.map((ex) => {
                           const scheduledEx = scheduled.scheduled_exercises.find(
                             (se) => se.exercise_name === ex.exercise_name

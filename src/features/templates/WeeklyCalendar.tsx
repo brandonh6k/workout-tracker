@@ -33,8 +33,8 @@ export function WeeklyCalendar({ scheduledWorkouts, onSelectWorkout }: Props) {
             key={day.value}
             className={`px-2 py-3 text-center text-sm font-medium ${
               day.value === today
-                ? 'bg-blue-50 text-blue-700'
-                : 'text-gray-700'
+                ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                : 'text-gray-700 dark:text-gray-300'
             }`}
           >
             <span className="hidden sm:inline">{day.label}</span>
@@ -47,12 +47,12 @@ export function WeeklyCalendar({ scheduledWorkouts, onSelectWorkout }: Props) {
         {workoutsByDay.map((day) => (
           <div
             key={day.value}
-            className={`border-r last:border-r-0 border-gray-100 p-2 ${
-              day.value === today ? 'bg-blue-50/50' : ''
+            className={`border-r last:border-r-0 border-gray-100 dark:border-gray-700 p-2 ${
+              day.value === today ? 'bg-blue-50/50 dark:bg-blue-900/20' : ''
             }`}
           >
             {day.workouts.length === 0 ? (
-              <div className="text-xs text-gray-400 italic text-center mt-4">
+              <div className="text-xs text-gray-400 dark:text-gray-500 italic text-center mt-4">
                 Rest
               </div>
             ) : (
@@ -61,12 +61,12 @@ export function WeeklyCalendar({ scheduledWorkouts, onSelectWorkout }: Props) {
                   <button
                     key={workout.id}
                     onClick={() => onSelectWorkout?.(workout)}
-                    className="w-full text-left p-2 rounded bg-blue-100 hover:bg-blue-200 transition-colors"
+                    className="w-full text-left p-2 rounded bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-900/70 transition-colors"
                   >
-                    <div className="text-xs font-medium text-blue-900 truncate">
+                    <div className="text-xs font-medium text-blue-900 dark:text-blue-100 truncate">
                       {workout.template.name}
                     </div>
-                    <div className="text-xs text-blue-600">
+                    <div className="text-xs text-blue-600 dark:text-blue-300">
                       {workout.template.template_exercises.length} exercises
                     </div>
                   </button>
@@ -78,11 +78,11 @@ export function WeeklyCalendar({ scheduledWorkouts, onSelectWorkout }: Props) {
       </div>
 
       {scheduledWorkouts.length === 0 && (
-        <div className="p-8 text-center border-t border-gray-100">
-          <p className="text-gray-500 mb-4">No workouts scheduled yet</p>
+        <div className="p-8 text-center border-t border-gray-100 dark:border-gray-700">
+          <p className="text-gray-500 dark:text-gray-400 mb-4">No workouts scheduled yet</p>
           <Link
             to="/schedule"
-            className="text-blue-600 hover:text-blue-700 font-medium"
+            className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
           >
             Schedule your first workout
           </Link>

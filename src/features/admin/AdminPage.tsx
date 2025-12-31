@@ -144,17 +144,17 @@ export function AdminPage() {
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
         <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
           <h2 className="font-semibold text-gray-900 dark:text-white">Exercise Library</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Manage exercise types, categories, and custom exercises</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Manage exercise types, categories, and custom exercises</p>
         </div>
 
         {/* Filters */}
-        <div className="px-4 py-3 border-b border-gray-100 space-y-3">
+        <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700 space-y-3">
           <input
             type="text"
             placeholder="Search by name or category..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
           />
           
           {/* Type filter pills */}
@@ -166,7 +166,7 @@ export function AdminPage() {
                 className={`px-3 py-1 text-sm rounded-full ${
                   typeFilter === f
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 {f.charAt(0).toUpperCase() + f.slice(1)} ({typeCounts[f]})
@@ -177,13 +177,13 @@ export function AdminPage() {
           {/* Category filter pills */}
           {categories.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              <span className="text-xs text-gray-500 self-center mr-1">Category:</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 self-center mr-1">Category:</span>
               <button
                 onClick={() => setCategoryFilter(null)}
                 className={`px-2 py-0.5 text-xs rounded-full ${
                   categoryFilter === null
-                    ? 'bg-gray-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-gray-700 dark:bg-gray-200 text-white dark:text-gray-900'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 All
@@ -194,8 +194,8 @@ export function AdminPage() {
                   onClick={() => setCategoryFilter(cat)}
                   className={`px-2 py-0.5 text-xs rounded-full ${
                     categoryFilter === cat
-                      ? 'bg-gray-600 text-white'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 hover:bg-gray-200'
+                      ? 'bg-gray-700 dark:bg-gray-200 text-white dark:text-gray-900'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                   }`}
                 >
                   {cat}
@@ -207,11 +207,11 @@ export function AdminPage() {
 
         {/* Exercise List */}
         {isLoading ? (
-          <div className="p-4 text-gray-500 dark:text-gray-400 dark:text-gray-500">Loading...</div>
+          <div className="p-4 text-gray-500 dark:text-gray-400">Loading...</div>
         ) : filteredExercises.length === 0 ? (
-          <div className="p-4 text-gray-500 italic">No exercises found</div>
+          <div className="p-4 text-gray-500 dark:text-gray-400 italic">No exercises found</div>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-gray-100 dark:divide-gray-700">
             {filteredExercises.map((exercise) => (
               <ExerciseRow
                 key={exercise.id}
@@ -257,7 +257,7 @@ function CloseButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-xl leading-none"
+      className="absolute top-3 right-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xl leading-none"
       title="Close"
     >
       ×
@@ -297,7 +297,7 @@ function MergeDialog({
           <>
             <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 pr-10">
               <h3 className="font-semibold text-gray-900 dark:text-white">Merge Exercise</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Merge "{source.name}" into another exercise</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Merge "{source.name}" into another exercise</p>
             </div>
 
             <div className="p-4 space-y-3">
@@ -309,20 +309,22 @@ function MergeDialog({
                   setSearchQuery(e.target.value)
                   setSelectedTarget(null)
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                 autoFocus
               />
 
               <div className="max-h-60 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg">
                 {filteredExercises.length === 0 ? (
-                  <div className="p-3 text-sm text-gray-500 italic">No exercises found</div>
+                  <div className="p-3 text-sm text-gray-500 dark:text-gray-400 italic">No exercises found</div>
                 ) : (
                   filteredExercises.map((exercise) => (
                     <button
                       key={exercise.id}
                       onClick={() => setSelectedTarget(exercise.name)}
                       className={`w-full px-3 py-2 text-left text-sm flex items-center justify-between ${
-                        selectedTarget === exercise.name ? 'bg-blue-50 text-blue-900' : 'hover:bg-gray-50 dark:bg-gray-900'
+                        selectedTarget === exercise.name 
+                          ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-900 dark:text-blue-100' 
+                          : 'hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white'
                       }`}
                     >
                       <span>{exercise.name}</span>
@@ -333,14 +335,14 @@ function MergeDialog({
               </div>
 
               {selectedTarget && (
-                <div className="text-sm text-gray-600 bg-yellow-50 p-2 rounded">
+                <div className="text-sm text-gray-600 dark:text-gray-300 bg-yellow-50 dark:bg-yellow-900/30 p-2 rounded">
                   Will merge <strong>{source.name}</strong> → <strong>{selectedTarget}</strong>
                 </div>
               )}
             </div>
 
             <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
-              <button onClick={onCancel} className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm">
+              <button onClick={onCancel} className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm">
                 Cancel
               </button>
               <button
@@ -359,25 +361,25 @@ function MergeDialog({
             </div>
 
             <div className="p-4 space-y-4">
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-gray-700 dark:text-gray-300">
                 Are you sure you want to merge <strong>"{source.name}"</strong> into{' '}
                 <strong>"{selectedTarget}"</strong>?
               </p>
 
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 space-y-2">
-                <p className="text-sm text-yellow-800 font-medium">This will update:</p>
-                <ul className="text-sm text-yellow-700 list-disc list-inside space-y-1">
+              <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 space-y-2">
+                <p className="text-sm text-yellow-800 dark:text-yellow-200 font-medium">This will update:</p>
+                <ul className="text-sm text-yellow-700 dark:text-yellow-300 list-disc list-inside space-y-1">
                   <li>All logged sets with this exercise</li>
                   <li>All template exercises</li>
                   <li>All scheduled exercises</li>
                 </ul>
               </div>
 
-              <p className="text-sm text-red-600 font-medium">This action cannot be undone.</p>
+              <p className="text-sm text-red-600 dark:text-red-400 font-medium">This action cannot be undone.</p>
             </div>
 
             <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
-              <button onClick={() => setStep('select')} className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm">
+              <button onClick={() => setStep('select')} className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm">
                 Back
               </button>
               <button
@@ -436,24 +438,24 @@ function EditDialog({
         <div className="p-4 space-y-4">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             />
           </div>
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
             <input
               type="text"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               placeholder="e.g., push, pull, core, lower"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
               list="category-suggestions"
             />
             <datalist id="category-suggestions">
@@ -465,11 +467,11 @@ function EditDialog({
 
           {/* Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type</label>
             <select
               value={exerciseType}
               onChange={(e) => setExerciseType(e.target.value as ExerciseType)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option value="weighted">Weighted</option>
               <option value="bodyweight">Bodyweight</option>
@@ -478,12 +480,12 @@ function EditDialog({
           </div>
 
           {exercise.is_custom && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">This is a custom exercise you created.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">This is a custom exercise you created.</p>
           )}
         </div>
 
         <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
-          <button onClick={onCancel} className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm">
+          <button onClick={onCancel} className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm">
             Cancel
           </button>
           <button
@@ -534,9 +536,9 @@ function ExerciseRow({
       {/* Left side: name and pills */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-gray-900 truncate">{exercise.name}</span>
+          <span className="text-gray-900 dark:text-white truncate">{exercise.name}</span>
           {exercise.is_custom && (
-            <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">Custom</span>
+            <span className="text-xs bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 px-1.5 py-0.5 rounded">Custom</span>
           )}
         </div>
         
@@ -548,7 +550,7 @@ function ExerciseRow({
               value={exercise.category ?? ''}
               onChange={(e) => handleCategoryChange(e.target.value)}
               onBlur={() => setEditingCategory(false)}
-              className="text-xs border border-gray-300 rounded px-1.5 py-0.5 text-gray-600 dark:text-gray-300"
+              className="text-xs border border-gray-300 dark:border-gray-600 rounded px-1.5 py-0.5 text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700"
               autoFocus
             >
               <option value="">none</option>
@@ -561,8 +563,8 @@ function ExerciseRow({
               onClick={() => setEditingCategory(true)}
               className={`text-xs px-2 py-0.5 rounded-full ${
                 exercise.category
-                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-600 hover:bg-gray-200'
-                  : 'bg-gray-50 dark:bg-gray-900 text-gray-400 hover:bg-gray-100 dark:bg-gray-700 border border-dashed border-gray-300'
+                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  : 'bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 border border-dashed border-gray-300 dark:border-gray-600'
               }`}
               title="Click to change category"
             >
@@ -576,7 +578,7 @@ function ExerciseRow({
               value={exercise.exercise_type}
               onChange={(e) => handleTypeChange(e.target.value as ExerciseType)}
               onBlur={() => setEditingType(false)}
-              className="text-xs border border-gray-300 rounded px-1.5 py-0.5"
+              className="text-xs border border-gray-300 dark:border-gray-600 rounded px-1.5 py-0.5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               autoFocus
             >
               <option value="weighted">Weighted</option>
@@ -588,10 +590,10 @@ function ExerciseRow({
               onClick={() => setEditingType(true)}
               className={`text-xs px-2 py-0.5 rounded-full ${
                 exercise.exercise_type === 'bodyweight'
-                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                  ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/70'
                   : exercise.exercise_type === 'cardio'
-                    ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                    : 'bg-violet-100 text-violet-700 hover:bg-violet-200'
+                    ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/70'
+                    : 'bg-violet-100 dark:bg-violet-900/50 text-violet-700 dark:text-violet-300 hover:bg-violet-200 dark:hover:bg-violet-900/70'
               }`}
               title="Click to change type"
             >
@@ -607,7 +609,7 @@ function ExerciseRow({
         {/* Edit icon */}
         <button
           onClick={onEdit}
-          className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:bg-gray-700 rounded"
+          className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
           title="Edit exercise"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -618,7 +620,7 @@ function ExerciseRow({
         {/* Merge icon */}
         <button
           onClick={onMerge}
-          className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
+          className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded"
           title="Merge into another exercise"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -630,7 +632,7 @@ function ExerciseRow({
         {exercise.is_custom && (
           <button
             onClick={() => onDelete(exercise)}
-            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
+            className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded"
             title="Delete custom exercise"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

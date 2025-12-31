@@ -105,7 +105,7 @@ export function ScheduleForm({
 
       {/* Template selection */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <label htmlFor="template" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="template" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Select Template
         </label>
         <select
@@ -113,7 +113,7 @@ export function ScheduleForm({
           value={selectedTemplateId}
           onChange={(e) => setSelectedTemplateId(e.target.value)}
           disabled={!!existingSchedule}
-          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+          className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-800"
         >
           <option value="">Choose a template...</option>
           {templates.map((template) => (
@@ -128,7 +128,7 @@ export function ScheduleForm({
       {selectedTemplate && (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Target Weights</h2>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Set the target weight for each exercise. These will be pre-filled when you start the workout.
           </p>
 
@@ -145,7 +145,7 @@ export function ScheduleForm({
                 >
                   <div className="flex-1">
                     <div className="font-medium text-gray-900 dark:text-white">{ex.exercise_name}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
                       {ex.target_sets} sets x {ex.target_reps} reps
                     </div>
                   </div>
@@ -153,7 +153,7 @@ export function ScheduleForm({
                     <button
                       type="button"
                       onClick={() => updateWeight(ex.exercise_name, Math.max(0, weight - 5))}
-                      className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100"
+                      className="w-8 h-8 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200"
                     >
                       -
                     </button>
@@ -165,13 +165,13 @@ export function ScheduleForm({
                       onChange={(e) =>
                         updateWeight(ex.exercise_name, parseFloat(e.target.value) || 0)
                       }
-                      className="w-20 px-2 py-1 border border-gray-300 rounded text-center"
+                      className="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
-                    <span className="text-gray-500 dark:text-gray-400 dark:text-gray-500">#</span>
+                    <span className="text-gray-500 dark:text-gray-400">#</span>
                     <button
                       type="button"
                       onClick={() => updateWeight(ex.exercise_name, weight + 5)}
-                      className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100"
+                      className="w-8 h-8 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200"
                     >
                       +
                     </button>
@@ -189,7 +189,7 @@ export function ScheduleForm({
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 dark:bg-gray-900 font-medium disabled:opacity-50"
+          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium disabled:opacity-50"
         >
           Cancel
         </button>

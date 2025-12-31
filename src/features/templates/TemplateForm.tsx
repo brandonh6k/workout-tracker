@@ -121,7 +121,7 @@ export function TemplateForm({
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Template Details</h2>
 
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Template Name *
           </label>
           <input
@@ -130,12 +130,12 @@ export function TemplateForm({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g., Lower Body"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           />
         </div>
 
         <div>
-          <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Notes (optional)
           </label>
           <textarea
@@ -144,7 +144,7 @@ export function TemplateForm({
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Any notes about this workout..."
             rows={2}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           />
         </div>
       </div>
@@ -154,7 +154,7 @@ export function TemplateForm({
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Exercises</h2>
 
         {exercises.length === 0 ? (
-          <p className="text-gray-500 italic py-4 text-center">
+          <p className="text-gray-500 dark:text-gray-400 italic py-4 text-center">
             No exercises yet. Click "Add Exercise" to get started.
           </p>
         ) : (
@@ -177,7 +177,7 @@ export function TemplateForm({
           <button
             type="button"
             onClick={addExercise}
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
           >
             + Add Exercise
           </button>
@@ -190,7 +190,7 @@ export function TemplateForm({
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 dark:bg-gray-900 font-medium disabled:opacity-50"
+          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium disabled:opacity-50"
         >
           Cancel
         </button>
@@ -232,7 +232,7 @@ function ExerciseRow({
             type="button"
             onClick={() => onMove('up')}
             disabled={index === 0}
-            className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
+            className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-30"
             title="Move up"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -243,7 +243,7 @@ function ExerciseRow({
             type="button"
             onClick={() => onMove('down')}
             disabled={index === totalCount - 1}
-            className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
+            className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-30"
             title="Move down"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -284,7 +284,7 @@ function ExerciseRow({
             max={20}
             value={exercise.target_sets}
             onChange={(e) => onUpdate({ target_sets: parseInt(e.target.value) || 1 })}
-            className="w-16 px-2 py-1 border border-gray-300 rounded text-center"
+            className="w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           />
         </div>
 
@@ -298,7 +298,7 @@ function ExerciseRow({
             max={100}
             value={exercise.target_reps}
             onChange={(e) => onUpdate({ target_reps: parseInt(e.target.value) || 1 })}
-            className="w-16 px-2 py-1 border border-gray-300 rounded text-center"
+            className="w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           />
         </div>
 
@@ -318,7 +318,7 @@ function ExerciseRow({
             value={exercise.notes}
             onChange={(e) => onUpdate({ notes: e.target.value })}
             placeholder="Notes (optional)"
-            className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           />
         </div>
       </div>
