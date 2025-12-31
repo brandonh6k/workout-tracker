@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTemplates } from './useTemplates'
 import { TemplateForm } from './TemplateForm'
 import { TemplateCard } from './TemplateCard'
+import { ConfirmDialog } from '../../components/ConfirmDialog'
 import * as api from './api'
 import type { TemplateWithExercises } from './api'
 
@@ -10,6 +11,7 @@ export function TemplatesPage() {
   const [mode, setMode] = useState<'list' | 'create' | 'edit'>('list')
   const [editingTemplate, setEditingTemplate] = useState<TemplateWithExercises | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<TemplateWithExercises | null>(null)
 
   const handleCreate = async (
     template: { name: string; notes: string | null },
@@ -41,9 +43,14 @@ export function TemplatesPage() {
     }
   }
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Delete this template? This cannot be undone.')) return
-    await api.deleteTemplate(id)
+  const handleDeleteClick = (template: TemplateWithExercises) => {
+    setDeleteTarget(template)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return
+    await api.deleteTemplate(deleteTarget.id)
+    setDeleteTarget(null)
     await refresh()
   }
 
@@ -138,12 +145,22 @@ export function TemplatesPage() {
               key={template.id}
               template={template}
               onEdit={() => handleEdit(template)}
-              onDelete={() => handleDelete(template.id)}
+              onDelete={() => handleDeleteClick(template)}
               onDuplicate={() => handleDuplicate(template.id)}
             />
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={deleteTarget !== null}
+        title="Delete Template"
+        message={`Delete "${deleteTarget?.name}"? This cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   )
 }
