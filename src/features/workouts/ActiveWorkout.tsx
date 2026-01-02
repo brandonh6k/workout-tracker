@@ -184,10 +184,15 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
       const newExercises = [...prev.exercises]
       const exercise = { ...newExercises[prev.currentExerciseIndex] }
       const sets = [...exercise.sets]
-      sets[prev.currentSetIndex] = {
-        ...sets[prev.currentSetIndex],
-        weight: Math.max(0, sets[prev.currentSetIndex].weight + delta),
+      const newWeight = Math.max(0, sets[prev.currentSetIndex].weight + delta)
+      
+      // Update current set and all remaining uncompleted sets
+      for (let i = prev.currentSetIndex; i < sets.length; i++) {
+        if (!sets[i].completed) {
+          sets[i] = { ...sets[i], weight: newWeight }
+        }
       }
+      
       exercise.sets = sets
       newExercises[prev.currentExerciseIndex] = exercise
       return { ...prev, exercises: newExercises }

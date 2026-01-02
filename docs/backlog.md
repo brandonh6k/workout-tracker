@@ -67,6 +67,40 @@
 
 - [ ] **Integration tests**: End-to-end flows like "create template -> schedule workout -> complete workout -> view progress". Could use Playwright or Cypress.
 
+## Active Workout UX (from real usage feedback)
+
+- [x] **Weight change doesn't propagate to remaining sets**: When you adjust weight mid-exercise, it should update all subsequent sets of that exercise, not just the current one.
+
+- [ ] **Reps adjustment on mobile is wonky**: The rep adjustment UI is awkward on mobile. Needs better touch targets or different interaction pattern.
+
+- [ ] **Rest screen "up next" is too low**: The upcoming exercise info is off-screen on mobile unless you scroll. Should be visible without scrolling.
+
+- [ ] **Rest screen shows wrong "next" after last set**: After completing the last set of an exercise, rest screen still shows the exercise you just finished instead of the next exercise.
+
+- [ ] **Flip exercise overlay header layout**: Move cancel to right, time to left. Add "set X of Y" next to "exercise X of Y". Consider progress bars instead of numbers.
+
+- [ ] **Dashboard still shows "Start Workout" after completing today's scheduled workout**: Should hide or change to "Workout Complete" if you've already done that scheduled workout today.
+
+## Workout Prep & Transitions
+
+- [ ] **Workout prep popup**: Before starting, show a checklist based on schedule - "You'll need: Dumbbells, Barbell, Bench" etc. Help user set up before starting the clock.
+
+- [ ] **Between-exercise changeover notes**: Add notes field per exercise for setup reminders like "Adjust Bowflex to X", "Grab 25lb dumbbells", "Move bench to incline". Show during transition.
+
+## Exercise Library Enhancements
+
+- [ ] **Endurance exercise category**: Add support for exercises like Farmer's Carries where the metric is time/distance held, not reps. New `exercise_type` value.
+
+- [ ] **Single-arm/unilateral exercises**: Support for exercises like DB Row where you do each side separately. Track left/right independently?
+
+- [ ] **Supersets**: Group exercises to be performed back-to-back with minimal rest between, then longer rest after the superset.
+
+- [ ] **"+Create exercise" button not working**: The create exercise option in autocomplete isn't clickable/functional.
+
+## Navigation / Layout
+
+- [x] **Sticky top menu**: Header navigation should stick to top when scrolling so you can always navigate.
+
 ## Future Phases
 
 - [x] Phase 2: Workout Logging
