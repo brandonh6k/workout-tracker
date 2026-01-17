@@ -79,7 +79,15 @@
 
 - [ ] **Flip exercise overlay header layout**: Move cancel to right, time to left. Add "set X of Y" next to "exercise X of Y". Consider progress bars instead of numbers.
 
+- [ ] **Refactor rest screen from overlay to state**: Currently rest timer is an overlay on the workout screen, which causes positioning issues ("up next" too low, etc.). Should be a separate render state - you're either in "active set" state or "resting" state. Cleaner mental model, fixes multiple UX issues, and makes it easier to add features like changeover notes.
+
+- [ ] **Skip remaining sets / advance to next exercise**: Button to skip remaining sets of current exercise and move to the next one. For time-crunched workouts where you can only do 2 of 3 scheduled sets.
+
+- [ ] **Extend rest button**: Add "+30s" button on rest screen to extend rest period. Sometimes you need a bit more recovery.
+
 - [ ] **Dashboard still shows "Start Workout" after completing today's scheduled workout**: Should hide or change to "Workout Complete" if you've already done that scheduled workout today.
+
+- [ ] **Dashboard "This Week" doesn't update after workout completion**: Volume stats don't refresh after finishing a workout - have to navigate away and back. Should refresh on workout complete.
 
 ## Workout Prep & Transitions
 
@@ -91,7 +99,7 @@
 
 - [ ] **Endurance exercise category**: Add support for exercises like Farmer's Carries where the metric is time/distance held, not reps. New `exercise_type` value.
 
-- [ ] **Single-arm/unilateral exercises**: Support for exercises like DB Row where you do each side separately. Track left/right independently?
+- [ ] **Single-arm/unilateral exercises ("both sides")**: Support for exercises like DB Row where you do each side separately before rest. Workflow: Left arm reps → Right arm reps → Rest timer starts. Could be a toggle on the exercise in template ("unilateral") that doubles the set flow. Track left/right independently or just prompt for both sides before completing the "set".
 
 - [ ] **Supersets**: Group exercises to be performed back-to-back with minimal rest between, then longer rest after the superset.
 
@@ -100,6 +108,20 @@
 ## Navigation / Layout
 
 - [x] **Sticky top menu**: Header navigation should stick to top when scrolling so you can always navigate.
+
+## Data Management
+
+- [ ] **Delete workout sessions**: Ability to delete logged workouts from History page. Useful for testing/mistakes. Should have confirmation dialog since it deletes all logged sets.
+
+## Bugs
+
+- [x] **History dates are off by one day**: Workouts done on Friday show as Thursday. Likely a timezone issue with date storage/display.
+
+- [ ] **Dashboard exercise list has arbitrary 5-item limit**: "Today's Workout" only shows 5 exercises with "+N more". Either remove the limit or make it expandable/accordion.
+
+## Security / Access Control
+
+- [x] **Admin tab restricted to specific accounts**: Hide Admin tab for non-admin users. For now, whitelist specific email (brandon.hunt@gmail.com). Prevents random Vercel visitors from messing with exercise library.
 
 ## Future Phases
 

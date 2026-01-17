@@ -2,18 +2,24 @@ import { Outlet, Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../features/auth'
 import { useTheme } from '../lib/useTheme'
 
-const navItems = [
+const ADMIN_EMAILS = ['brandon.hunt@gmail.com']
+
+const baseNavItems = [
   { to: '/', label: 'Dashboard' },
   { to: '/templates', label: 'Templates' },
   { to: '/schedule', label: 'Schedule' },
   { to: '/history', label: 'History' },
-  { to: '/admin', label: 'Admin' },
 ]
 
 export function Layout() {
   const { user, signOut } = useAuth()
   const location = useLocation()
   const { theme, toggleTheme } = useTheme()
+
+  const isAdmin = user?.email && ADMIN_EMAILS.includes(user.email)
+  const navItems = isAdmin
+    ? [...baseNavItems, { to: '/admin', label: 'Admin' }]
+    : baseNavItems
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
