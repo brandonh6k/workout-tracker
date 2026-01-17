@@ -117,7 +117,7 @@
 
 - [x] **History dates are off by one day**: Workouts done on Friday show as Thursday. Likely a timezone issue with date storage/display.
 
-- [ ] **Dashboard exercise list has arbitrary 5-item limit**: "Today's Workout" only shows 5 exercises with "+N more". Either remove the limit or make it expandable/accordion.
+- [x] **Dashboard exercise list has arbitrary 5-item limit**: "Today's Workout" only shows 5 exercises with "+N more". Either remove the limit or make it expandable/accordion.
 
 ## Security / Access Control
 

@@ -21,6 +21,7 @@ export function DashboardPage() {
   const [comparison, setComparison] = useState<ExerciseComparison[]>([])
   const [recentWorkouts, setRecentWorkouts] = useState<RecentWorkout[]>([])
   const [weeklyVolume, setWeeklyVolume] = useState<WeeklyVolumeComparison | null>(null)
+  const [expandedWorkouts, setExpandedWorkouts] = useState<Set<string>>(new Set())
 
   const today = new Date().getDay()
   const todaysWorkouts = scheduledWorkouts.filter((w) => w.day_of_week === today)
@@ -114,7 +115,10 @@ export function DashboardPage() {
 
                 {workout.template.template_exercises.length > 0 && (
                   <ul className="mt-3 text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                    {workout.template.template_exercises.slice(0, 5).map((ex) => {
+                    {(expandedWorkouts.has(workout.id)
+                      ? workout.template.template_exercises
+                      : workout.template.template_exercises.slice(0, 5)
+                    ).map((ex) => {
                       const scheduledEx = workout.scheduled_exercises.find(
                         (se) => se.exercise_name === ex.exercise_name
                       )
@@ -127,9 +131,28 @@ export function DashboardPage() {
                         </li>
                       )
                     })}
-                    {workout.template.template_exercises.length > 5 && (
-                      <li className="text-gray-400 dark:text-gray-500 italic">
-                        +{workout.template.template_exercises.length - 5} more
+                    {workout.template.template_exercises.length > 5 && !expandedWorkouts.has(workout.id) && (
+                      <li>
+                        <button
+                          onClick={() => setExpandedWorkouts((prev) => new Set(prev).add(workout.id))}
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                        >
+                          +{workout.template.template_exercises.length - 5} more
+                        </button>
+                      </li>
+                    )}
+                    {workout.template.template_exercises.length > 5 && expandedWorkouts.has(workout.id) && (
+                      <li>
+                        <button
+                          onClick={() => setExpandedWorkouts((prev) => {
+                            const next = new Set(prev)
+                            next.delete(workout.id)
+                            return next
+                          })}
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                        >
+                          Show less
+                        </button>
                       </li>
                     )}
                   </ul>
