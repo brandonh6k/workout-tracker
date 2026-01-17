@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
-import { getRecentWorkouts, type WorkoutSessionWithSets } from './api'
+import { toast } from 'sonner'
+import { getRecentWorkouts, abandonWorkoutSession, type WorkoutSessionWithSets } from './api'
 import { getLoggedExercises, ExerciseHistoryView, type LoggedExerciseInfo } from '../progress'
 import type { ExerciseType } from '../../types'
 import { formatWorkoutDate, groupBy } from '../../lib/utils'
+import { ConfirmDialog } from '../../components/ConfirmDialog'
 
 type ViewMode = { type: 'list' } | { type: 'exercise'; name: string; exerciseType: ExerciseType }
 
@@ -11,25 +13,40 @@ export function HistoryPage() {
   const [exercises, setExercises] = useState<LoggedExerciseInfo[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [view, setView] = useState<ViewMode>({ type: 'list' })
+  const [deletingWorkout, setDeletingWorkout] = useState<WorkoutSessionWithSets | null>(null)
+
+  const loadData = async () => {
+    setIsLoading(true)
+    try {
+      const [workoutsData, exercisesData] = await Promise.all([
+        getRecentWorkouts(20),
+        getLoggedExercises(),
+      ])
+      setWorkouts(workoutsData)
+      setExercises(exercisesData)
+    } catch (err) {
+      console.error('Failed to load history:', err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true)
-      try {
-        const [workoutsData, exercisesData] = await Promise.all([
-          getRecentWorkouts(20),
-          getLoggedExercises(),
-        ])
-        setWorkouts(workoutsData)
-        setExercises(exercisesData)
-      } catch (err) {
-        console.error('Failed to load history:', err)
-      } finally {
-        setIsLoading(false)
-      }
-    }
     loadData()
   }, [])
+
+  const handleDeleteWorkout = async () => {
+    if (!deletingWorkout) return
+    try {
+      await abandonWorkoutSession(deletingWorkout.id)
+      toast.success('Workout deleted')
+      setDeletingWorkout(null)
+      loadData()
+    } catch (err) {
+      console.error('Failed to delete workout:', err)
+      toast.error('Failed to delete workout')
+    }
+  }
 
   // Exercise detail view
   if (view.type === 'exercise') {
@@ -61,7 +78,11 @@ export function HistoryPage() {
             ) : (
               <div className="divide-y divide-gray-100 dark:divide-gray-700">
                 {workouts.map((workout) => (
-                  <WorkoutRow key={workout.id} workout={workout} />
+                  <WorkoutRow
+                    key={workout.id}
+                    workout={workout}
+                    onDelete={() => setDeletingWorkout(workout)}
+                  />
                 ))}
               </div>
             )}
@@ -103,11 +124,22 @@ export function HistoryPage() {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={!!deletingWorkout}
+        title="Delete Workout"
+        message={`Delete this workout from ${deletingWorkout ? formatWorkoutDate(deletingWorkout.date) : ''}? This will remove all logged sets and cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={handleDeleteWorkout}
+        onCancel={() => setDeletingWorkout(null)}
+      />
     </div>
   )
 }
 
-function WorkoutRow({ workout }: { workout: WorkoutSessionWithSets }) {
+function WorkoutRow({ workout, onDelete }: { workout: WorkoutSessionWithSets; onDelete: () => void }) {
   const formatted = formatWorkoutDate(workout.date)
 
   // Group sets by exercise
@@ -118,16 +150,27 @@ function WorkoutRow({ workout }: { workout: WorkoutSessionWithSets }) {
   const totalVolume = workout.logged_sets.reduce((sum, s) => sum + s.weight * s.reps, 0)
 
   return (
-    <div className="px-4 py-3">
-      <div className="flex items-center justify-between mb-1">
-        <span className="font-medium text-gray-900 dark:text-white">{formatted}</span>
-        {workout.duration_minutes && (
-          <span className="text-sm text-gray-500 dark:text-gray-400">{workout.duration_minutes}min</span>
-        )}
+    <div className="px-4 py-3 flex items-start justify-between gap-2">
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-between mb-1">
+          <span className="font-medium text-gray-900 dark:text-white">{formatted}</span>
+          {workout.duration_minutes && (
+            <span className="text-sm text-gray-500 dark:text-gray-400">{workout.duration_minutes}min</span>
+          )}
+        </div>
+        <div className="text-sm text-gray-500 dark:text-gray-400">
+          {exerciseCount} exercises, {totalSets} sets, {totalVolume.toLocaleString()}# volume
+        </div>
       </div>
-      <div className="text-sm text-gray-500 dark:text-gray-400">
-        {exerciseCount} exercises, {totalSets} sets, {totalVolume.toLocaleString()}# volume
-      </div>
+      <button
+        onClick={onDelete}
+        className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded"
+        title="Delete workout"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </button>
     </div>
   )
 }

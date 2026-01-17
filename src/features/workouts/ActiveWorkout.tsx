@@ -263,6 +263,10 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
     setState((prev) => (prev ? { ...prev, restTimerEnd: null, lastCompleted: null } : null))
   }
 
+  const handleExtendRest = () => {
+    setState((prev) => (prev?.restTimerEnd ? { ...prev, restTimerEnd: prev.restTimerEnd + 30 * 1000 } : null))
+  }
+
   const handleFinishWorkout = async () => {
     if (!state) return
     try {
@@ -363,6 +367,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
           currentReps={lastCompletedSetData?.reps ?? 0}
           onAdjustReps={handleAdjustLastCompletedReps}
           onSkip={handleSkipRest}
+          onExtend={handleExtendRest}
         />
       )}
 

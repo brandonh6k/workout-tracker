@@ -4,6 +4,7 @@ type Props = {
   currentReps: number
   onAdjustReps: (delta: number) => void
   onSkip: () => void
+  onExtend: () => void
 }
 
 export function RestTimerOverlay({
@@ -12,6 +13,7 @@ export function RestTimerOverlay({
   currentReps,
   onAdjustReps,
   onSkip,
+  onExtend,
 }: Props) {
   const isLastTenSeconds = secondsRemaining <= 10
   const minutes = Math.floor(secondsRemaining / 60)
@@ -55,12 +57,20 @@ export function RestTimerOverlay({
         </div>
       )}
 
-      <button
-        onClick={onSkip}
-        className="px-6 py-3 bg-gray-700 rounded-lg text-lg hover:bg-gray-600"
-      >
-        Skip Rest
-      </button>
+      <div className="flex gap-3">
+        <button
+          onClick={onExtend}
+          className="px-6 py-3 bg-gray-700 rounded-lg text-lg hover:bg-gray-600"
+        >
+          +30s
+        </button>
+        <button
+          onClick={onSkip}
+          className="px-6 py-3 bg-gray-700 rounded-lg text-lg hover:bg-gray-600"
+        >
+          Skip Rest
+        </button>
+      </div>
     </div>
   )
 }

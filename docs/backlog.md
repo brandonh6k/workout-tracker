@@ -83,7 +83,7 @@
 
 - [ ] **Skip remaining sets / advance to next exercise**: Button to skip remaining sets of current exercise and move to the next one. For time-crunched workouts where you can only do 2 of 3 scheduled sets.
 
-- [ ] **Extend rest button**: Add "+30s" button on rest screen to extend rest period. Sometimes you need a bit more recovery.
+- [x] **Extend rest button**: Add "+30s" button on rest screen to extend rest period. Sometimes you need a bit more recovery.
 
 - [ ] **Dashboard still shows "Start Workout" after completing today's scheduled workout**: Should hide or change to "Workout Complete" if you've already done that scheduled workout today.
 
@@ -111,7 +111,7 @@
 
 ## Data Management
 
-- [ ] **Delete workout sessions**: Ability to delete logged workouts from History page. Useful for testing/mistakes. Should have confirmation dialog since it deletes all logged sets.
+- [x] **Delete workout sessions**: Ability to delete logged workouts from History page. Useful for testing/mistakes. Should have confirmation dialog since it deletes all logged sets.
 
 ## Bugs
 
