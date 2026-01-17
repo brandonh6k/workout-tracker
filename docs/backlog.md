@@ -9,6 +9,8 @@
 
 ## UI/UX Improvements
 
+- [ ] **UX refresh (frontend-design skill)**: Full visual overhaul using the `frontend-design` agent skill. Replace generic Tailwind defaults with a distinctive, intentional aesthetic. Scope includes: custom typography, cohesive color palette with CSS variables, motion/micro-interactions, spatial composition rethinking, and atmosphere (backgrounds, textures). Multi-session effort - consider scoping to specific pages (dashboard, active workout) first. This is also a sandbox exercise to test the skill on a non-trivial codebase.
+
 - [x] **Simplify rep target in templates**: Change from rep range (min-max) to single rep target. Ranges add complexity without value - you know what you're aiming for.
 
 - [ ] **Remove rep ranges from logging**: You did X reps, not a range. Simplify to single value.
