@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSchedule, type ScheduledWorkoutWithDetails } from '../schedule'
 import { WeeklyCalendar } from '../templates'
@@ -26,32 +26,42 @@ export function DashboardPage() {
   const today = new Date().getDay()
   const todaysWorkouts = scheduledWorkouts.filter((w) => w.day_of_week === today)
 
+  // Check which templates were completed today
+  const todayDateStr = new Date().toISOString().split('T')[0]
+  const completedTodayTemplateIds = new Set(
+    recentWorkouts
+      .filter((w) => w.date === todayDateStr && w.templateId)
+      .map((w) => w.templateId)
+  )
+
   // Load comparison and recent workouts data
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [comparisonData, recentData, volumeData] = await Promise.all([
-          getProgressComparison(4),
-          getRecentWorkouts(5),
-          getWeeklyVolumeComparison(),
-        ])
-        setComparison(comparisonData)
-        setRecentWorkouts(recentData)
-        setWeeklyVolume(volumeData)
-      } catch (err) {
-        console.error('Failed to load dashboard data:', err)
-      }
+  const loadDashboardData = useCallback(async () => {
+    try {
+      const [comparisonData, recentData, volumeData] = await Promise.all([
+        getProgressComparison(4),
+        getRecentWorkouts(5),
+        getWeeklyVolumeComparison(),
+      ])
+      setComparison(comparisonData)
+      setRecentWorkouts(recentData)
+      setWeeklyVolume(volumeData)
+    } catch (err) {
+      console.error('Failed to load dashboard data:', err)
     }
-    loadData()
   }, [])
+
+  useEffect(() => {
+    loadDashboardData()
+  }, [loadDashboardData])
 
   const handleStartWorkout = (workout: ScheduledWorkoutWithDetails) => {
     setActiveWorkout(workout)
   }
 
-  const handleWorkoutComplete = () => {
+  const handleWorkoutComplete = async () => {
     setActiveWorkout(null)
     refresh()
+    await loadDashboardData()
   }
 
   const handleWorkoutCancel = () => {
@@ -105,12 +115,18 @@ export function DashboardPage() {
                       {workout.template.template_exercises.length} exercises
                     </p>
                   </div>
-                  <button
-                    onClick={() => handleStartWorkout(workout)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium text-sm"
-                  >
-                    Start Workout
-                  </button>
+                  {completedTodayTemplateIds.has(workout.template_id) ? (
+                    <span className="px-4 py-2 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 rounded-md font-medium text-sm">
+                      Completed
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() => handleStartWorkout(workout)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium text-sm"
+                    >
+                      Start Workout
+                    </button>
+                  )}
                 </div>
 
                 {workout.template.template_exercises.length > 0 && (

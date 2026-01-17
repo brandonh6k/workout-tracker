@@ -387,6 +387,7 @@ export async function getProgressComparison(weeksAgo = 4): Promise<ExerciseCompa
 export type RecentWorkout = {
   id: string
   date: string
+  templateId: string | null
   templateName: string | null
   exerciseCount: number
   setCount: number
@@ -433,6 +434,7 @@ export async function getRecentWorkouts(limit = 5): Promise<RecentWorkout[]> {
   if (!sets) return sessions.map((s) => ({
     id: s.id,
     date: s.date,
+    templateId: s.template_id ?? null,
     templateName: s.template_id ? templateMap.get(s.template_id) ?? null : null,
     exerciseCount: 0,
     setCount: 0,
@@ -450,6 +452,7 @@ export async function getRecentWorkouts(limit = 5): Promise<RecentWorkout[]> {
     return {
       id: s.id,
       date: s.date,
+      templateId: s.template_id ?? null,
       templateName: s.template_id ? templateMap.get(s.template_id) ?? null : null,
       exerciseCount: exerciseNames.size,
       setCount: setsForSession.length,

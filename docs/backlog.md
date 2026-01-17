@@ -85,9 +85,9 @@
 
 - [x] **Extend rest button**: Add "+30s" button on rest screen to extend rest period. Sometimes you need a bit more recovery.
 
-- [ ] **Dashboard still shows "Start Workout" after completing today's scheduled workout**: Should hide or change to "Workout Complete" if you've already done that scheduled workout today.
+- [x] **Dashboard still shows "Start Workout" after completing today's scheduled workout**: Should hide or change to "Workout Complete" if you've already done that scheduled workout today.
 
-- [ ] **Dashboard "This Week" doesn't update after workout completion**: Volume stats don't refresh after finishing a workout - have to navigate away and back. Should refresh on workout complete.
+- [x] **Dashboard "This Week" doesn't update after workout completion**: Volume stats don't refresh after finishing a workout - have to navigate away and back. Should refresh on workout complete.
 
 ## Workout Prep & Transitions
 
