@@ -79,6 +79,11 @@ export function SchedulePage() {
           templates={templates}
           dayOfWeek={editingSchedule?.day_of_week ?? addingToDay!}
           existingSchedule={editingSchedule ?? undefined}
+          scheduledTemplateIds={
+            scheduledWorkouts
+              .filter((w) => w.day_of_week === (editingSchedule?.day_of_week ?? addingToDay!))
+              .map((w) => w.template_id)
+          }
           onComplete={handleScheduleComplete}
           onCancel={() => {
             setAddingToDay(null)

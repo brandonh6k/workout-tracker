@@ -14,6 +14,7 @@ type Props = {
   templates: TemplateWithExercises[]
   dayOfWeek: number
   existingSchedule?: ScheduledWorkoutWithDetails
+  scheduledTemplateIds?: string[]
   onComplete: () => void
   onCancel: () => void
 }
@@ -22,6 +23,7 @@ export function ScheduleForm({
   templates,
   dayOfWeek,
   existingSchedule,
+  scheduledTemplateIds = [],
   onComplete,
   onCancel,
 }: Props) {
@@ -33,6 +35,11 @@ export function ScheduleForm({
   const [error, setError] = useState<string | null>(null)
 
   const selectedTemplate = templates.find((t) => t.id === selectedTemplateId)
+
+  // Filter out templates already scheduled for this day (unless editing that specific one)
+  const availableTemplates = existingSchedule
+    ? templates // When editing, show all templates (but dropdown is disabled anyway)
+    : templates.filter((t) => !scheduledTemplateIds.includes(t.id))
 
   // When template changes, reset weights
   useEffect(() => {
@@ -93,7 +100,13 @@ export function ScheduleForm({
       }
       onComplete()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save schedule')
+      const message = err instanceof Error ? err.message : 'Failed to save schedule'
+      // Detect unique constraint violation (template already scheduled for this day)
+      if (message.includes('duplicate') || message.includes('unique') || message.includes('23505')) {
+        setError('This template is already scheduled for this day')
+      } else {
+        setError(message)
+      }
     } finally {
       setIsSubmitting(false)
     }
@@ -120,7 +133,7 @@ export function ScheduleForm({
           className="input w-full disabled:opacity-50"
         >
           <option value="">Choose a template...</option>
-          {templates.map((template) => (
+          {availableTemplates.map((template) => (
             <option key={template.id} value={template.id}>
               {template.name} ({template.template_exercises.length} exercises)
             </option>
