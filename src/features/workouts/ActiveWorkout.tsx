@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { ScheduledWorkoutWithDetails } from '../schedule'
 import * as api from './api'
-import { RestTimerOverlay, SetDisplay } from './components'
+import { SetDisplay } from './components'
 
 type SetData = {
   id?: string // DB id once saved
@@ -20,11 +20,15 @@ type ExerciseState = {
   sets: SetData[]
 }
 
-type LastCompletedSet = {
-  exerciseIndex: number
-  setIndex: number
-  isAmrap: boolean
-}
+type WorkoutPhase =
+  | { type: 'active-set' }
+  | {
+      type: 'resting'
+      restTimerEnd: number
+      lastCompletedExerciseIndex: number
+      lastCompletedSetIndex: number
+      isAmrap: boolean
+    }
 
 type WorkoutState = {
   sessionId: string
@@ -32,8 +36,7 @@ type WorkoutState = {
   currentExerciseIndex: number
   currentSetIndex: number
   startTime: number
-  restTimerEnd: number | null
-  lastCompleted: LastCompletedSet | null
+  phase: WorkoutPhase
 }
 
 type Props = {
@@ -82,8 +85,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
           currentExerciseIndex: 0,
           currentSetIndex: 0,
           startTime: Date.now(),
-          restTimerEnd: null,
-          lastCompleted: null,
+          phase: { type: 'active-set' },
         })
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to start workout')
@@ -97,25 +99,27 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
 
   // Rest timer countdown
   useEffect(() => {
-    if (!state?.restTimerEnd) return
+    if (!state || state.phase.type !== 'resting') return
+    const restTimerEnd = state.phase.restTimerEnd
 
     const interval = setInterval(() => {
       setTick((t) => t + 1)
-      if (Date.now() >= state.restTimerEnd!) {
-        setState((prev) => (prev ? { ...prev, restTimerEnd: null, lastCompleted: null } : null))
+      if (Date.now() >= restTimerEnd) {
+        setState((prev) => (prev ? { ...prev, phase: { type: 'active-set' } } : null))
       }
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [state?.restTimerEnd])
+  }, [state?.phase])
 
   const currentExercise = state?.exercises[state.currentExerciseIndex]
   const currentSet = currentExercise?.sets[state?.currentSetIndex ?? 0]
 
-  // Get the last completed set data for AMRAP adjustment
-  const lastCompletedSetData = state?.lastCompleted
-    ? state.exercises[state.lastCompleted.exerciseIndex]?.sets[state.lastCompleted.setIndex]
-    : null
+  // Get the last completed set data for AMRAP adjustment (only available during resting phase)
+  const lastCompletedSetData =
+    state?.phase.type === 'resting'
+      ? state.exercises[state.phase.lastCompletedExerciseIndex]?.sets[state.phase.lastCompletedSetIndex]
+      : null
 
   const handleCompleteSet = useCallback(async () => {
     if (!state || !currentExercise || !currentSet) return
@@ -162,10 +166,11 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
           exercises: newExercises,
           currentExerciseIndex: nextExerciseIndex,
           currentSetIndex: nextSetIndex,
-          restTimerEnd: Date.now() + exercise.restSeconds * 1000,
-          lastCompleted: {
-            exerciseIndex: prev.currentExerciseIndex,
-            setIndex: prev.currentSetIndex,
+          phase: {
+            type: 'resting',
+            restTimerEnd: Date.now() + exercise.restSeconds * 1000,
+            lastCompletedExerciseIndex: prev.currentExerciseIndex,
+            lastCompletedSetIndex: prev.currentSetIndex,
             isAmrap: exercise.isAmrap,
           },
         }
@@ -218,22 +223,23 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
 
   // Adjust the LAST COMPLETED set (for AMRAP during rest)
   const handleAdjustLastCompletedReps = async (delta: number) => {
-    if (!state?.lastCompleted || !lastCompletedSetData?.id) return
+    if (!state || state.phase.type !== 'resting' || !lastCompletedSetData?.id) return
 
+    const { lastCompletedExerciseIndex, lastCompletedSetIndex } = state.phase
     const newReps = Math.max(1, lastCompletedSetData.reps + delta)
 
     // Update local state immediately
     setState((prev) => {
-      if (!prev?.lastCompleted) return prev
+      if (!prev || prev.phase.type !== 'resting') return prev
       const newExercises = [...prev.exercises]
-      const exercise = { ...newExercises[prev.lastCompleted.exerciseIndex] }
+      const exercise = { ...newExercises[lastCompletedExerciseIndex] }
       const sets = [...exercise.sets]
-      sets[prev.lastCompleted.setIndex] = {
-        ...sets[prev.lastCompleted.setIndex],
+      sets[lastCompletedSetIndex] = {
+        ...sets[lastCompletedSetIndex],
         reps: newReps,
       }
       exercise.sets = sets
-      newExercises[prev.lastCompleted.exerciseIndex] = exercise
+      newExercises[lastCompletedExerciseIndex] = exercise
       return { ...prev, exercises: newExercises }
     })
 
@@ -243,16 +249,16 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
     } catch (err) {
       // Revert on error
       setState((prev) => {
-        if (!prev?.lastCompleted) return prev
+        if (!prev || prev.phase.type !== 'resting') return prev
         const newExercises = [...prev.exercises]
-        const exercise = { ...newExercises[prev.lastCompleted.exerciseIndex] }
+        const exercise = { ...newExercises[lastCompletedExerciseIndex] }
         const sets = [...exercise.sets]
-        sets[prev.lastCompleted.setIndex] = {
-          ...sets[prev.lastCompleted.setIndex],
+        sets[lastCompletedSetIndex] = {
+          ...sets[lastCompletedSetIndex],
           reps: lastCompletedSetData.reps,
         }
         exercise.sets = sets
-        newExercises[prev.lastCompleted.exerciseIndex] = exercise
+        newExercises[lastCompletedExerciseIndex] = exercise
         return { ...prev, exercises: newExercises }
       })
       setError(err instanceof Error ? err.message : 'Failed to update set')
@@ -260,11 +266,17 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
   }
 
   const handleSkipRest = () => {
-    setState((prev) => (prev ? { ...prev, restTimerEnd: null, lastCompleted: null } : null))
+    setState((prev) => (prev ? { ...prev, phase: { type: 'active-set' } } : null))
   }
 
   const handleExtendRest = () => {
-    setState((prev) => (prev?.restTimerEnd ? { ...prev, restTimerEnd: prev.restTimerEnd + 30 * 1000 } : null))
+    setState((prev) => {
+      if (!prev || prev.phase.type !== 'resting') return prev
+      return {
+        ...prev,
+        phase: { ...prev.phase, restTimerEnd: prev.phase.restTimerEnd + 30 * 1000 },
+      }
+    })
   }
 
   const handleFinishWorkout = async () => {
@@ -337,13 +349,102 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
 
   if (!currentExercise || !currentSet) return null
 
-  const restTimeRemaining = state.restTimerEnd
-    ? Math.max(0, Math.ceil((state.restTimerEnd - Date.now()) / 1000))
-    : 0
-
   const totalExercises = state.exercises.length
   const completedExercises = state.exercises.filter((e) => e.sets.every((s) => s.completed)).length
+  const elapsedMinutes = Math.round((Date.now() - state.startTime) / 60000)
 
+  // Compute next exercise info for rest screen
+  const nextExercise = state.exercises[state.currentExerciseIndex]
+  const nextSetNumber = state.currentSetIndex + 1
+  const isLastExercise = state.currentExerciseIndex >= state.exercises.length
+
+  // Resting phase - full screen replacement
+  if (state.phase.type === 'resting') {
+    const restTimeRemaining = Math.max(0, Math.ceil((state.phase.restTimerEnd - Date.now()) / 1000))
+
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+        {/* Header */}
+        <header className="bg-gray-800 px-4 py-3 flex items-center justify-between">
+          <button onClick={handleAbandon} className="text-gray-400 hover:text-white">
+            X Cancel
+          </button>
+          <div className="text-sm text-gray-400">
+            {completedExercises}/{totalExercises} exercises
+          </div>
+          <div className="text-sm text-gray-400">{elapsedMinutes}m</div>
+        </header>
+
+        {/* Rest Timer Content */}
+        <div className="flex-1 flex flex-col items-center justify-center p-4">
+          <div className="text-gray-400 text-2xl mb-2">Rest</div>
+          <div
+            className={`font-bold mb-6 transition-all ${
+              restTimeRemaining <= 10 ? 'text-8xl text-sky-400' : 'text-7xl text-white'
+            }`}
+          >
+            {Math.floor(restTimeRemaining / 60)}:{(restTimeRemaining % 60).toString().padStart(2, '0')}
+          </div>
+
+          {/* AMRAP adjustment */}
+          {state.phase.isAmrap && lastCompletedSetData && (
+            <div className="bg-gray-800 rounded-lg p-4 mb-6">
+              <div className="text-gray-400 text-sm mb-2 text-center">Adjust last set reps (AMRAP)</div>
+              <div className="flex items-center justify-center gap-4">
+                <button
+                  onClick={() => handleAdjustLastCompletedReps(-1)}
+                  className="w-12 h-12 bg-gray-700 rounded-lg text-xl hover:bg-gray-600"
+                >
+                  -1
+                </button>
+                <div className="w-20 text-center text-3xl font-bold">{lastCompletedSetData.reps}</div>
+                <button
+                  onClick={() => handleAdjustLastCompletedReps(1)}
+                  className="w-12 h-12 bg-gray-700 rounded-lg text-xl hover:bg-gray-600"
+                >
+                  +1
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Rest control buttons */}
+          <div className="flex gap-3 mb-8">
+            <button
+              onClick={handleExtendRest}
+              className="px-6 py-3 bg-gray-700 rounded-lg text-lg hover:bg-gray-600"
+            >
+              +30s
+            </button>
+            <button
+              onClick={handleSkipRest}
+              className="px-6 py-3 bg-gray-700 rounded-lg text-lg hover:bg-gray-600"
+            >
+              Skip Rest
+            </button>
+          </div>
+
+          {/* Up Next - prominently displayed */}
+          <div className="w-full max-w-sm bg-gray-800 rounded-lg p-4">
+            <div className="text-gray-400 text-sm mb-2">Up next</div>
+            {isLastExercise ? (
+              <div className="text-green-400 text-xl font-bold">Workout Complete!</div>
+            ) : (
+              <>
+                <div className="text-xl font-bold">{nextExercise.name}</div>
+                <div className="text-gray-400 text-sm">
+                  Set {nextSetNumber} of {nextExercise.targetSets} &middot;{' '}
+                  {nextExercise.sets[state.currentSetIndex]?.weight}# x {nextExercise.targetReps} reps
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Active set phase
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col">
       {/* Header */}
@@ -351,25 +452,11 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
         <button onClick={handleAbandon} className="text-gray-400 hover:text-white">
           X Cancel
         </button>
-        <div className="text-sm text-gray-400 dark:text-gray-500">
+        <div className="text-sm text-gray-400">
           {completedExercises}/{totalExercises} exercises
         </div>
-        <div className="text-sm text-gray-400 dark:text-gray-500">
-          {Math.round((Date.now() - state.startTime) / 60000)}m
-        </div>
+        <div className="text-sm text-gray-400">{elapsedMinutes}m</div>
       </header>
-
-      {/* Rest Timer Overlay */}
-      {restTimeRemaining > 0 && (
-        <RestTimerOverlay
-          secondsRemaining={restTimeRemaining}
-          isAmrap={state.lastCompleted?.isAmrap ?? false}
-          currentReps={lastCompletedSetData?.reps ?? 0}
-          onAdjustReps={handleAdjustLastCompletedReps}
-          onSkip={handleSkipRest}
-          onExtend={handleExtendRest}
-        />
-      )}
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center p-4">

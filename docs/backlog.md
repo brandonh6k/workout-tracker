@@ -90,13 +90,13 @@
 
 - [ ] **Reps adjustment on mobile is wonky**: The rep adjustment UI is awkward on mobile. Needs better touch targets or different interaction pattern.
 
-- [ ] **Rest screen "up next" is too low**: The upcoming exercise info is off-screen on mobile unless you scroll. Should be visible without scrolling.
+- [x] **Rest screen "up next" is too low**: The upcoming exercise info is off-screen on mobile unless you scroll. Should be visible without scrolling.
 
-- [ ] **Rest screen shows wrong "next" after last set**: After completing the last set of an exercise, rest screen still shows the exercise you just finished instead of the next exercise.
+- [x] **Rest screen shows wrong "next" after last set**: After completing the last set of an exercise, rest screen still shows the exercise you just finished instead of the next exercise.
 
 - [ ] **Flip exercise overlay header layout**: Move cancel to right, time to left. Add "set X of Y" next to "exercise X of Y". Consider progress bars instead of numbers.
 
-- [ ] **Refactor rest screen from overlay to state**: Currently rest timer is an overlay on the workout screen, which causes positioning issues ("up next" too low, etc.). Should be a separate render state - you're either in "active set" state or "resting" state. Cleaner mental model, fixes multiple UX issues, and makes it easier to add features like changeover notes.
+- [x] **Refactor rest screen from overlay to state**: Currently rest timer is an overlay on the workout screen, which causes positioning issues ("up next" too low, etc.). Should be a separate render state - you're either in "active set" state or "resting" state. Cleaner mental model, fixes multiple UX issues, and makes it easier to add features like changeover notes.
 
 - [ ] **Skip remaining sets / advance to next exercise**: Button to skip remaining sets of current exercise and move to the next one. For time-crunched workouts where you can only do 2 of 3 scheduled sets.
 
