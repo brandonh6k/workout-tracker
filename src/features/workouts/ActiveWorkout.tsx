@@ -298,7 +298,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
           
           {/* Big timer */}
           <div 
-            className="mb-8 transition-all duration-300"
+            className="mb-12 transition-all duration-300"
             style={{ 
               fontFamily: 'var(--font-display)',
               fontSize: isUrgent ? '8rem' : '6rem',
@@ -423,6 +423,22 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
               </>
             )}
           </div>
+
+          {/* Skip Exercise - placed below Up Next, away from other buttons */}
+          {!isLastExercise && nextSetNumber < nextExercise.targetSets && (
+            <button
+              onClick={handleSkipExercise}
+              className="mt-6 text-sm transition-colors"
+              style={{ 
+                color: 'var(--color-graphite)',
+                fontFamily: 'var(--font-mono)'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-zinc)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-graphite)'}
+            >
+              Skip remaining sets →
+            </button>
+          )}
         </div>
       </div>
     )
@@ -610,15 +626,10 @@ function WorkoutHeader({
       >
         ✕ CANCEL
       </button>
-      <div 
-        style={{ 
-          color: 'var(--color-ash)',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.875rem'
-        }}
-      >
-        {completedExercises}/{totalExercises} exercises
-      </div>
+      
+      {/* Progress ring */}
+      <ProgressRing completed={completedExercises} total={totalExercises} />
+      
       <div 
         style={{ 
           color: 'var(--color-ember)',
@@ -630,5 +641,55 @@ function WorkoutHeader({
         {elapsedMinutes}m
       </div>
     </header>
+  )
+}
+
+function ProgressRing({ completed, total }: { completed: number; total: number }) {
+  const size = 36
+  const strokeWidth = 3
+  const radius = (size - strokeWidth) / 2
+  const circumference = 2 * Math.PI * radius
+  const progress = total > 0 ? completed / total : 0
+  const strokeDashoffset = circumference * (1 - progress)
+
+  return (
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="transform -rotate-90">
+        {/* Background ring */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="var(--color-steel)"
+          strokeWidth={strokeWidth}
+        />
+        {/* Progress ring */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="var(--color-ember)"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          style={{ transition: 'stroke-dashoffset 0.3s ease' }}
+        />
+      </svg>
+      {/* Center text */}
+      <div 
+        className="absolute inset-0 flex items-center justify-center"
+        style={{ 
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.625rem',
+          fontWeight: 600,
+          color: 'var(--color-ash)'
+        }}
+      >
+        {completed}/{total}
+      </div>
+    </div>
   )
 }
