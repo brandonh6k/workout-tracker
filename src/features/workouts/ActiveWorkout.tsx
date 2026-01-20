@@ -330,13 +330,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
               <div className="flex items-center justify-center gap-4">
                 <button
                   onClick={() => handleAdjustLastCompletedReps(-1)}
-                  className="w-14 h-14 text-2xl"
-                  style={{ 
-                    background: 'var(--color-concrete)',
-                    color: 'var(--color-chalk)',
-                    borderRadius: 'var(--radius-sm)',
-                    fontFamily: 'var(--font-mono)'
-                  }}
+                  className="btn-control w-14 h-14 text-2xl"
                 >
                   −
                 </button>
@@ -352,13 +346,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
                 </div>
                 <button
                   onClick={() => handleAdjustLastCompletedReps(1)}
-                  className="w-14 h-14 text-2xl"
-                  style={{ 
-                    background: 'var(--color-concrete)',
-                    color: 'var(--color-chalk)',
-                    borderRadius: 'var(--radius-sm)',
-                    fontFamily: 'var(--font-mono)'
-                  }}
+                  className="btn-control w-14 h-14 text-2xl"
                 >
                   +
                 </button>
@@ -368,10 +356,10 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
 
           {/* Rest control buttons */}
           <div className="flex gap-3 mb-8">
-            <button onClick={handleExtendRest} className="btn-secondary">
+            <button onClick={handleExtendRest} className="btn-control">
               +30s
             </button>
-            <button onClick={handleSkipRest} className="btn-secondary">
+            <button onClick={handleSkipRest} className="btn-control">
               Skip Rest
             </button>
           </div>

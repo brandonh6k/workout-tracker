@@ -120,19 +120,12 @@ function AdjustButton({
   return (
     <button
       onClick={onClick}
-      className="transition-all"
+      className="btn-control"
       style={{ 
         width: small ? '3.5rem' : '3rem',
         height: '3rem',
-        background: 'var(--color-concrete)',
-        color: 'var(--color-chalk)',
-        borderRadius: 'var(--radius-sm)',
-        fontFamily: 'var(--font-mono)',
-        fontSize: small ? '0.875rem' : '1.125rem',
-        fontWeight: 600
+        fontSize: small ? '0.875rem' : '1.125rem'
       }}
-      onMouseEnter={(e) => e.currentTarget.style.background = 'var(--color-graphite)'}
-      onMouseLeave={(e) => e.currentTarget.style.background = 'var(--color-concrete)'}
     >
       {label}
     </button>

@@ -241,6 +241,24 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--color-danger);
 }
 
+/* Control buttons - compact, for adjustments like +30s, -1/+1 */
+.btn-control {
+  background: var(--color-concrete);
+  color: var(--color-chalk);
+  border: 1px solid var(--color-graphite);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.btn-control:hover {
+  background: var(--color-graphite);
+  border-color: var(--color-zinc);
+}
+
 /* ========================================
    Cards
    ======================================== */
