@@ -8,9 +8,12 @@ describe('ErrorMessage', () => {
     expect(screen.getByText('Something went wrong')).toBeInTheDocument()
   })
 
-  it('has error styling', () => {
+  it('has error styling via CSS variables', () => {
     render(<ErrorMessage message="Error" />)
-    const element = screen.getByText('Error')
-    expect(element).toHaveClass('bg-red-50', 'border-red-200', 'text-red-700')
+    // The message is now inside a span within the container
+    const element = screen.getByText('Error').closest('div')
+    expect(element).toBeInTheDocument()
+    // Check inline styles are applied (CSS variable based styling)
+    expect(element).toHaveStyle({ background: 'var(--color-danger-muted)' })
   })
 })

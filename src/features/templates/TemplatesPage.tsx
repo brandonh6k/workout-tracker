@@ -65,8 +65,17 @@ export function TemplatesPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-gray-600 dark:text-gray-300">Loading templates...</div>
+      <div className="flex items-center justify-center py-16">
+        <div 
+          className="text-center"
+          style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+        >
+          <div 
+            className="w-8 h-8 mx-auto mb-3 border-2 border-t-transparent rounded-full animate-spin"
+            style={{ borderColor: 'var(--color-graphite)', borderTopColor: 'transparent' }}
+          />
+          Loading templates...
+        </div>
       </div>
     )
   }
@@ -77,8 +86,24 @@ export function TemplatesPage() {
 
   if (mode === 'create') {
     return (
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create Template</h1>
+      <div className="space-y-6 animate-fade-in">
+        <header className="flex items-center gap-4">
+          <button
+            onClick={() => setMode('list')}
+            className="p-2 hover:bg-[var(--color-steel)] rounded transition-colors"
+            style={{ color: 'var(--color-slate)' }}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <h1 
+            className="text-2xl tracking-wide"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-bone)' }}
+          >
+            NEW TEMPLATE
+          </h1>
+        </header>
         <TemplateForm
           onSubmit={handleCreate}
           onCancel={() => setMode('list')}
@@ -90,8 +115,27 @@ export function TemplatesPage() {
 
   if (mode === 'edit' && editingTemplate) {
     return (
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Edit Template</h1>
+      <div className="space-y-6 animate-fade-in">
+        <header className="flex items-center gap-4">
+          <button
+            onClick={() => {
+              setMode('list')
+              setEditingTemplate(null)
+            }}
+            className="p-2 hover:bg-[var(--color-steel)] rounded transition-colors"
+            style={{ color: 'var(--color-slate)' }}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <h1 
+            className="text-2xl tracking-wide"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-bone)' }}
+          >
+            EDIT TEMPLATE
+          </h1>
+        </header>
         <TemplateForm
           initialData={editingTemplate}
           onSubmit={handleUpdate}
@@ -107,34 +151,74 @@ export function TemplatesPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Workout Templates</h1>
+        <div>
+          <h1 
+            className="text-2xl tracking-wide"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-bone)' }}
+          >
+            TEMPLATES
+          </h1>
+          <p 
+            className="text-sm mt-1"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
+            Reusable workout blueprints
+          </p>
+        </div>
         <button
           onClick={() => setMode('create')}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
+          className="btn btn-primary"
         >
-          New Template
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          New
         </button>
       </div>
 
-      <p className="text-sm text-gray-600 dark:text-gray-300">
-        Templates are reusable workout plans. Schedule them on specific days in the Schedule tab.
-      </p>
-
+      {/* Template Grid */}
       {templates.length === 0 ? (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
-          <p className="text-gray-500 dark:text-gray-400 mb-4">
-            No templates yet. Create your first workout template!
+        <div 
+          className="card text-center py-12"
+          style={{ borderStyle: 'dashed', borderColor: 'var(--color-graphite)' }}
+        >
+          <div 
+            className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
+            style={{ background: 'var(--color-steel)' }}
+          >
+            <svg 
+              className="w-8 h-8" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+              style={{ color: 'var(--color-zinc)' }}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <p 
+            className="mb-1"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ash)', fontSize: '1.1rem' }}
+          >
+            NO TEMPLATES YET
+          </p>
+          <p 
+            className="text-sm mb-6"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
+            Create your first workout blueprint
           </p>
           <button
             onClick={() => setMode('create')}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
+            className="btn btn-primary"
           >
             Create Template
           </button>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2 stagger-children">
           {templates.map((template) => (
             <TemplateCard
               key={template.id}

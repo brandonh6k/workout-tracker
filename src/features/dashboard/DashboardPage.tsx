@@ -83,7 +83,9 @@ export function DashboardPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-gray-600 dark:text-gray-300">Loading...</div>
+        <div style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)' }}>
+          Loading...
+        </div>
       </div>
     )
   }
@@ -93,183 +95,340 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-
-      {/* Today's Workout */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Today's Workout
-        </h2>
-
-        {todaysWorkouts.length > 0 ? (
-          <div className="space-y-3">
-            {todaysWorkouts.map((workout) => (
-              <div
-                key={workout.id}
-                className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="font-medium text-gray-900 dark:text-white">{workout.template.name}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      {workout.template.template_exercises.length} exercises
-                    </p>
-                  </div>
-                  {completedTodayTemplateIds.has(workout.template_id) ? (
-                    <span className="px-4 py-2 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 rounded-md font-medium text-sm">
-                      Completed
-                    </span>
-                  ) : (
-                    <button
-                      onClick={() => handleStartWorkout(workout)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium text-sm"
-                    >
-                      Start Workout
-                    </button>
-                  )}
-                </div>
-
-                {workout.template.template_exercises.length > 0 && (
-                  <ul className="mt-3 text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                    {(expandedWorkouts.has(workout.id)
-                      ? workout.template.template_exercises
-                      : workout.template.template_exercises.slice(0, 5)
-                    ).map((ex) => {
-                      const scheduledEx = workout.scheduled_exercises.find(
-                        (se) => se.exercise_name === ex.exercise_name
-                      )
-                      return (
-                        <li key={ex.id} className="flex justify-between">
-                          <span>{ex.exercise_name}</span>
-                          <span className="text-gray-400 dark:text-gray-500">
-                            {scheduledEx?.target_weight ?? 0}# - {ex.target_sets}x{ex.target_reps}
-                          </span>
-                        </li>
-                      )
-                    })}
-                    {workout.template.template_exercises.length > 5 && !expandedWorkouts.has(workout.id) && (
-                      <li>
-                        <button
-                          onClick={() => setExpandedWorkouts((prev) => new Set(prev).add(workout.id))}
-                          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
-                        >
-                          +{workout.template.template_exercises.length - 5} more
-                        </button>
-                      </li>
-                    )}
-                    {workout.template.template_exercises.length > 5 && expandedWorkouts.has(workout.id) && (
-                      <li>
-                        <button
-                          onClick={() => setExpandedWorkouts((prev) => {
-                            const next = new Set(prev)
-                            next.delete(workout.id)
-                            return next
-                          })}
-                          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
-                        >
-                          Show less
-                        </button>
-                      </li>
-                    )}
-                  </ul>
-                )}
-              </div>
-            ))}
+    <div className="space-y-6 stagger-children">
+      {/* Hero Section - Today's Workout */}
+      <section 
+        className="relative overflow-hidden"
+        style={{ 
+          background: 'var(--color-iron)',
+          border: '1px solid var(--color-steel)',
+          borderRadius: 'var(--radius-md)'
+        }}
+      >
+        {/* Decorative corner accent */}
+        <div 
+          className="absolute top-0 right-0 w-32 h-32 opacity-10"
+          style={{
+            background: 'linear-gradient(135deg, var(--color-ember) 0%, transparent 70%)'
+          }}
+        />
+        
+        <div className="relative p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div 
+              className="w-2 h-8"
+              style={{ background: 'var(--color-ember)', borderRadius: 'var(--radius-sm)' }}
+            />
+            <h1 
+              className="text-2xl"
+              style={{ 
+                fontFamily: 'var(--font-display)',
+                fontWeight: 600,
+                color: 'var(--color-chalk)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em'
+              }}
+            >
+              Today's Workout
+            </h1>
           </div>
-        ) : (
-          <div>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">No workout scheduled for today</p>
-            <div className="flex gap-3">
+
+          {todaysWorkouts.length > 0 ? (
+            <div className="space-y-4">
+              {todaysWorkouts.map((workout) => {
+                const isCompleted = completedTodayTemplateIds.has(workout.template_id)
+                return (
+                  <div
+                    key={workout.id}
+                    className="p-4"
+                    style={{ 
+                      background: 'var(--color-steel)',
+                      border: `1px solid ${isCompleted ? 'var(--color-success-muted)' : 'var(--color-concrete)'}`,
+                      borderRadius: 'var(--radius-md)'
+                    }}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <h3 
+                          className="text-lg truncate"
+                          style={{ 
+                            fontFamily: 'var(--font-display)',
+                            fontWeight: 600,
+                            color: 'var(--color-chalk)',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          {workout.template.name}
+                        </h3>
+                        <p 
+                          className="text-sm mt-1"
+                          style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)' }}
+                        >
+                          {workout.template.template_exercises.length} exercises
+                        </p>
+                      </div>
+                      
+                      {isCompleted ? (
+                        <div 
+                          className="flex items-center gap-2 px-4 py-2"
+                          style={{ 
+                            background: 'var(--color-success-muted)',
+                            color: 'var(--color-success)',
+                            borderRadius: 'var(--radius-sm)',
+                            fontFamily: 'var(--font-display)',
+                            fontWeight: 600,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                            fontSize: '0.875rem'
+                          }}
+                        >
+                          <span>✓</span>
+                          <span>Completed</span>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => handleStartWorkout(workout)}
+                          className="btn-primary animate-pulse-glow"
+                          style={{ 
+                            padding: '0.75rem 1.5rem',
+                            fontSize: '0.875rem'
+                          }}
+                        >
+                          Start Workout
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Exercise list */}
+                    {workout.template.template_exercises.length > 0 && (
+                      <ul className="mt-4 space-y-1">
+                        {(expandedWorkouts.has(workout.id)
+                          ? workout.template.template_exercises
+                          : workout.template.template_exercises.slice(0, 5)
+                        ).map((ex) => {
+                          const scheduledEx = workout.scheduled_exercises.find(
+                            (se) => se.exercise_name === ex.exercise_name
+                          )
+                          return (
+                            <li 
+                              key={ex.id} 
+                              className="flex justify-between py-1 border-b"
+                              style={{ 
+                                borderColor: 'var(--color-concrete)',
+                                fontFamily: 'var(--font-mono)',
+                                fontSize: '0.8125rem'
+                              }}
+                            >
+                              <span style={{ color: 'var(--color-ash)' }}>{ex.exercise_name}</span>
+                              <span style={{ color: 'var(--color-zinc)' }}>
+                                {scheduledEx?.target_weight ?? 0}# · {ex.target_sets}×{ex.target_reps}
+                              </span>
+                            </li>
+                          )
+                        })}
+                        {workout.template.template_exercises.length > 5 && !expandedWorkouts.has(workout.id) && (
+                          <li>
+                            <button
+                              onClick={() => setExpandedWorkouts((prev) => new Set(prev).add(workout.id))}
+                              className="text-sm mt-2"
+                              style={{ color: 'var(--color-ember)', fontFamily: 'var(--font-mono)' }}
+                            >
+                              +{workout.template.template_exercises.length - 5} more exercises
+                            </button>
+                          </li>
+                        )}
+                        {workout.template.template_exercises.length > 5 && expandedWorkouts.has(workout.id) && (
+                          <li>
+                            <button
+                              onClick={() => setExpandedWorkouts((prev) => {
+                                const next = new Set(prev)
+                                next.delete(workout.id)
+                                return next
+                              })}
+                              className="text-sm mt-2"
+                              style={{ color: 'var(--color-ember)', fontFamily: 'var(--font-mono)' }}
+                            >
+                              Show less
+                            </button>
+                          </li>
+                        )}
+                      </ul>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="py-4">
+              <p style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)' }}>
+                Rest day — no workout scheduled
+              </p>
               <button
                 onClick={() => navigate('/schedule')}
-                className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 font-medium text-sm"
+                className="btn-secondary mt-4"
               >
                 Schedule a Workout
               </button>
             </div>
-          </div>
-        )}
-      </div>
-
-      {/* Weekly Volume Stats */}
-      {weeklyVolume && (weeklyVolume.thisWeek > 0 || weeklyVolume.lastWeek > 0) && (
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-            <div className="text-sm text-gray-500 dark:text-gray-400">This Week</div>
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {weeklyVolume.thisWeek.toLocaleString()}#
-            </div>
-            <div className="text-xs text-gray-400 dark:text-gray-500">
-              {weeklyVolume.thisWeekSessions} session{weeklyVolume.thisWeekSessions !== 1 ? 's' : ''}
-            </div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-            <div className="text-sm text-gray-500 dark:text-gray-400">Last Week</div>
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {weeklyVolume.lastWeek.toLocaleString()}#
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400 dark:text-gray-500">
-                {weeklyVolume.lastWeekSessions} session{weeklyVolume.lastWeekSessions !== 1 ? 's' : ''}
-              </span>
-              {weeklyVolume.change !== null && (
-                <span
-                  className={`text-xs font-medium px-1.5 py-0.5 rounded ${
-                    weeklyVolume.change > 0
-                      ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300'
-                      : weeklyVolume.change < 0
-                        ? 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
-                  }`}
-                >
-                  {weeklyVolume.change > 0 && '+'}
-                  {weeklyVolume.change}%
-                </span>
-              )}
-            </div>
-          </div>
+          )}
         </div>
+      </section>
+
+      {/* Volume Stats */}
+      {weeklyVolume && (weeklyVolume.thisWeek > 0 || weeklyVolume.lastWeek > 0) && (
+        <section className="grid grid-cols-2 gap-4">
+          <VolumeCard
+            label="This Week"
+            volume={weeklyVolume.thisWeek}
+            sessions={weeklyVolume.thisWeekSessions}
+            isHighlighted
+          />
+          <VolumeCard
+            label="Last Week"
+            volume={weeklyVolume.lastWeek}
+            sessions={weeklyVolume.lastWeekSessions}
+            change={weeklyVolume.change}
+          />
+        </section>
       )}
 
       {/* Weekly Calendar */}
-      <div>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Weekly Schedule
-        </h2>
+      <section>
+        <SectionHeader title="Weekly Schedule" icon="▦" />
         <WeeklyCalendar
           scheduledWorkouts={scheduledWorkouts}
           onSelectWorkout={handleStartWorkout}
         />
-      </div>
+      </section>
 
       {/* Progress Comparison */}
       {comparison.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            This Week vs 4 Weeks Ago
-          </h2>
-          <div className="space-y-3">
+        <section 
+          style={{ 
+            background: 'var(--color-iron)',
+            border: '1px solid var(--color-steel)',
+            borderRadius: 'var(--radius-md)',
+            padding: '1.5rem'
+          }}
+        >
+          <SectionHeader title="Progress vs 4 Weeks Ago" icon="↗" />
+          <div className="space-y-2 mt-4">
             {comparison.slice(0, 5).map((item) => (
               <ComparisonRow key={item.exerciseName} item={item} />
             ))}
           </div>
-        </div>
+        </section>
       )}
 
       {/* Recent Workouts */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Recent Workouts
-        </h2>
+      <section 
+        style={{ 
+          background: 'var(--color-iron)',
+          border: '1px solid var(--color-steel)',
+          borderRadius: 'var(--radius-md)',
+          padding: '1.5rem'
+        }}
+      >
+        <SectionHeader title="Recent Workouts" icon="◷" />
         {recentWorkouts.length > 0 ? (
-          <div className="space-y-3">
+          <div className="space-y-2 mt-4">
             {recentWorkouts.map((workout) => (
               <RecentWorkoutRow key={workout.id} workout={workout} />
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 dark:text-gray-400 italic">No workouts logged yet</p>
+          <p 
+            className="mt-4"
+            style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)', fontStyle: 'italic' }}
+          >
+            No workouts logged yet
+          </p>
+        )}
+      </section>
+    </div>
+  )
+}
+
+function SectionHeader({ title, icon }: { title: string; icon: string }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span style={{ color: 'var(--color-ember)', fontSize: '1.25rem' }}>{icon}</span>
+      <h2 
+        style={{ 
+          fontFamily: 'var(--font-display)',
+          fontWeight: 600,
+          color: 'var(--color-chalk)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+          fontSize: '1.125rem'
+        }}
+      >
+        {title}
+      </h2>
+    </div>
+  )
+}
+
+function VolumeCard({ 
+  label, 
+  volume, 
+  sessions, 
+  change,
+  isHighlighted 
+}: { 
+  label: string
+  volume: number
+  sessions: number
+  change?: number | null
+  isHighlighted?: boolean
+}) {
+  return (
+    <div 
+      className="p-4"
+      style={{ 
+        background: 'var(--color-iron)',
+        border: `1px solid ${isHighlighted ? 'var(--color-ember)' : 'var(--color-steel)'}`,
+        borderRadius: 'var(--radius-md)',
+        boxShadow: isHighlighted ? 'var(--shadow-glow)' : 'none'
+      }}
+    >
+      <div 
+        className="text-xs uppercase tracking-wider mb-1"
+        style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-display)' }}
+      >
+        {label}
+      </div>
+      <div 
+        className="text-3xl font-bold"
+        style={{ 
+          color: isHighlighted ? 'var(--color-ember)' : 'var(--color-chalk)',
+          fontFamily: 'var(--font-display)'
+        }}
+      >
+        {volume.toLocaleString()}
+        <span className="text-lg ml-1" style={{ color: 'var(--color-zinc)' }}>#</span>
+      </div>
+      <div className="flex items-center gap-2 mt-1">
+        <span 
+          className="text-xs"
+          style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)' }}
+        >
+          {sessions} session{sessions !== 1 ? 's' : ''}
+        </span>
+        {change !== null && change !== undefined && (
+          <span
+            className="text-xs px-1.5 py-0.5"
+            style={{ 
+              background: change > 0 ? 'var(--color-success-muted)' : change < 0 ? 'var(--color-danger-muted)' : 'var(--color-concrete)',
+              color: change > 0 ? 'var(--color-success)' : change < 0 ? 'var(--color-danger)' : 'var(--color-ash)',
+              borderRadius: 'var(--radius-sm)',
+              fontFamily: 'var(--font-mono)',
+              fontWeight: 600
+            }}
+          >
+            {change > 0 && '+'}
+            {change}%
+          </span>
         )}
       </div>
     </div>
@@ -282,32 +441,57 @@ function ComparisonRow({ item }: { item: ExerciseComparison }) {
   const isNegative = hasChange && item.change! < 0
 
   return (
-    <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
+    <div 
+      className="flex items-center justify-between py-3 border-b last:border-0"
+      style={{ borderColor: 'var(--color-concrete)' }}
+    >
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-gray-900 dark:text-white truncate">{item.exerciseName}</div>
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          {item.currentWeek ? `${item.currentWeek.e1rm}#` : '—'}
-          {item.pastWeek && (
-            <span className="text-gray-400 dark:text-gray-500"> vs {item.pastWeek.e1rm}#</span>
-          )}
+        <div 
+          className="truncate"
+          style={{ 
+            color: 'var(--color-chalk)',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.875rem'
+          }}
+        >
+          {item.exerciseName}
+        </div>
+        <div 
+          className="text-sm mt-0.5"
+          style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)' }}
+        >
+          {item.currentWeek ? (
+            <>
+              <span style={{ color: 'var(--color-ember)' }}>{item.currentWeek.e1rm}#</span>
+              {item.pastWeek && (
+                <span> vs {item.pastWeek.e1rm}#</span>
+              )}
+            </>
+          ) : '—'}
         </div>
       </div>
       {hasChange && (
         <div
-          className={`text-sm font-medium px-2 py-1 rounded ${
-            isPositive
-              ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300'
-              : isNegative
-                ? 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
-          }`}
+          className="text-sm px-2 py-1"
+          style={{ 
+            background: isPositive ? 'var(--color-success-muted)' : isNegative ? 'var(--color-danger-muted)' : 'var(--color-concrete)',
+            color: isPositive ? 'var(--color-success)' : isNegative ? 'var(--color-danger)' : 'var(--color-ash)',
+            borderRadius: 'var(--radius-sm)',
+            fontFamily: 'var(--font-mono)',
+            fontWeight: 600
+          }}
         >
           {isPositive && '+'}
           {item.change}%
         </div>
       )}
       {!hasChange && item.currentWeek && !item.pastWeek && (
-        <div className="text-xs text-gray-400 dark:text-gray-500 italic">new</div>
+        <div 
+          className="text-xs uppercase"
+          style={{ color: 'var(--color-info)', fontFamily: 'var(--font-display)' }}
+        >
+          New
+        </div>
       )}
     </div>
   )
@@ -317,16 +501,44 @@ function RecentWorkoutRow({ workout }: { workout: RecentWorkout }) {
   const formatted = formatWorkoutDate(workout.date)
 
   return (
-    <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
+    <div 
+      className="flex items-center justify-between py-3 border-b last:border-0"
+      style={{ borderColor: 'var(--color-concrete)' }}
+    >
       <div>
-        <div className="font-medium text-gray-900 dark:text-white">
+        <div 
+          style={{ 
+            color: 'var(--color-chalk)',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.875rem'
+          }}
+        >
           {workout.templateName ?? 'Ad-hoc Workout'}
         </div>
-        <div className="text-sm text-gray-500 dark:text-gray-400">{formatted}</div>
+        <div 
+          className="text-sm mt-0.5"
+          style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)' }}
+        >
+          {formatted}
+        </div>
       </div>
-      <div className="text-right text-sm text-gray-500 dark:text-gray-400">
-        <div>{workout.exerciseCount} exercises</div>
-        <div>{workout.totalVolume.toLocaleString()}# volume</div>
+      <div className="text-right">
+        <div 
+          style={{ 
+            color: 'var(--color-ember)',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.875rem',
+            fontWeight: 600
+          }}
+        >
+          {workout.totalVolume.toLocaleString()}#
+        </div>
+        <div 
+          className="text-xs mt-0.5"
+          style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)' }}
+        >
+          {workout.exerciseCount} exercises
+        </div>
       </div>
     </div>
   )

@@ -62,26 +62,71 @@ export function HistoryPage() {
   // Main history list view
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Workout History</h1>
+      {/* Header */}
+      <div>
+        <h1 
+          className="text-2xl tracking-wide"
+          style={{ fontFamily: 'var(--font-display)', color: 'var(--color-bone)' }}
+        >
+          HISTORY
+        </h1>
+        <p 
+          className="text-sm mt-1"
+          style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+        >
+          {workouts.length} workout{workouts.length !== 1 ? 's' : ''} logged
+        </p>
+      </div>
 
       {isLoading ? (
-        <div className="text-gray-500 dark:text-gray-400">Loading...</div>
+        <div className="flex items-center justify-center py-16">
+          <div 
+            className="text-center"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
+            <div 
+              className="w-8 h-8 mx-auto mb-3 border-2 border-t-transparent rounded-full animate-spin"
+              style={{ borderColor: 'var(--color-graphite)', borderTopColor: 'transparent' }}
+            />
+            Loading history...
+          </div>
+        </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-6">
           {/* Recent Workouts */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="font-semibold text-gray-900 dark:text-white">Recent Workouts</h2>
+          <div className="card" style={{ padding: 0 }}>
+            <div 
+              className="px-4 py-3 flex items-center justify-between"
+              style={{ borderBottom: '1px solid var(--color-steel)' }}
+            >
+              <h2 
+                className="text-sm tracking-wide"
+                style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ash)' }}
+              >
+                RECENT WORKOUTS
+              </h2>
+              <span 
+                className="text-xs tabular-nums"
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+              >
+                {workouts.length}
+              </span>
             </div>
             {workouts.length === 0 ? (
-              <div className="p-4 text-gray-500 dark:text-gray-400 italic">No workouts logged yet</div>
+              <div 
+                className="p-6 text-center"
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+              >
+                No workouts logged yet
+              </div>
             ) : (
-              <div className="divide-y divide-gray-100 dark:divide-gray-700">
-                {workouts.map((workout) => (
+              <div>
+                {workouts.map((workout, i) => (
                   <WorkoutRow
                     key={workout.id}
                     workout={workout}
                     onDelete={() => setDeletingWorkout(workout)}
+                    isLast={i === workouts.length - 1}
                   />
                 ))}
               </div>
@@ -89,34 +134,73 @@ export function HistoryPage() {
           </div>
 
           {/* Exercise List */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="font-semibold text-gray-900 dark:text-white">Exercises</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Tap to view history</p>
+          <div className="card" style={{ padding: 0 }}>
+            <div 
+              className="px-4 py-3"
+              style={{ borderBottom: '1px solid var(--color-steel)' }}
+            >
+              <h2 
+                className="text-sm tracking-wide"
+                style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ash)' }}
+              >
+                EXERCISES
+              </h2>
+              <p 
+                className="text-xs mt-0.5"
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+              >
+                Tap to view history
+              </p>
             </div>
             {exercises.length === 0 ? (
-              <div className="p-4 text-gray-500 dark:text-gray-400 italic">No exercises logged yet</div>
+              <div 
+                className="p-6 text-center"
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+              >
+                No exercises logged yet
+              </div>
             ) : (
-              <div className="divide-y divide-gray-100 dark:divide-gray-700">
-                {exercises.map((ex) => (
+              <div>
+                {exercises.map((ex, i) => (
                   <button
                     key={ex.name}
                     onClick={() => setView({ type: 'exercise', name: ex.name, exerciseType: ex.exerciseType })}
-                    className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center justify-between"
+                    className="w-full px-4 py-3 text-left flex items-center justify-between transition-colors hover:bg-[var(--color-steel)]"
+                    style={{ 
+                      borderBottom: i < exercises.length - 1 ? '1px solid var(--color-steel)' : 'none' 
+                    }}
                   >
                     <div className="flex items-center gap-2">
-                      <span className="text-gray-900 dark:text-white">{ex.name}</span>
+                      <span 
+                        className="text-sm"
+                        style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ash)' }}
+                      >
+                        {ex.name}
+                      </span>
                       {ex.exerciseType !== 'weighted' && (
-                        <span className={`text-xs px-1.5 py-0.5 rounded ${
-                          ex.exerciseType === 'bodyweight' 
-                            ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300' 
-                            : 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300'
-                        }`}>
+                        <span 
+                          className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded"
+                          style={{ 
+                            fontFamily: 'var(--font-mono)',
+                            background: ex.exerciseType === 'bodyweight' 
+                              ? 'var(--color-success-muted)' 
+                              : 'var(--color-info)',
+                            color: 'var(--color-bone)'
+                          }}
+                        >
                           {ex.exerciseType === 'bodyweight' ? 'BW' : 'Cardio'}
                         </span>
                       )}
                     </div>
-                    <span className="text-gray-400 dark:text-gray-500">&rarr;</span>
+                    <svg 
+                      className="w-4 h-4" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                      style={{ color: 'var(--color-zinc)' }}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </button>
                 ))}
               </div>
@@ -139,7 +223,15 @@ export function HistoryPage() {
   )
 }
 
-function WorkoutRow({ workout, onDelete }: { workout: WorkoutSessionWithSets; onDelete: () => void }) {
+function WorkoutRow({ 
+  workout, 
+  onDelete, 
+  isLast = false 
+}: { 
+  workout: WorkoutSessionWithSets
+  onDelete: () => void
+  isLast?: boolean 
+}) {
   const formatted = formatWorkoutDate(workout.date)
 
   // Group sets by exercise
@@ -150,21 +242,38 @@ function WorkoutRow({ workout, onDelete }: { workout: WorkoutSessionWithSets; on
   const totalVolume = workout.logged_sets.reduce((sum, s) => sum + s.weight * s.reps, 0)
 
   return (
-    <div className="px-4 py-3 flex items-start justify-between gap-2">
+    <div 
+      className="px-4 py-3 flex items-start justify-between gap-3 group"
+      style={{ borderBottom: isLast ? 'none' : '1px solid var(--color-steel)' }}
+    >
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-1">
-          <span className="font-medium text-gray-900 dark:text-white">{formatted}</span>
+          <span 
+            className="text-sm"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ash)' }}
+          >
+            {formatted}
+          </span>
           {workout.duration_minutes && (
-            <span className="text-sm text-gray-500 dark:text-gray-400">{workout.duration_minutes}min</span>
+            <span 
+              className="text-xs tabular-nums"
+              style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+            >
+              {workout.duration_minutes}min
+            </span>
           )}
         </div>
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          {exerciseCount} exercises, {totalSets} sets, {totalVolume.toLocaleString()}# volume
+        <div 
+          className="text-xs tabular-nums"
+          style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+        >
+          {exerciseCount} ex · {totalSets} sets · {totalVolume.toLocaleString()}#
         </div>
       </div>
       <button
         onClick={onDelete}
-        className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded"
+        className="p-1.5 rounded transition-colors opacity-50 group-hover:opacity-100 hover:bg-[var(--color-danger-muted)]"
+        style={{ color: 'var(--color-slate)' }}
         title="Delete workout"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

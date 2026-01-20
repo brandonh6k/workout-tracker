@@ -54,37 +54,22 @@ export function ConfirmDialog({
 
   if (!isOpen) return null
 
-  const variantStyles = {
-    danger: {
-      button: 'bg-red-600 hover:bg-red-700 text-white',
-      header: 'bg-red-50 dark:bg-red-900/30',
-      footer: 'bg-red-100 dark:bg-red-900/20 border-red-200 dark:border-red-800',
-      title: 'text-red-900 dark:text-red-200',
-      message: 'text-red-700 dark:text-red-300',
-    },
-    warning: {
-      button: 'bg-yellow-600 hover:bg-yellow-700 text-white',
-      header: 'bg-yellow-50 dark:bg-yellow-900/30',
-      footer: 'bg-yellow-100 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800',
-      title: 'text-yellow-900 dark:text-yellow-200',
-      message: 'text-yellow-700 dark:text-yellow-300',
-    },
-    default: {
-      button: 'bg-blue-600 hover:bg-blue-700 text-white',
-      header: 'bg-white dark:bg-gray-800',
-      footer: 'bg-gray-50 dark:bg-gray-700 border-gray-100 dark:border-gray-600',
-      title: 'text-gray-900 dark:text-white',
-      message: 'text-gray-600 dark:text-gray-300',
-    },
+  const getButtonStyle = () => {
+    if (variant === 'danger') {
+      return { background: 'var(--color-danger)', color: 'var(--color-chalk)' }
+    }
+    if (variant === 'warning') {
+      return { background: 'var(--color-heat)', color: 'var(--color-void)' }
+    }
+    return { background: 'var(--color-ember)', color: 'var(--color-void)' }
   }
 
-  const styles = variantStyles[variant]
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center animate-fade-in">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0"
+        style={{ background: 'rgba(0, 0, 0, 0.75)' }}
         onClick={onCancel}
       />
 
@@ -94,26 +79,44 @@ export function ConfirmDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby="dialog-title"
-        className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 overflow-hidden"
+        className="relative max-w-sm w-full mx-4 overflow-hidden rounded animate-slide-up"
+        style={{ 
+          background: 'var(--color-iron)',
+          border: '1px solid var(--color-steel)',
+          boxShadow: 'var(--shadow-lg)'
+        }}
       >
-        <div className={`p-6 ${styles.header}`}>
-          <h2 id="dialog-title" className={`text-lg font-semibold mb-2 ${styles.title}`}>
-            {title}
+        <div className="p-6">
+          <h2 
+            id="dialog-title" 
+            className="text-lg tracking-wide mb-2"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-bone)' }}
+          >
+            {title.toUpperCase()}
           </h2>
-          <p className={styles.message}>{message}</p>
+          <p 
+            className="text-sm"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
+            {message}
+          </p>
         </div>
 
-        <div className={`flex justify-end gap-3 px-6 py-4 border-t ${styles.footer}`}>
+        <div 
+          className="flex justify-end gap-3 px-6 py-4"
+          style={{ borderTop: '1px solid var(--color-steel)', background: 'var(--color-void)' }}
+        >
           <button
             onClick={onCancel}
-            className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md hover:bg-gray-50 dark:hover:bg-gray-500 font-medium text-sm"
+            className="btn btn-secondary text-sm"
           >
             {cancelLabel}
           </button>
           <button
             ref={confirmButtonRef}
             onClick={onConfirm}
-            className={`px-4 py-2 rounded-md font-medium text-sm ${styles.button}`}
+            className="btn text-sm"
+            style={getButtonStyle()}
           >
             {confirmLabel}
           </button>

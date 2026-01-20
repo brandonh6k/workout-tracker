@@ -19,7 +19,8 @@ describe('ConfirmDialog', () => {
 
   it('renders title and message when open', () => {
     render(<ConfirmDialog {...defaultProps} />)
-    expect(screen.getByText('Confirm Action')).toBeInTheDocument()
+    // Title is uppercased in the new design
+    expect(screen.getByText('CONFIRM ACTION')).toBeInTheDocument()
     expect(screen.getByText('Are you sure?')).toBeInTheDocument()
   })
 
@@ -64,8 +65,8 @@ describe('ConfirmDialog', () => {
     const onCancel = vi.fn()
     render(<ConfirmDialog {...defaultProps} onCancel={onCancel} />)
 
-    // Click the backdrop (the element with bg-black/50)
-    const backdrop = document.querySelector('.bg-black\\/50')
+    // Click the backdrop (the element with absolute inset-0 that's not the dialog)
+    const backdrop = document.querySelector('.absolute.inset-0')
     expect(backdrop).toBeInTheDocument()
     await user.click(backdrop!)
     expect(onCancel).toHaveBeenCalledTimes(1)
@@ -83,15 +84,16 @@ describe('ConfirmDialog', () => {
   it('applies danger variant styling', () => {
     render(<ConfirmDialog {...defaultProps} variant="danger" />)
     
-    // Check header has danger styling
-    const title = screen.getByText('Confirm Action')
-    expect(title).toHaveClass('text-red-900')
+    // Check the confirm button has danger styling via CSS variables
+    const confirmButton = screen.getByRole('button', { name: 'Confirm' })
+    expect(confirmButton).toHaveStyle({ background: 'var(--color-danger)' })
   })
 
   it('applies warning variant styling', () => {
     render(<ConfirmDialog {...defaultProps} variant="warning" />)
     
-    const title = screen.getByText('Confirm Action')
-    expect(title).toHaveClass('text-yellow-900')
+    // Check the confirm button has warning styling via CSS variables  
+    const confirmButton = screen.getByRole('button', { name: 'Confirm' })
+    expect(confirmButton).toHaveStyle({ background: 'var(--color-heat)' })
   })
 })

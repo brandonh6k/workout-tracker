@@ -104,16 +104,20 @@ export function ScheduleForm({
       {error && <ErrorMessage message={error} />}
 
       {/* Template selection */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <label htmlFor="template" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Select Template
+      <div className="card space-y-3">
+        <label 
+          htmlFor="template" 
+          className="block text-xs uppercase tracking-wider"
+          style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+        >
+          Template
         </label>
         <select
           id="template"
           value={selectedTemplateId}
           onChange={(e) => setSelectedTemplateId(e.target.value)}
           disabled={!!existingSchedule}
-          className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-800"
+          className="input w-full disabled:opacity-50"
         >
           <option value="">Choose a template...</option>
           {templates.map((template) => (
@@ -126,13 +130,23 @@ export function ScheduleForm({
 
       {/* Exercise weights */}
       {selectedTemplate && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Target Weights</h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Set the target weight for each exercise. These will be pre-filled when you start the workout.
-          </p>
+        <div className="card space-y-4">
+          <div>
+            <h2 
+              className="text-base tracking-wide"
+              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ash)' }}
+            >
+              TARGET WEIGHTS
+            </h2>
+            <p 
+              className="text-xs mt-1"
+              style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+            >
+              Pre-filled when you start the workout
+            </p>
+          </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             {selectedTemplate.template_exercises.map((ex) => {
               const weight = exerciseWeights.find(
                 (ew) => ew.exercise_name === ex.exercise_name
@@ -141,39 +155,69 @@ export function ScheduleForm({
               return (
                 <div
                   key={ex.id}
-                  className="flex items-center justify-between gap-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg"
+                  className="flex items-center justify-between gap-4 p-3 rounded"
+                  style={{ background: 'var(--color-void)', border: '1px solid var(--color-steel)' }}
                 >
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-900 dark:text-white">{ex.exercise_name}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {ex.target_sets} sets x {ex.target_reps} reps
+                  <div className="flex-1 min-w-0">
+                    <div 
+                      className="text-sm truncate"
+                      style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ash)' }}
+                    >
+                      {ex.exercise_name}
+                    </div>
+                    <div 
+                      className="text-xs tabular-nums"
+                      style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+                    >
+                      {ex.target_sets}×{ex.target_reps}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
                     <button
                       type="button"
                       onClick={() => updateWeight(ex.exercise_name, Math.max(0, weight - 5))}
-                      className="w-8 h-8 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200"
+                      className="w-8 h-8 flex items-center justify-center rounded transition-colors"
+                      style={{ 
+                        background: 'var(--color-steel)', 
+                        color: 'var(--color-ash)',
+                        border: '1px solid var(--color-graphite)'
+                      }}
                     >
-                      -
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                      </svg>
                     </button>
-                    <input
-                      type="number"
-                      min={0}
-                      step={2.5}
-                      value={weight}
-                      onChange={(e) =>
-                        updateWeight(ex.exercise_name, parseFloat(e.target.value) || 0)
-                      }
-                      className="w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    />
-                    <span className="text-gray-500 dark:text-gray-400">#</span>
+                    <div className="flex items-center">
+                      <input
+                        type="number"
+                        min={0}
+                        step={2.5}
+                        value={weight}
+                        onChange={(e) =>
+                          updateWeight(ex.exercise_name, parseFloat(e.target.value) || 0)
+                        }
+                        className="input w-16 text-center py-1.5 px-1 text-sm tabular-nums"
+                      />
+                      <span 
+                        className="text-xs ml-1"
+                        style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+                      >
+                        #
+                      </span>
+                    </div>
                     <button
                       type="button"
                       onClick={() => updateWeight(ex.exercise_name, weight + 5)}
-                      className="w-8 h-8 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200"
+                      className="w-8 h-8 flex items-center justify-center rounded transition-colors"
+                      style={{ 
+                        background: 'var(--color-steel)', 
+                        color: 'var(--color-ash)',
+                        border: '1px solid var(--color-graphite)'
+                      }}
                     >
-                      +
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
                     </button>
                   </div>
                 </div>
@@ -189,16 +233,16 @@ export function ScheduleForm({
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
-          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium disabled:opacity-50"
+          className="btn btn-secondary disabled:opacity-50"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isSubmitting || !selectedTemplateId}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium disabled:opacity-50"
+          className="btn btn-primary disabled:opacity-50"
         >
-          {isSubmitting ? 'Saving...' : existingSchedule ? 'Update Schedule' : 'Schedule Workout'}
+          {isSubmitting ? 'Saving...' : existingSchedule ? 'Update' : 'Schedule'}
         </button>
       </div>
     </form>

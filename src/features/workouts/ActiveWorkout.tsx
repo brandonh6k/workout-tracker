@@ -148,8 +148,26 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <div className="text-white">Starting workout...</div>
+      <div 
+        className="min-h-screen flex items-center justify-center"
+        style={{ background: 'var(--color-void)' }}
+      >
+        <div 
+          className="text-center"
+          style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+        >
+          <div 
+            className="w-12 h-12 mx-auto mb-4"
+            style={{ 
+              border: '3px solid var(--color-steel)',
+              borderTopColor: 'var(--color-ember)',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }}
+          />
+          INITIALIZING...
+        </div>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     )
   }
@@ -157,13 +175,31 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900 p-4">
-        <div className="bg-red-900 text-red-100 p-4 rounded-lg max-w-md">
-          <p>{error}</p>
-          <button
-            onClick={onCancel}
-            className="mt-4 px-4 py-2 bg-red-700 rounded hover:bg-red-600"
+      <div 
+        className="min-h-screen flex items-center justify-center p-4"
+        style={{ background: 'var(--color-void)' }}
+      >
+        <div 
+          className="max-w-md p-6 text-center"
+          style={{ 
+            background: 'var(--color-danger-muted)',
+            border: '1px solid var(--color-danger)',
+            borderRadius: 'var(--radius-md)'
+          }}
+        >
+          <div 
+            className="text-4xl mb-4"
+            style={{ color: 'var(--color-danger)' }}
           >
+            ⚠
+          </div>
+          <p 
+            className="mb-6"
+            style={{ color: 'var(--color-chalk)', fontFamily: 'var(--font-mono)' }}
+          >
+            {error}
+          </p>
+          <button onClick={onCancel} className="btn-danger">
             Go Back
           </button>
         </div>
@@ -175,14 +211,42 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
   if (!state || state.currentExerciseIndex >= state.exercises.length) {
     const duration = state ? Math.round((Date.now() - state.startTime) / 60000) : 0
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 p-4">
-        <div className="text-center text-white">
-          <div className="text-6xl mb-4">Done!</div>
-          <h1 className="text-3xl font-bold mb-2">Workout Complete!</h1>
-          <p className="text-gray-400 mb-8">{duration} minutes</p>
+      <div 
+        className="min-h-screen flex flex-col items-center justify-center p-4"
+        style={{ background: 'var(--color-void)' }}
+      >
+        <div className="text-center animate-slide-up">
+          <div 
+            className="text-8xl mb-6"
+            style={{ 
+              fontFamily: 'var(--font-display)',
+              color: 'var(--color-ember)',
+              textShadow: '0 0 40px rgba(245, 158, 11, 0.5)'
+            }}
+          >
+            DONE
+          </div>
+          <h1 
+            className="text-3xl mb-2"
+            style={{ 
+              fontFamily: 'var(--font-display)',
+              color: 'var(--color-chalk)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em'
+            }}
+          >
+            Workout Complete
+          </h1>
+          <p 
+            className="mb-8"
+            style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)' }}
+          >
+            {duration} minutes
+          </p>
           <button
             onClick={handleFinishWorkout}
-            className="px-8 py-4 bg-green-600 rounded-lg text-xl font-bold hover:bg-green-500"
+            className="btn-primary text-lg px-8 py-4"
+            style={{ boxShadow: 'var(--shadow-glow)' }}
           >
             Save & Finish
           </button>
@@ -205,48 +269,98 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
   // Resting phase - full screen replacement
   if (state.phase.type === 'resting') {
     const restTimeRemaining = Math.max(0, Math.ceil((state.phase.restTimerEnd - Date.now()) / 1000))
+    const isUrgent = restTimeRemaining <= 10
 
     return (
-      <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+      <div 
+        className="min-h-screen flex flex-col"
+        style={{ background: 'var(--color-void)' }}
+      >
         {/* Header */}
-        <header className="bg-gray-800 px-4 py-3 flex items-center justify-between">
-          <button onClick={handleAbandon} className="text-gray-400 hover:text-white">
-            X Cancel
-          </button>
-          <div className="text-sm text-gray-400">
-            {completedExercises}/{totalExercises} exercises
-          </div>
-          <div className="text-sm text-gray-400">{elapsedMinutes}m</div>
-        </header>
+        <WorkoutHeader
+          onAbandon={handleAbandon}
+          completedExercises={completedExercises}
+          totalExercises={totalExercises}
+          elapsedMinutes={elapsedMinutes}
+        />
 
         {/* Rest Timer Content */}
         <div className="flex-1 flex flex-col items-center justify-center p-4">
-          <div className="text-gray-400 text-2xl mb-2">Rest</div>
-          <div
-            className={`font-bold mb-6 transition-all ${
-              restTimeRemaining <= 10 ? 'text-8xl text-sky-400' : 'text-7xl text-white'
-            }`}
+          <div 
+            className="text-xl uppercase tracking-widest mb-4"
+            style={{ 
+              fontFamily: 'var(--font-display)',
+              color: 'var(--color-zinc)'
+            }}
+          >
+            Rest
+          </div>
+          
+          {/* Big timer */}
+          <div 
+            className="mb-8 transition-all duration-300"
+            style={{ 
+              fontFamily: 'var(--font-display)',
+              fontSize: isUrgent ? '8rem' : '6rem',
+              fontWeight: 700,
+              color: isUrgent ? 'var(--color-ember)' : 'var(--color-chalk)',
+              textShadow: isUrgent ? '0 0 40px rgba(245, 158, 11, 0.6)' : 'none',
+              lineHeight: 1
+            }}
           >
             {Math.floor(restTimeRemaining / 60)}:{(restTimeRemaining % 60).toString().padStart(2, '0')}
           </div>
 
           {/* AMRAP adjustment */}
           {state.phase.isAmrap && lastCompletedSetData && (
-            <div className="bg-gray-800 rounded-lg p-4 mb-6">
-              <div className="text-gray-400 text-sm mb-2 text-center">Adjust last set reps (AMRAP)</div>
+            <div 
+              className="p-4 mb-6"
+              style={{ 
+                background: 'var(--color-steel)',
+                border: '1px solid var(--color-concrete)',
+                borderRadius: 'var(--radius-md)'
+              }}
+            >
+              <div 
+                className="text-sm text-center mb-3 uppercase tracking-wider"
+                style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-display)' }}
+              >
+                Adjust AMRAP Reps
+              </div>
               <div className="flex items-center justify-center gap-4">
                 <button
                   onClick={() => handleAdjustLastCompletedReps(-1)}
-                  className="w-12 h-12 bg-gray-700 rounded-lg text-xl hover:bg-gray-600"
+                  className="w-14 h-14 text-2xl"
+                  style={{ 
+                    background: 'var(--color-concrete)',
+                    color: 'var(--color-chalk)',
+                    borderRadius: 'var(--radius-sm)',
+                    fontFamily: 'var(--font-mono)'
+                  }}
                 >
-                  -1
+                  −
                 </button>
-                <div className="w-20 text-center text-3xl font-bold">{lastCompletedSetData.reps}</div>
+                <div 
+                  className="w-24 text-center text-4xl"
+                  style={{ 
+                    fontFamily: 'var(--font-display)',
+                    fontWeight: 700,
+                    color: 'var(--color-ember)'
+                  }}
+                >
+                  {lastCompletedSetData.reps}
+                </div>
                 <button
                   onClick={() => handleAdjustLastCompletedReps(1)}
-                  className="w-12 h-12 bg-gray-700 rounded-lg text-xl hover:bg-gray-600"
+                  className="w-14 h-14 text-2xl"
+                  style={{ 
+                    background: 'var(--color-concrete)',
+                    color: 'var(--color-chalk)',
+                    borderRadius: 'var(--radius-sm)',
+                    fontFamily: 'var(--font-mono)'
+                  }}
                 >
-                  +1
+                  +
                 </button>
               </div>
             </div>
@@ -254,31 +368,57 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
 
           {/* Rest control buttons */}
           <div className="flex gap-3 mb-8">
-            <button
-              onClick={handleExtendRest}
-              className="px-6 py-3 bg-gray-700 rounded-lg text-lg hover:bg-gray-600"
-            >
+            <button onClick={handleExtendRest} className="btn-secondary">
               +30s
             </button>
-            <button
-              onClick={handleSkipRest}
-              className="px-6 py-3 bg-gray-700 rounded-lg text-lg hover:bg-gray-600"
-            >
+            <button onClick={handleSkipRest} className="btn-secondary">
               Skip Rest
             </button>
           </div>
 
-          {/* Up Next - prominently displayed */}
-          <div className="w-full max-w-sm bg-gray-800 rounded-lg p-4">
-            <div className="text-gray-400 text-sm mb-2">Up next</div>
+          {/* Up Next */}
+          <div 
+            className="w-full max-w-sm p-4"
+            style={{ 
+              background: 'var(--color-iron)',
+              border: '1px solid var(--color-steel)',
+              borderRadius: 'var(--radius-md)'
+            }}
+          >
+            <div 
+              className="text-xs uppercase tracking-wider mb-2"
+              style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-display)' }}
+            >
+              Up Next
+            </div>
             {isLastExercise ? (
-              <div className="text-green-400 text-xl font-bold">Workout Complete!</div>
+              <div 
+                className="text-xl"
+                style={{ 
+                  fontFamily: 'var(--font-display)',
+                  color: 'var(--color-success)',
+                  textTransform: 'uppercase'
+                }}
+              >
+                Workout Complete!
+              </div>
             ) : (
               <>
-                <div className="text-xl font-bold">{nextExercise.name}</div>
-                <div className="text-gray-400 text-sm">
-                  Set {nextSetNumber} of {nextExercise.targetSets} &middot;{' '}
-                  {nextExercise.sets[state.currentSetIndex]?.weight}# x {nextExercise.targetReps} reps
+                <div 
+                  className="text-xl"
+                  style={{ 
+                    fontFamily: 'var(--font-display)',
+                    color: 'var(--color-chalk)',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  {nextExercise.name}
+                </div>
+                <div 
+                  className="mt-1"
+                  style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)', fontSize: '0.875rem' }}
+                >
+                  Set {nextSetNumber}/{nextExercise.targetSets} · {nextExercise.sets[state.currentSetIndex]?.weight}# × {nextExercise.targetReps}
                 </div>
               </>
             )}
@@ -290,36 +430,64 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
 
   // Active set phase
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+    <div 
+      className="min-h-screen flex flex-col"
+      style={{ background: 'var(--color-void)' }}
+    >
       {/* Header */}
-      <header className="bg-gray-800 px-4 py-3 flex items-center justify-between">
-        <button onClick={handleAbandon} className="text-gray-400 hover:text-white">
-          X Cancel
-        </button>
-        <div className="text-sm text-gray-400">
-          {completedExercises}/{totalExercises} exercises
-        </div>
-        <div className="text-sm text-gray-400">{elapsedMinutes}m</div>
-      </header>
+      <WorkoutHeader
+        onAbandon={handleAbandon}
+        completedExercises={completedExercises}
+        totalExercises={totalExercises}
+        elapsedMinutes={elapsedMinutes}
+      />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center p-4">
         {/* Exercise Name */}
-        <h1 className="text-3xl font-bold text-center mb-1">{currentExercise.name}</h1>
-        {currentExercise.isAmrap && <div className="text-sm text-orange-400 mb-2">AMRAP</div>}
+        <h1 
+          className="text-3xl text-center mb-1"
+          style={{ 
+            fontFamily: 'var(--font-display)',
+            fontWeight: 700,
+            color: 'var(--color-chalk)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em'
+          }}
+        >
+          {currentExercise.name}
+        </h1>
+        {currentExercise.isAmrap && (
+          <div 
+            className="text-sm mb-2 px-2 py-0.5"
+            style={{ 
+              background: 'var(--color-flame)',
+              color: 'var(--color-void)',
+              fontFamily: 'var(--font-display)',
+              fontWeight: 600,
+              borderRadius: 'var(--radius-sm)',
+              textTransform: 'uppercase'
+            }}
+          >
+            AMRAP
+          </div>
+        )}
 
-        {/* Set Progress Dots */}
-        <div className="flex gap-2 mb-8">
+        {/* Set Progress */}
+        <div className="flex gap-2 my-6">
           {currentExercise.sets.map((set, idx) => (
             <div
               key={idx}
-              className={`w-3 h-3 rounded-full ${
-                set.completed
-                  ? 'bg-green-500'
-                  : idx === state.currentSetIndex
-                    ? 'bg-blue-500'
-                    : 'bg-gray-600'
-              }`}
+              className="w-4 h-4 transition-all"
+              style={{ 
+                background: set.completed 
+                  ? 'var(--color-success)' 
+                  : idx === state.currentSetIndex 
+                    ? 'var(--color-ember)'
+                    : 'var(--color-graphite)',
+                borderRadius: 'var(--radius-sm)',
+                boxShadow: idx === state.currentSetIndex ? 'var(--shadow-glow)' : 'none'
+              }}
             />
           ))}
         </div>
@@ -339,36 +507,128 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
         {/* Complete Set Button */}
         <button
           onClick={handleCompleteSet}
-          className="w-full max-w-xs py-6 bg-blue-600 rounded-xl text-2xl font-bold hover:bg-blue-500 active:bg-blue-700"
+          className="w-full max-w-xs py-6 text-2xl animate-pulse-glow"
+          style={{ 
+            background: 'linear-gradient(135deg, var(--color-ember) 0%, var(--color-flame) 100%)',
+            color: 'var(--color-void)',
+            fontFamily: 'var(--font-display)',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            borderRadius: 'var(--radius-md)',
+            boxShadow: 'var(--shadow-lg), var(--shadow-glow)'
+          }}
         >
           Done
         </button>
 
-        {/* Skip to next exercise - only show if there are remaining sets */}
+        {/* Skip to next exercise */}
         {state.currentSetIndex < currentExercise.targetSets - 1 && (
           <button
             onClick={handleSkipExercise}
-            className="mt-3 text-gray-400 hover:text-gray-200 text-sm"
+            className="mt-4 text-sm transition-colors"
+            style={{ 
+              color: 'var(--color-zinc)',
+              fontFamily: 'var(--font-mono)'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-chalk)'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-zinc)'}
           >
-            Skip to next exercise
+            Skip to next exercise →
           </button>
         )}
       </div>
 
       {/* Exercise Queue */}
-      <div className="bg-gray-800 px-4 py-3">
-        <div className="text-xs text-gray-400 mb-2">Coming up:</div>
+      <div 
+        className="px-4 py-3"
+        style={{ 
+          background: 'var(--color-iron)',
+          borderTop: '1px solid var(--color-steel)'
+        }}
+      >
+        <div 
+          className="text-xs uppercase tracking-wider mb-2"
+          style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-display)' }}
+        >
+          Coming Up
+        </div>
         <div className="flex gap-2 overflow-x-auto pb-2">
           {state.exercises.slice(state.currentExerciseIndex + 1).map((ex, idx) => (
-            <div key={idx} className="flex-shrink-0 bg-gray-700 px-3 py-2 rounded text-sm">
+            <div 
+              key={idx} 
+              className="flex-shrink-0 px-3 py-2 text-sm"
+              style={{ 
+                background: 'var(--color-steel)',
+                color: 'var(--color-ash)',
+                borderRadius: 'var(--radius-sm)',
+                fontFamily: 'var(--font-mono)'
+              }}
+            >
               {ex.name}
             </div>
           ))}
           {state.currentExerciseIndex >= state.exercises.length - 1 && (
-            <div className="text-gray-500 text-sm">Last exercise!</div>
+            <div 
+              className="text-sm"
+              style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)' }}
+            >
+              Last exercise!
+            </div>
           )}
         </div>
       </div>
     </div>
+  )
+}
+
+function WorkoutHeader({ 
+  onAbandon, 
+  completedExercises, 
+  totalExercises, 
+  elapsedMinutes 
+}: { 
+  onAbandon: () => void
+  completedExercises: number
+  totalExercises: number
+  elapsedMinutes: number
+}) {
+  return (
+    <header 
+      className="px-4 py-3 flex items-center justify-between"
+      style={{ 
+        background: 'var(--color-iron)',
+        borderBottom: '1px solid var(--color-steel)'
+      }}
+    >
+      <button 
+        onClick={onAbandon} 
+        className="transition-colors"
+        style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)', fontSize: '0.875rem' }}
+        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-danger)'}
+        onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-zinc)'}
+      >
+        ✕ CANCEL
+      </button>
+      <div 
+        style={{ 
+          color: 'var(--color-ash)',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.875rem'
+        }}
+      >
+        {completedExercises}/{totalExercises} exercises
+      </div>
+      <div 
+        style={{ 
+          color: 'var(--color-ember)',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.875rem',
+          fontWeight: 600
+        }}
+      >
+        {elapsedMinutes}m
+      </div>
+    </header>
   )
 }

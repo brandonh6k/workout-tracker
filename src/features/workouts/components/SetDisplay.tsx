@@ -22,78 +22,119 @@ export function SetDisplay({
   onAdjustReps,
 }: Props) {
   return (
-    <div className="flex flex-col items-center mb-8">
+    <div className="flex flex-col items-center mb-8 w-full max-w-xs">
       {/* Weight - clickable to adjust */}
       <button
         onClick={() => onAdjustModeChange(adjustMode === 'weight' ? null : 'weight')}
-        className={`text-6xl font-bold transition-colors ${
-          adjustMode === 'weight' ? 'text-blue-400' : 'hover:text-gray-300'
-        }`}
+        className="transition-all"
+        style={{ 
+          fontFamily: 'var(--font-display)',
+          fontSize: '5rem',
+          fontWeight: 700,
+          color: adjustMode === 'weight' ? 'var(--color-ember)' : 'var(--color-chalk)',
+          lineHeight: 1,
+          textShadow: adjustMode === 'weight' ? '0 0 30px rgba(245, 158, 11, 0.4)' : 'none'
+        }}
       >
-        {weight}<span className="text-3xl text-gray-400 dark:text-gray-500">#</span>
+        {weight}
+        <span 
+          className="text-3xl ml-1"
+          style={{ color: 'var(--color-zinc)' }}
+        >
+          #
+        </span>
       </button>
 
       {/* Weight adjustment controls */}
       {adjustMode === 'weight' && (
-        <div className="flex items-center justify-center gap-2 mt-2 mb-2">
-          <button
-            onClick={() => onAdjustWeight(-5)}
-            className="w-12 h-12 bg-gray-700 rounded-lg text-xl hover:bg-gray-600"
-          >
-            -5
-          </button>
-          <button
-            onClick={() => onAdjustWeight(-2.5)}
-            className="w-12 h-12 bg-gray-700 rounded-lg hover:bg-gray-600"
-          >
-            -2.5
-          </button>
-          <button
-            onClick={() => onAdjustWeight(2.5)}
-            className="w-12 h-12 bg-gray-700 rounded-lg hover:bg-gray-600"
-          >
-            +2.5
-          </button>
-          <button
-            onClick={() => onAdjustWeight(5)}
-            className="w-12 h-12 bg-gray-700 rounded-lg text-xl hover:bg-gray-600"
-          >
-            +5
-          </button>
+        <div 
+          className="flex items-center justify-center gap-2 mt-3 mb-2 p-2 animate-fade-in"
+          style={{ 
+            background: 'var(--color-steel)',
+            borderRadius: 'var(--radius-md)'
+          }}
+        >
+          <AdjustButton onClick={() => onAdjustWeight(-5)} label="−5" />
+          <AdjustButton onClick={() => onAdjustWeight(-2.5)} label="−2.5" small />
+          <AdjustButton onClick={() => onAdjustWeight(2.5)} label="+2.5" small />
+          <AdjustButton onClick={() => onAdjustWeight(5)} label="+5" />
         </div>
       )}
 
       {/* Reps - clickable to adjust */}
       <button
         onClick={() => onAdjustModeChange(adjustMode === 'reps' ? null : 'reps')}
-        className={`text-4xl mt-4 transition-colors ${
-          adjustMode === 'reps' ? 'text-blue-400' : 'text-gray-300 hover:text-gray-100'
-        }`}
+        className="mt-4 transition-all"
+        style={{ 
+          fontFamily: 'var(--font-display)',
+          fontSize: '2.5rem',
+          fontWeight: 600,
+          color: adjustMode === 'reps' ? 'var(--color-ember)' : 'var(--color-ash)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em'
+        }}
       >
-        {reps} reps
+        {reps} <span style={{ color: 'var(--color-zinc)', fontSize: '1.5rem' }}>reps</span>
       </button>
 
       {/* Reps adjustment controls */}
       {adjustMode === 'reps' && (
-        <div className="flex items-center justify-center gap-4 mt-2">
-          <button
-            onClick={() => onAdjustReps(-1)}
-            className="w-12 h-12 bg-gray-700 rounded-lg text-xl hover:bg-gray-600"
-          >
-            -1
-          </button>
-          <button
-            onClick={() => onAdjustReps(1)}
-            className="w-12 h-12 bg-gray-700 rounded-lg text-xl hover:bg-gray-600"
-          >
-            +1
-          </button>
+        <div 
+          className="flex items-center justify-center gap-3 mt-3 p-2 animate-fade-in"
+          style={{ 
+            background: 'var(--color-steel)',
+            borderRadius: 'var(--radius-md)'
+          }}
+        >
+          <AdjustButton onClick={() => onAdjustReps(-1)} label="−1" />
+          <AdjustButton onClick={() => onAdjustReps(1)} label="+1" />
         </div>
       )}
 
-      <div className="text-sm text-gray-500 mt-6">
-        Set {setNumber} of {totalSets}
+      {/* Set counter */}
+      <div 
+        className="mt-6 px-3 py-1"
+        style={{ 
+          background: 'var(--color-steel)',
+          borderRadius: 'var(--radius-sm)',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.875rem',
+          color: 'var(--color-zinc)'
+        }}
+      >
+        SET <span style={{ color: 'var(--color-chalk)' }}>{setNumber}</span> / {totalSets}
       </div>
     </div>
+  )
+}
+
+function AdjustButton({ 
+  onClick, 
+  label, 
+  small 
+}: { 
+  onClick: () => void
+  label: string
+  small?: boolean
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="transition-all"
+      style={{ 
+        width: small ? '3.5rem' : '3rem',
+        height: '3rem',
+        background: 'var(--color-concrete)',
+        color: 'var(--color-chalk)',
+        borderRadius: 'var(--radius-sm)',
+        fontFamily: 'var(--font-mono)',
+        fontSize: small ? '0.875rem' : '1.125rem',
+        fontWeight: 600
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.background = 'var(--color-graphite)'}
+      onMouseLeave={(e) => e.currentTarget.style.background = 'var(--color-concrete)'}
+    >
+      {label}
+    </button>
   )
 }

@@ -89,45 +89,66 @@ export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Prop
   }, [history])
 
   if (isLoading) {
-    return <div className="text-gray-500 dark:text-gray-400">Loading...</div>
+    return (
+      <div className="flex items-center justify-center py-16">
+        <div 
+          className="text-center"
+          style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+        >
+          <div 
+            className="w-8 h-8 mx-auto mb-3 border-2 border-t-transparent rounded-full animate-spin"
+            style={{ borderColor: 'var(--color-graphite)', borderTopColor: 'transparent' }}
+          />
+          Loading...
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <header className="flex items-center gap-4">
         <button
           onClick={onBack}
-          className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+          className="p-2 hover:bg-[var(--color-steel)] rounded transition-colors"
+          style={{ color: 'var(--color-slate)' }}
         >
-          &larr; Back
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
         </button>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{exerciseName}</h1>
-      </div>
+        <h1 
+          className="text-2xl tracking-wide"
+          style={{ fontFamily: 'var(--font-display)', color: 'var(--color-bone)' }}
+        >
+          {exerciseName.toUpperCase()}
+        </h1>
+      </header>
 
       {/* Stats Cards - different stats for different exercise types */}
       {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {exerciseType === 'weighted' && (
             <>
               <StatCard label="Best Weight" value={`${stats.bestWeight}#`} />
-              <StatCard label="Est. 1RM" value={`${stats.estimated1RM}#`} />
-              <StatCard label="Best Volume" value={`${stats.bestVolume}`} sublabel="(single set)" />
-              <StatCard label="Total Sessions" value={stats.totalSessions.toString()} />
+              <StatCard label="Est. 1RM" value={`${stats.estimated1RM}#`} highlight />
+              <StatCard label="Best Volume" value={`${stats.bestVolume}`} sublabel="single set" />
+              <StatCard label="Sessions" value={stats.totalSessions.toString()} />
             </>
           )}
           {exerciseType === 'bodyweight' && (
             <>
-              <StatCard label="Best Reps" value={stats.bestReps.toString()} sublabel="(single set)" />
-              <StatCard label="Total Reps" value={stats.totalVolume.toString()} sublabel="(all time)" />
+              <StatCard label="Best Reps" value={stats.bestReps.toString()} highlight sublabel="single set" />
+              <StatCard label="Total Reps" value={stats.totalVolume.toString()} sublabel="all time" />
               <StatCard label="Total Sets" value={stats.totalSets.toString()} />
-              <StatCard label="Total Sessions" value={stats.totalSessions.toString()} />
+              <StatCard label="Sessions" value={stats.totalSessions.toString()} />
             </>
           )}
           {exerciseType === 'cardio' && (
             <>
               <StatCard label="Sessions" value={stats.totalSessions.toString()} />
-              <StatCard label="Coming Soon" value="--" sublabel="(cardio stats)" />
+              <StatCard label="Coming Soon" value="--" sublabel="cardio stats" />
             </>
           )}
         </div>
@@ -135,9 +156,14 @@ export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Prop
 
       {/* Progress Chart - only for weighted/bodyweight with enough data */}
       {progressData.length >= 2 && exerciseType !== 'cardio' && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+        <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-900 dark:text-white">Progress</h2>
+            <h2 
+              className="text-sm tracking-wide"
+              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ash)' }}
+            >
+              PROGRESS
+            </h2>
             {exerciseType === 'weighted' && (
               <div className="flex gap-1">
                 <MetricButton
@@ -167,20 +193,34 @@ export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Prop
       )}
 
       {/* History List */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="font-semibold text-gray-900 dark:text-white">History</h2>
+      <div className="card" style={{ padding: 0 }}>
+        <div 
+          className="px-4 py-3"
+          style={{ borderBottom: '1px solid var(--color-steel)' }}
+        >
+          <h2 
+            className="text-sm tracking-wide"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ash)' }}
+          >
+            HISTORY
+          </h2>
         </div>
         
         {history.length === 0 ? (
-          <div className="p-4 text-gray-500 dark:text-gray-400 italic">No history for this exercise</div>
+          <div 
+            className="p-6 text-center"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
+            No history for this exercise
+          </div>
         ) : (
-          <div className="divide-y divide-gray-100 dark:divide-gray-700">
-            {history.map((entry) => (
+          <div>
+            {history.map((entry, i) => (
               <HistoryEntry
                 key={entry.sessionId}
                 entry={entry}
                 isPR={entry.sessionId === prSessionId}
+                isLast={i === history.length - 1}
               />
             ))}
           </div>
@@ -190,17 +230,60 @@ export function ExerciseHistoryView({ exerciseName, exerciseType, onBack }: Prop
   )
 }
 
-function StatCard({ label, value, sublabel }: { label: string; value: string; sublabel?: string }) {
+function StatCard({ 
+  label, 
+  value, 
+  sublabel,
+  highlight = false 
+}: { 
+  label: string
+  value: string
+  sublabel?: string
+  highlight?: boolean
+}) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-      <div className="text-sm text-gray-500 dark:text-gray-400">{label}</div>
-      <div className="text-2xl font-bold text-gray-900 dark:text-white">{value}</div>
-      {sublabel && <div className="text-xs text-gray-400 dark:text-gray-500">{sublabel}</div>}
+    <div 
+      className="card p-3"
+      style={{ 
+        borderColor: highlight ? 'var(--color-ember)' : 'var(--color-steel)',
+      }}
+    >
+      <div 
+        className="text-[10px] uppercase tracking-wider mb-1"
+        style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+      >
+        {label}
+      </div>
+      <div 
+        className="text-xl tabular-nums"
+        style={{ 
+          fontFamily: 'var(--font-display)', 
+          color: highlight ? 'var(--color-ember)' : 'var(--color-bone)' 
+        }}
+      >
+        {value}
+      </div>
+      {sublabel && (
+        <div 
+          className="text-[10px] mt-0.5"
+          style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-graphite)' }}
+        >
+          {sublabel}
+        </div>
+      )}
     </div>
   )
 }
 
-function HistoryEntry({ entry, isPR }: { entry: ExerciseHistoryEntry; isPR: boolean }) {
+function HistoryEntry({ 
+  entry, 
+  isPR, 
+  isLast = false 
+}: { 
+  entry: ExerciseHistoryEntry
+  isPR: boolean
+  isLast?: boolean
+}) {
   const formatted = formatWorkoutDate(entry.date)
 
   // Find best set of this session (by estimated 1RM)
@@ -215,16 +298,31 @@ function HistoryEntry({ entry, isPR }: { entry: ExerciseHistoryEntry; isPR: bool
   }
 
   return (
-    <div className="px-4 py-3">
+    <div 
+      className="px-4 py-3"
+      style={{ borderBottom: isLast ? 'none' : '1px solid var(--color-steel)' }}
+    >
       <div className="flex items-center justify-between mb-2">
-        <div className="font-medium text-gray-900 dark:text-white">{formatted}</div>
+        <div 
+          className="text-sm"
+          style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ash)' }}
+        >
+          {formatted}
+        </div>
         {isPR && (
-          <span className="text-xs bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200 px-2 py-0.5 rounded-full font-medium">
+          <span 
+            className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded"
+            style={{ 
+              fontFamily: 'var(--font-mono)',
+              background: 'var(--color-heat)',
+              color: 'var(--color-void)'
+            }}
+          >
             PR
           </span>
         )}
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5">
         {entry.sets.map((set) => (
           <SetBadge key={set.id} set={set} isBest={set.id === bestSet.id} />
         ))}
@@ -236,13 +334,14 @@ function HistoryEntry({ entry, isPR }: { entry: ExerciseHistoryEntry; isPR: bool
 function SetBadge({ set, isBest }: { set: { weight: number; reps: number; set_number: number }; isBest: boolean }) {
   return (
     <span
-      className={`text-sm px-2 py-1 rounded ${
-        isBest
-          ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 font-medium'
-          : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-      }`}
+      className="text-xs px-2 py-1 rounded tabular-nums"
+      style={{ 
+        fontFamily: 'var(--font-mono)',
+        background: isBest ? 'var(--color-ember)' : 'var(--color-steel)',
+        color: isBest ? 'var(--color-void)' : 'var(--color-ash)'
+      }}
     >
-      {set.weight}# x {set.reps}
+      {set.weight}# × {set.reps}
     </span>
   )
 }
@@ -259,11 +358,12 @@ function MetricButton({
   return (
     <button
       onClick={onClick}
-      className={`px-2 py-1 text-xs rounded transition-colors ${
-        active
-          ? 'bg-blue-600 text-white'
-          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-      }`}
+      className="px-2 py-1 text-[10px] uppercase tracking-wider rounded transition-colors"
+      style={{ 
+        fontFamily: 'var(--font-mono)',
+        background: active ? 'var(--color-ember)' : 'var(--color-steel)',
+        color: active ? 'var(--color-void)' : 'var(--color-ash)'
+      }}
     >
       {label}
     </button>
@@ -304,35 +404,37 @@ function ProgressChart({
     <div className="h-48">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-steel)" />
           <XAxis
             dataKey="date"
-            tick={{ fontSize: 12, fill: '#6b7280' }}
+            tick={{ fontSize: 10, fill: 'var(--color-zinc)', fontFamily: 'var(--font-mono)' }}
             tickLine={false}
-            axisLine={{ stroke: '#e5e7eb' }}
+            axisLine={{ stroke: 'var(--color-steel)' }}
           />
           <YAxis
-            tick={{ fontSize: 12, fill: '#6b7280' }}
+            tick={{ fontSize: 10, fill: 'var(--color-zinc)', fontFamily: 'var(--font-mono)' }}
             tickLine={false}
-            axisLine={{ stroke: '#e5e7eb' }}
+            axisLine={{ stroke: 'var(--color-steel)' }}
             width={40}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: '#fff',
-              border: '1px solid #e5e7eb',
-              borderRadius: '6px',
-              fontSize: '12px',
+              backgroundColor: 'var(--color-iron)',
+              border: '1px solid var(--color-steel)',
+              borderRadius: '4px',
+              fontSize: '11px',
+              fontFamily: 'var(--font-mono)',
+              color: 'var(--color-ash)',
             }}
             formatter={(value) => [`${value}${unit}`, label]}
           />
           <Line
             type="monotone"
             dataKey="value"
-            stroke="#2563eb"
+            stroke="var(--color-ember)"
             strokeWidth={2}
-            dot={{ fill: '#2563eb', strokeWidth: 0, r: 3 }}
-            activeDot={{ r: 5, fill: '#1d4ed8' }}
+            dot={{ fill: 'var(--color-ember)', strokeWidth: 0, r: 3 }}
+            activeDot={{ r: 5, fill: 'var(--color-flame)' }}
           />
         </LineChart>
       </ResponsiveContainer>

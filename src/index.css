@@ -2,21 +2,375 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Base styles */
+/* ========================================
+   IRON FORGE - Design System
+   Industrial Utilitarian + Brutalist Raw
+   ======================================== */
+
+:root {
+  /* Raw palette - static colors */
+  --raw-void: #0a0a0b;
+  --raw-iron: #141416;
+  --raw-steel: #1c1c1f;
+  --raw-concrete: #26262a;
+  --raw-graphite: #3a3a40;
+  --raw-zinc: #52525b;
+  --raw-slate: #71717a;
+  --raw-ash: #a1a1aa;
+  --raw-chalk: #e4e4e7;
+  --raw-bone: #fafafa;
+
+  /* Accent - Electric amber/orange (same in both modes) */
+  --color-ember: #f59e0b;
+  --color-flame: #fb923c;
+  --color-heat: #fbbf24;
+  
+  /* State colors */
+  --color-success: #22c55e;
+  --color-success-muted: #166534;
+  --color-danger: #ef4444;
+  --color-danger-muted: #991b1b;
+  --color-info: #06b6d4;
+
+  /* Typography */
+  --font-display: 'Oswald', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-body: 'JetBrains Mono', monospace;
+
+  /* Spacing scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+
+  /* Border radius - sharp, industrial */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+
+  /* Transitions */
+  --transition-fast: 100ms ease-out;
+  --transition-base: 150ms ease-out;
+  --transition-slow: 300ms ease-out;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.15);
+  --shadow-glow: 0 0 20px rgba(245, 158, 11, 0.3);
+
+  /* ========================================
+     LIGHT MODE (default) - Semantic colors
+     ======================================== */
+  --color-void: var(--raw-bone);
+  --color-iron: var(--raw-chalk);
+  --color-steel: var(--raw-ash);
+  --color-concrete: var(--raw-slate);
+  --color-graphite: var(--raw-zinc);
+  --color-zinc: var(--raw-graphite);
+  --color-slate: var(--raw-concrete);
+  --color-ash: var(--raw-steel);
+  --color-chalk: var(--raw-iron);
+  --color-bone: var(--raw-void);
+}
+
+/* ========================================
+   DARK MODE - Semantic colors swap
+   ======================================== */
+:root.dark {
+  --color-void: var(--raw-void);
+  --color-iron: var(--raw-iron);
+  --color-steel: var(--raw-steel);
+  --color-concrete: var(--raw-concrete);
+  --color-graphite: var(--raw-graphite);
+  --color-zinc: var(--raw-zinc);
+  --color-slate: var(--raw-slate);
+  --color-ash: var(--raw-ash);
+  --color-chalk: var(--raw-chalk);
+  --color-bone: var(--raw-bone);
+  
+  /* Darker shadows for dark mode */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* ========================================
+   Base Styles
+   ======================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
-  @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased;
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.5;
+  background-color: var(--color-void);
+  color: var(--color-ash);
   min-height: 100vh;
+  letter-spacing: 0.01em;
 }
 
-/* Focus styles for accessibility */
+/* Noise texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* Noise texture - slightly less visible in light mode */
+:root:not(.dark) body::before {
+  opacity: 0.015;
+}
+
+/* ========================================
+   Typography
+   ======================================== */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-bone);
+  line-height: 1.1;
+}
+
+/* Headers use bone color which swaps automatically */
+
+/* Data/numbers - monospace treatment */
+.font-data {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Display text - big impactful numbers */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* ========================================
+   Focus & Accessibility
+   ======================================== */
+
 *:focus-visible {
-  @apply outline-2 outline-offset-2 outline-blue-500;
+  outline: 2px solid var(--color-ember);
+  outline-offset: 2px;
 }
 
-/* Sonner toast progress bar */
-[data-sonner-toast] {
-  position: relative;
+/* ========================================
+   Buttons
+   ======================================== */
+
+.btn {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-ember) 0%, var(--color-flame) 100%);
+  color: var(--color-void);
+  box-shadow: var(--shadow-md), var(--shadow-glow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(245, 158, 11, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--color-concrete);
+  color: var(--color-chalk);
+  border: 1px solid var(--color-graphite);
+}
+
+.btn-secondary:hover {
+  background: var(--color-graphite);
+  border-color: var(--color-zinc);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-slate);
+}
+
+.btn-ghost:hover {
+  color: var(--color-chalk);
+  background: var(--color-steel);
+}
+
+.btn-danger {
+  background: var(--color-danger-muted);
+  color: var(--color-chalk);
+}
+
+.btn-danger:hover {
+  background: var(--color-danger);
+}
+
+/* ========================================
+   Cards
+   ======================================== */
+
+.card {
+  background: var(--color-iron);
+  border: 1px solid var(--color-steel);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Cards use semantic colors that swap automatically */
+
+.card-elevated {
+  background: var(--color-steel);
+  border-color: var(--color-concrete);
+  box-shadow: var(--shadow-md);
+}
+
+/* ========================================
+   Inputs
+   ======================================== */
+
+.input {
+  font-family: var(--font-mono);
+  background: var(--color-void);
+  border: 1px solid var(--color-graphite);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  color: var(--color-chalk);
+  transition: border-color var(--transition-fast);
+}
+
+.input:focus {
+  border-color: var(--color-ember);
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--color-zinc);
+}
+
+/* Inputs use semantic colors that swap automatically */
+
+/* ========================================
+   Progress/Gauge Elements
+   ======================================== */
+
+.gauge {
+  background: var(--color-void);
+  border: 2px solid var(--color-graphite);
+  border-radius: var(--radius-sm);
   overflow: hidden;
+}
+
+.gauge-fill {
+  background: linear-gradient(90deg, var(--color-ember) 0%, var(--color-heat) 100%);
+  height: 100%;
+  transition: width var(--transition-slow);
+}
+
+.gauge-success .gauge-fill {
+  background: linear-gradient(90deg, var(--color-success-muted) 0%, var(--color-success) 100%);
+}
+
+/* ========================================
+   Animations
+   ======================================== */
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.5);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out forwards;
+}
+
+/* Staggered children */
+.stagger-children > * {
+  opacity: 0;
+  animation: slide-up 0.3s ease-out forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 50ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 100ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 150ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 250ms; }
+
+/* ========================================
+   Sonner Toast Overrides
+   ======================================== */
+
+[data-sonner-toast] {
+  font-family: var(--font-mono) !important;
+  background: var(--color-steel) !important;
+  border: 1px solid var(--color-concrete) !important;
+  border-radius: var(--radius-md) !important;
+  color: var(--color-chalk) !important;
 }
 
 [data-sonner-toast]::before {
@@ -25,16 +379,38 @@ body {
   top: 0;
   left: 0;
   height: 3px;
-  background: currentColor;
-  opacity: 0.3;
+  background: var(--color-ember);
   animation: sonner-progress 4000ms linear forwards;
 }
 
 @keyframes sonner-progress {
-  from {
-    width: 100%;
-  }
-  to {
-    width: 0%;
-  }
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+/* ========================================
+   Utility Classes
+   ======================================== */
+
+.text-ember { color: var(--color-ember); }
+.text-heat { color: var(--color-heat); }
+.text-success { color: var(--color-success); }
+.text-danger { color: var(--color-danger); }
+.text-muted { color: var(--color-zinc); }
+.text-subtle { color: var(--color-slate); }
+
+.bg-void { background-color: var(--color-void); }
+.bg-iron { background-color: var(--color-iron); }
+.bg-steel { background-color: var(--color-steel); }
+.bg-concrete { background-color: var(--color-concrete); }
+
+.border-steel { border-color: var(--color-steel); }
+.border-concrete { border-color: var(--color-concrete); }
+.border-graphite { border-color: var(--color-graphite); }
+.border-ember { border-color: var(--color-ember); }
+
+/* Divider line */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-graphite), transparent);
 }

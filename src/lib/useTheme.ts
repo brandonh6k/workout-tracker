@@ -11,14 +11,10 @@ function getInitialTheme(): Theme {
     if (stored === 'light' || stored === 'dark') {
       return stored
     }
-    
-    // Fall back to system preference
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark'
-    }
   }
   
-  return 'light'
+  // Default to dark for this app (basement gym use case)
+  return 'dark'
 }
 
 function applyTheme(theme: Theme) {

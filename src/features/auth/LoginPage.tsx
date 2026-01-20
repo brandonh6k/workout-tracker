@@ -28,23 +28,54 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white">
-            Workout Tracker
+    <div 
+      className="min-h-screen flex items-center justify-center px-4"
+      style={{ background: 'var(--color-void)' }}
+    >
+      <div className="max-w-sm w-full space-y-8">
+        {/* Logo/Brand */}
+        <div className="text-center">
+          <div 
+            className="w-16 h-16 mx-auto mb-4 rounded flex items-center justify-center"
+            style={{ 
+              background: 'linear-gradient(135deg, var(--color-ember) 0%, var(--color-flame) 100%)',
+              boxShadow: 'var(--shadow-glow)'
+            }}
+          >
+            <svg 
+              className="w-8 h-8" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+              style={{ color: 'var(--color-void)' }}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h1 
+            className="text-3xl tracking-wider"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-bone)' }}
+          >
+            IRON FORGE
           </h1>
-          <h2 className="mt-2 text-center text-gray-600 dark:text-gray-300">
-            Sign in to your account
-          </h2>
+          <p 
+            className="mt-2 text-sm"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
+            Sign in to continue
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {error && <ErrorMessage message={error} />}
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label 
+                htmlFor="email" 
+                className="block text-xs uppercase tracking-wider mb-2"
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+              >
                 Email
               </label>
               <input
@@ -53,13 +84,17 @@ export function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="input w-full"
                 placeholder="you@example.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label 
+                htmlFor="password" 
+                className="block text-xs uppercase tracking-wider mb-2"
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+              >
                 Password
               </label>
               <input
@@ -68,7 +103,7 @@ export function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="input w-full"
                 placeholder="********"
               />
             </div>
@@ -77,14 +112,31 @@ export function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn btn-primary w-full py-3 disabled:opacity-50"
           >
-            {isLoading ? 'Signing in...' : 'Sign in'}
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <div 
+                  className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin"
+                  style={{ borderColor: 'var(--color-void)', borderTopColor: 'transparent' }}
+                />
+                Signing in...
+              </span>
+            ) : (
+              'Sign In'
+            )}
           </button>
 
-          <p className="text-center text-sm text-gray-600 dark:text-gray-300">
+          <p 
+            className="text-center text-sm"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
             Don't have an account?{' '}
-            <Link to="/signup" className="text-blue-600 hover:text-blue-500 font-medium">
+            <Link 
+              to="/signup" 
+              className="font-medium transition-colors"
+              style={{ color: 'var(--color-ember)' }}
+            >
               Sign up
             </Link>
           </p>

@@ -121,12 +121,21 @@ export function TemplateForm({
       {error && <ErrorMessage message={error} />}
 
       {/* Template details */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Template Details</h2>
+      <div className="card space-y-4">
+        <h2 
+          className="text-base tracking-wide"
+          style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ash)' }}
+        >
+          TEMPLATE DETAILS
+        </h2>
 
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Template Name *
+          <label 
+            htmlFor="name" 
+            className="block text-xs uppercase tracking-wider mb-2"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
+            Name *
           </label>
           <input
             id="name"
@@ -134,12 +143,16 @@ export function TemplateForm({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g., Lower Body"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="input w-full"
           />
         </div>
 
         <div>
-          <label htmlFor="notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label 
+            htmlFor="notes" 
+            className="block text-xs uppercase tracking-wider mb-2"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
             Notes (optional)
           </label>
           <textarea
@@ -148,21 +161,48 @@ export function TemplateForm({
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Any notes about this workout..."
             rows={2}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="input w-full resize-none"
           />
         </div>
       </div>
 
       {/* Exercises */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Exercises</h2>
+      <div className="card space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 
+            className="text-base tracking-wide"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ash)' }}
+          >
+            EXERCISES
+          </h2>
+          <span 
+            className="text-xs tabular-nums"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
+            {exercises.length} exercise{exercises.length !== 1 ? 's' : ''}
+          </span>
+        </div>
 
         {exercises.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400 italic py-4 text-center">
-            No exercises yet. Click "Add Exercise" to get started.
-          </p>
+          <div 
+            className="py-8 text-center rounded"
+            style={{ background: 'var(--color-void)', border: '1px dashed var(--color-graphite)' }}
+          >
+            <p 
+              className="text-sm mb-1"
+              style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+            >
+              No exercises yet
+            </p>
+            <p 
+              className="text-xs"
+              style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-graphite)' }}
+            >
+              Add exercises to build your template
+            </p>
+          </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {exercises.map((exercise, index) => (
               <ExerciseRow
                 key={exercise.id}
@@ -177,15 +217,22 @@ export function TemplateForm({
           </div>
         )}
 
-        <div className="flex justify-end pt-2">
-          <button
-            type="button"
-            onClick={addExercise}
-            className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
-          >
-            + Add Exercise
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={addExercise}
+          className="w-full py-3 rounded text-sm uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
+          style={{ 
+            fontFamily: 'var(--font-display)',
+            background: 'var(--color-void)',
+            border: '1px dashed var(--color-graphite)',
+            color: 'var(--color-ember)'
+          }}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          Add Exercise
+        </button>
       </div>
 
       {/* Actions */}
@@ -194,14 +241,14 @@ export function TemplateForm({
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
-          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium disabled:opacity-50"
+          className="btn btn-secondary disabled:opacity-50"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium disabled:opacity-50"
+          className="btn btn-primary disabled:opacity-50"
         >
           {isSubmitting ? 'Saving...' : initialData ? 'Save Changes' : 'Create Template'}
         </button>
@@ -228,18 +275,28 @@ function ExerciseRow({
   onMove,
 }: ExerciseRowProps) {
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-3">
+    <div 
+      className="rounded p-4 space-y-3"
+      style={{ background: 'var(--color-void)', border: '1px solid var(--color-steel)' }}
+    >
       <div className="flex items-start gap-3">
-        {/* Reorder buttons */}
-        <div className="flex flex-col gap-1">
+        {/* Index + Reorder buttons */}
+        <div className="flex flex-col items-center gap-0.5 pt-1">
+          <span 
+            className="text-xs tabular-nums mb-1 w-5 text-center"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
+            {index + 1}
+          </span>
           <button
             type="button"
             onClick={() => onMove('up')}
             disabled={index === 0}
-            className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-30"
+            className="p-1 rounded transition-colors hover:bg-[var(--color-steel)] disabled:opacity-30"
+            style={{ color: 'var(--color-slate)' }}
             title="Move up"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
             </svg>
           </button>
@@ -247,10 +304,11 @@ function ExerciseRow({
             type="button"
             onClick={() => onMove('down')}
             disabled={index === totalCount - 1}
-            className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-30"
+            className="p-1 rounded transition-colors hover:bg-[var(--color-steel)] disabled:opacity-30"
+            style={{ color: 'var(--color-slate)' }}
             title="Move down"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
@@ -269,32 +327,44 @@ function ExerciseRow({
         <button
           type="button"
           onClick={onRemove}
-          className="p-2 text-gray-400 hover:text-red-500"
+          className="p-2 rounded transition-colors hover:bg-[var(--color-danger-muted)]"
+          style={{ color: 'var(--color-slate)' }}
           title="Remove exercise"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
 
-      {/* Sets and reps */}
-      <div className="flex flex-wrap gap-3 pl-9">
+      {/* Sets, reps, and options */}
+      <div 
+        className="flex flex-wrap gap-3 pl-8 pt-3"
+        style={{ borderTop: '1px solid var(--color-steel)' }}
+      >
         <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600 dark:text-gray-300">Sets:</label>
+          <label 
+            className="text-xs uppercase tracking-wider"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
+            Sets
+          </label>
           <input
             type="number"
             min={1}
             max={20}
             value={exercise.target_sets}
             onChange={(e) => onUpdate({ target_sets: parseInt(e.target.value) || 1 })}
-            className="w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="input w-14 text-center py-1 px-2"
           />
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600 dark:text-gray-300">
-            {exercise.is_amrap ? 'Min reps:' : 'Reps:'}
+          <label 
+            className="text-xs uppercase tracking-wider"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
+            {exercise.is_amrap ? 'Min' : 'Reps'}
           </label>
           <input
             type="number"
@@ -302,26 +372,45 @@ function ExerciseRow({
             max={100}
             value={exercise.target_reps}
             onChange={(e) => onUpdate({ target_reps: parseInt(e.target.value) || 1 })}
-            className="w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="input w-14 text-center py-1 px-2"
           />
         </div>
 
-        <label className="flex items-center gap-2 cursor-pointer">
+        <label 
+          className="flex items-center gap-2 cursor-pointer px-2 py-1 rounded transition-colors"
+          style={{ 
+            background: exercise.is_amrap ? 'var(--color-steel)' : 'transparent',
+            border: `1px solid ${exercise.is_amrap ? 'var(--color-ember)' : 'var(--color-graphite)'}` 
+          }}
+        >
           <input
             type="checkbox"
             checked={exercise.is_amrap}
             onChange={(e) => onUpdate({ is_amrap: e.target.checked })}
-            className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+            className="sr-only"
           />
-          <span className="text-sm text-gray-600 dark:text-gray-300">AMRAP</span>
+          <span 
+            className="text-xs uppercase tracking-wider"
+            style={{ 
+              fontFamily: 'var(--font-mono)', 
+              color: exercise.is_amrap ? 'var(--color-ember)' : 'var(--color-zinc)' 
+            }}
+          >
+            AMRAP
+          </span>
         </label>
 
         <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600 dark:text-gray-300">Rest:</label>
+          <label 
+            className="text-xs uppercase tracking-wider"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
+            Rest
+          </label>
           <select
             value={exercise.rest_seconds}
             onChange={(e) => onUpdate({ rest_seconds: parseInt(e.target.value) })}
-            className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="input py-1 px-2 text-sm"
           >
             <option value={60}>1:00</option>
             <option value={90}>1:30</option>
@@ -333,13 +422,13 @@ function ExerciseRow({
           </select>
         </div>
 
-        <div className="flex-1 min-w-[150px]">
+        <div className="flex-1 min-w-[140px]">
           <input
             type="text"
             value={exercise.notes}
             onChange={(e) => onUpdate({ notes: e.target.value })}
-            placeholder="Notes (optional)"
-            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            placeholder="Notes..."
+            className="input w-full py-1 px-2 text-sm"
           />
         </div>
       </div>

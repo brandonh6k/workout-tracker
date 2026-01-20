@@ -42,12 +42,44 @@ export function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
-        <div className="max-w-md w-full text-center space-y-4">
-          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
-            Check your email to confirm your account!
+      <div 
+        className="min-h-screen flex items-center justify-center px-4"
+        style={{ background: 'var(--color-void)' }}
+      >
+        <div className="max-w-sm w-full text-center space-y-6">
+          <div 
+            className="w-16 h-16 mx-auto rounded-full flex items-center justify-center"
+            style={{ background: 'var(--color-success-muted)' }}
+          >
+            <svg 
+              className="w-8 h-8" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+              style={{ color: 'var(--color-success)' }}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
           </div>
-          <Link to="/login" className="text-blue-600 hover:text-blue-500 font-medium">
+          <div>
+            <h2 
+              className="text-xl tracking-wide mb-2"
+              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-bone)' }}
+            >
+              CHECK YOUR EMAIL
+            </h2>
+            <p 
+              className="text-sm"
+              style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+            >
+              Click the link in your email to confirm your account
+            </p>
+          </div>
+          <Link 
+            to="/login" 
+            className="inline-block text-sm transition-colors"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ember)' }}
+          >
             Back to login
           </Link>
         </div>
@@ -56,23 +88,54 @@ export function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white">
-            Workout Tracker
+    <div 
+      className="min-h-screen flex items-center justify-center px-4"
+      style={{ background: 'var(--color-void)' }}
+    >
+      <div className="max-w-sm w-full space-y-8">
+        {/* Logo/Brand */}
+        <div className="text-center">
+          <div 
+            className="w-16 h-16 mx-auto mb-4 rounded flex items-center justify-center"
+            style={{ 
+              background: 'linear-gradient(135deg, var(--color-ember) 0%, var(--color-flame) 100%)',
+              boxShadow: 'var(--shadow-glow)'
+            }}
+          >
+            <svg 
+              className="w-8 h-8" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+              style={{ color: 'var(--color-void)' }}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h1 
+            className="text-3xl tracking-wider"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-bone)' }}
+          >
+            IRON FORGE
           </h1>
-          <h2 className="mt-2 text-center text-gray-600 dark:text-gray-300">
+          <p 
+            className="mt-2 text-sm"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
             Create your account
-          </h2>
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {error && <ErrorMessage message={error} />}
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label 
+                htmlFor="email" 
+                className="block text-xs uppercase tracking-wider mb-2"
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+              >
                 Email
               </label>
               <input
@@ -81,13 +144,17 @@ export function SignupPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="input w-full"
                 placeholder="you@example.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label 
+                htmlFor="password" 
+                className="block text-xs uppercase tracking-wider mb-2"
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+              >
                 Password
               </label>
               <input
@@ -96,13 +163,17 @@ export function SignupPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="input w-full"
                 placeholder="********"
               />
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              <label 
+                htmlFor="confirmPassword" 
+                className="block text-xs uppercase tracking-wider mb-2"
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+              >
                 Confirm Password
               </label>
               <input
@@ -111,7 +182,7 @@ export function SignupPage() {
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="input w-full"
                 placeholder="********"
               />
             </div>
@@ -120,14 +191,31 @@ export function SignupPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn btn-primary w-full py-3 disabled:opacity-50"
           >
-            {isLoading ? 'Creating account...' : 'Sign up'}
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <div 
+                  className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin"
+                  style={{ borderColor: 'var(--color-void)', borderTopColor: 'transparent' }}
+                />
+                Creating account...
+              </span>
+            ) : (
+              'Create Account'
+            )}
           </button>
 
-          <p className="text-center text-sm text-gray-600 dark:text-gray-300">
+          <p 
+            className="text-center text-sm"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
             Already have an account?{' '}
-            <Link to="/login" className="text-blue-600 hover:text-blue-500 font-medium">
+            <Link 
+              to="/login" 
+              className="font-medium transition-colors"
+              style={{ color: 'var(--color-ember)' }}
+            >
               Sign in
             </Link>
           </p>
