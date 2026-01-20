@@ -53,7 +53,7 @@
 
 ## Code Quality / Refactoring
 
-- [ ] **useReducer for ActiveWorkout**: The `ActiveWorkout` component has complex nested state with 12+ setState calls. Refactoring to `useReducer` would centralize state mutations, simplify rollback logic, and make the component easier to test.
+- [x] **useReducer for ActiveWorkout**: The `ActiveWorkout` component has complex nested state with 12+ setState calls. Refactoring to `useReducer` would centralize state mutations, simplify rollback logic, and make the component easier to test.
 
 - [ ] **Data fetching hooks for Dashboard/Progress**: Extract `useDashboardData()` and `useExerciseHistory(exerciseName)` hooks to separate data fetching concerns from UI components. Currently, `DashboardPage` and `ExerciseHistoryView` have parallel API calls mixed into the component.
 
@@ -65,7 +65,7 @@
 
 - [ ] **API layer tests**: Add tests for API functions with Supabase mocking. Would require setting up a mock Supabase client or using MSW (Mock Service Worker) to intercept requests.
 
-- [ ] **ActiveWorkout component tests**: Complex component with state management, timers, and API calls. Would benefit from the useReducer refactor first to make state transitions more testable.
+- [x] **ActiveWorkout component tests**: Complex component with state management, timers, and API calls. Would benefit from the useReducer refactor first to make state transitions more testable.
 
 - [ ] **E2E tests with Playwright**: Set up Playwright for end-to-end testing. Priority flows:
   1. Auth flow (signup, login, logout)

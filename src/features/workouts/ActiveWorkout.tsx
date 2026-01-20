@@ -1,43 +1,8 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useReducer, useState, useEffect, useCallback } from 'react'
 import type { ScheduledWorkoutWithDetails } from '../schedule'
 import * as api from './api'
 import { SetDisplay } from './components'
-
-type SetData = {
-  id?: string // DB id once saved
-  reps: number
-  weight: number
-  completed: boolean
-}
-
-type ExerciseState = {
-  name: string
-  targetSets: number
-  targetReps: number
-  targetWeight: number
-  isAmrap: boolean
-  restSeconds: number
-  sets: SetData[]
-}
-
-type WorkoutPhase =
-  | { type: 'active-set' }
-  | {
-      type: 'resting'
-      restTimerEnd: number
-      lastCompletedExerciseIndex: number
-      lastCompletedSetIndex: number
-      isAmrap: boolean
-    }
-
-type WorkoutState = {
-  sessionId: string
-  exercises: ExerciseState[]
-  currentExerciseIndex: number
-  currentSetIndex: number
-  startTime: number
-  phase: WorkoutPhase
-}
+import { workoutReducer, buildInitialState } from './workoutReducer'
 
 type Props = {
   scheduledWorkout: ScheduledWorkoutWithDetails
@@ -46,7 +11,7 @@ type Props = {
 }
 
 export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props) {
-  const [state, setState] = useState<WorkoutState | null>(null)
+  const [state, dispatch] = useReducer(workoutReducer, null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [adjustMode, setAdjustMode] = useState<'weight' | 'reps' | null>(null)
@@ -57,36 +22,8 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
     const initWorkout = async () => {
       try {
         const session = await api.startWorkoutSession(scheduledWorkout)
-
-        const exercises: ExerciseState[] = scheduledWorkout.template.template_exercises.map((ex) => {
-          const scheduledEx = scheduledWorkout.scheduled_exercises.find(
-            (se) => se.exercise_name === ex.exercise_name
-          )
-          const targetWeight = scheduledEx?.target_weight ?? 0
-
-          return {
-            name: ex.exercise_name,
-            targetSets: ex.target_sets,
-            targetReps: ex.target_reps,
-            targetWeight,
-            isAmrap: ex.is_amrap,
-            restSeconds: ex.rest_seconds ?? 90,
-            sets: Array.from({ length: ex.target_sets }, () => ({
-              reps: ex.target_reps,
-              weight: targetWeight,
-              completed: false,
-            })),
-          }
-        })
-
-        setState({
-          sessionId: session.id,
-          exercises,
-          currentExerciseIndex: 0,
-          currentSetIndex: 0,
-          startTime: Date.now(),
-          phase: { type: 'active-set' },
-        })
+        const initialState = buildInitialState(session.id, scheduledWorkout)
+        dispatch({ type: 'INITIALIZE', payload: initialState })
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to start workout')
       } finally {
@@ -105,7 +42,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
     const interval = setInterval(() => {
       setTick((t) => t + 1)
       if (Date.now() >= restTimerEnd) {
-        setState((prev) => (prev ? { ...prev, phase: { type: 'active-set' } } : null))
+        dispatch({ type: 'REST_TIMER_EXPIRED' })
       }
     }, 1000)
 
@@ -132,50 +69,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
         reps: currentSet.reps,
       })
 
-      setState((prev) => {
-        if (!prev) return null
-
-        const newExercises = [...prev.exercises]
-        const exercise = { ...newExercises[prev.currentExerciseIndex] }
-        const sets = [...exercise.sets]
-        const completedReps = sets[prev.currentSetIndex].reps
-        sets[prev.currentSetIndex] = { ...sets[prev.currentSetIndex], id: loggedSet.id, completed: true }
-
-        // For AMRAP: pre-fill next set with the reps we just did
-        if (exercise.isAmrap && prev.currentSetIndex + 1 < exercise.targetSets) {
-          sets[prev.currentSetIndex + 1] = {
-            ...sets[prev.currentSetIndex + 1],
-            reps: completedReps,
-          }
-        }
-
-        exercise.sets = sets
-        newExercises[prev.currentExerciseIndex] = exercise
-
-        // Advance to next set or exercise
-        let nextExerciseIndex = prev.currentExerciseIndex
-        let nextSetIndex = prev.currentSetIndex + 1
-
-        if (nextSetIndex >= exercise.targetSets) {
-          nextSetIndex = 0
-          nextExerciseIndex = prev.currentExerciseIndex + 1
-        }
-
-        return {
-          ...prev,
-          exercises: newExercises,
-          currentExerciseIndex: nextExerciseIndex,
-          currentSetIndex: nextSetIndex,
-          phase: {
-            type: 'resting',
-            restTimerEnd: Date.now() + exercise.restSeconds * 1000,
-            lastCompletedExerciseIndex: prev.currentExerciseIndex,
-            lastCompletedSetIndex: prev.currentSetIndex,
-            isAmrap: exercise.isAmrap,
-          },
-        }
-      })
-
+      dispatch({ type: 'COMPLETE_SET', payload: { loggedSetId: loggedSet.id } })
       setAdjustMode(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to log set')
@@ -183,117 +77,50 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
   }, [state, currentExercise, currentSet])
 
   const handleAdjustWeight = (delta: number) => {
-    if (!state) return
-    setState((prev) => {
-      if (!prev) return null
-      const newExercises = [...prev.exercises]
-      const exercise = { ...newExercises[prev.currentExerciseIndex] }
-      const sets = [...exercise.sets]
-      const newWeight = Math.max(0, sets[prev.currentSetIndex].weight + delta)
-      
-      // Update current set and all remaining uncompleted sets
-      for (let i = prev.currentSetIndex; i < sets.length; i++) {
-        if (!sets[i].completed) {
-          sets[i] = { ...sets[i], weight: newWeight }
-        }
-      }
-      
-      exercise.sets = sets
-      newExercises[prev.currentExerciseIndex] = exercise
-      return { ...prev, exercises: newExercises }
-    })
+    dispatch({ type: 'ADJUST_WEIGHT', payload: { delta } })
   }
 
   const handleAdjustReps = (delta: number) => {
-    if (!state) return
-    setState((prev) => {
-      if (!prev) return null
-      const newExercises = [...prev.exercises]
-      const exercise = { ...newExercises[prev.currentExerciseIndex] }
-      const sets = [...exercise.sets]
-      sets[prev.currentSetIndex] = {
-        ...sets[prev.currentSetIndex],
-        reps: Math.max(1, sets[prev.currentSetIndex].reps + delta),
-      }
-      exercise.sets = sets
-      newExercises[prev.currentExerciseIndex] = exercise
-      return { ...prev, exercises: newExercises }
-    })
+    dispatch({ type: 'ADJUST_REPS', payload: { delta } })
   }
 
   // Adjust the LAST COMPLETED set (for AMRAP during rest)
   const handleAdjustLastCompletedReps = async (delta: number) => {
     if (!state || state.phase.type !== 'resting' || !lastCompletedSetData?.id) return
 
-    const { lastCompletedExerciseIndex, lastCompletedSetIndex } = state.phase
-    const newReps = Math.max(1, lastCompletedSetData.reps + delta)
+    const originalReps = lastCompletedSetData.reps
 
-    // Update local state immediately
-    setState((prev) => {
-      if (!prev || prev.phase.type !== 'resting') return prev
-      const newExercises = [...prev.exercises]
-      const exercise = { ...newExercises[lastCompletedExerciseIndex] }
-      const sets = [...exercise.sets]
-      sets[lastCompletedSetIndex] = {
-        ...sets[lastCompletedSetIndex],
-        reps: newReps,
-      }
-      exercise.sets = sets
-      newExercises[lastCompletedExerciseIndex] = exercise
-      return { ...prev, exercises: newExercises }
-    })
+    // Update local state immediately (optimistic update)
+    dispatch({ type: 'ADJUST_LAST_COMPLETED_REPS', payload: { delta } })
 
     // Update in DB
     try {
+      const newReps = Math.max(1, originalReps + delta)
       await api.updateSet(lastCompletedSetData.id, { reps: newReps })
     } catch (err) {
       // Revert on error
-      setState((prev) => {
-        if (!prev || prev.phase.type !== 'resting') return prev
-        const newExercises = [...prev.exercises]
-        const exercise = { ...newExercises[lastCompletedExerciseIndex] }
-        const sets = [...exercise.sets]
-        sets[lastCompletedSetIndex] = {
-          ...sets[lastCompletedSetIndex],
-          reps: lastCompletedSetData.reps,
-        }
-        exercise.sets = sets
-        newExercises[lastCompletedExerciseIndex] = exercise
-        return { ...prev, exercises: newExercises }
-      })
+      dispatch({ type: 'REVERT_LAST_COMPLETED_REPS', payload: { originalReps } })
       setError(err instanceof Error ? err.message : 'Failed to update set')
     }
   }
 
   const handleSkipRest = () => {
-    setState((prev) => (prev ? { ...prev, phase: { type: 'active-set' } } : null))
+    dispatch({ type: 'SKIP_REST' })
   }
 
   const handleExtendRest = () => {
-    setState((prev) => {
-      if (!prev || prev.phase.type !== 'resting') return prev
-      return {
-        ...prev,
-        phase: { ...prev.phase, restTimerEnd: prev.phase.restTimerEnd + 30 * 1000 },
-      }
-    })
+    dispatch({ type: 'EXTEND_REST' })
   }
 
   const handleSkipExercise = () => {
     if (!state || !currentExercise) return
     // Only skip if there are remaining sets (otherwise just complete normally)
-    const remainingSets = currentExercise.sets.filter((s, idx) => idx >= state.currentSetIndex && !s.completed)
+    const remainingSets = currentExercise.sets.filter(
+      (s, idx) => idx >= state.currentSetIndex && !s.completed
+    )
     if (remainingSets.length === 0) return
 
-    setState((prev) => {
-      if (!prev) return null
-      return {
-        ...prev,
-        currentExerciseIndex: prev.currentExerciseIndex + 1,
-        currentSetIndex: 0,
-        phase: { type: 'active-set' },
-      }
-    })
+    dispatch({ type: 'SKIP_EXERCISE' })
   }
 
   const handleFinishWorkout = async () => {
