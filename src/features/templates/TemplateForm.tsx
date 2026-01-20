@@ -350,12 +350,14 @@ function ExerciseRow({
             Sets
           </label>
           <input
-            type="number"
-            min={1}
-            max={20}
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
             value={exercise.target_sets || ''}
-            onChange={(e) => onUpdate({ target_sets: parseInt(e.target.value) || 0 })}
-            onFocus={(e) => e.target.select()}
+            onChange={(e) => {
+              const digits = e.target.value.replace(/\D/g, '')
+              onUpdate({ target_sets: parseInt(digits) || 0 })
+            }}
             onBlur={(e) => {
               const val = parseInt(e.target.value)
               if (!val || val < 1) onUpdate({ target_sets: 1 })
@@ -373,12 +375,14 @@ function ExerciseRow({
             {exercise.is_amrap ? 'Min' : 'Reps'}
           </label>
           <input
-            type="number"
-            min={1}
-            max={100}
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
             value={exercise.target_reps || ''}
-            onChange={(e) => onUpdate({ target_reps: parseInt(e.target.value) || 0 })}
-            onFocus={(e) => e.target.select()}
+            onChange={(e) => {
+              const digits = e.target.value.replace(/\D/g, '')
+              onUpdate({ target_reps: parseInt(digits) || 0 })
+            }}
             onBlur={(e) => {
               const val = parseInt(e.target.value)
               if (!val || val < 1) onUpdate({ target_reps: 1 })
