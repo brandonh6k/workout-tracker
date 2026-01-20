@@ -76,6 +76,14 @@
   
   Will need test fixtures for auth state and possibly a test Supabase project or local emulator.
 
+- [ ] **Acceptance tests on Vercel preview deployments**: Gate PR merges with Playwright tests running against Vercel preview URLs. Free tier approach (no custom environments):
+  1. Push to feature branch triggers Vercel preview deployment
+  2. GitHub Action waits for preview URL to be ready
+  3. Run Playwright tests against preview URL
+  4. Branch protection rules block merge if tests fail
+  
+  Not true "promotion" but achieves same goal: broken code doesn't hit production. Use `vercel-preview-url` action or Vercel API to get deployment URL. Depends on Playwright setup being done first.
+
 ## Active Workout UX (from real usage feedback)
 
 - [x] **Weight change doesn't propagate to remaining sets**: When you adjust weight mid-exercise, it should update all subsequent sets of that exercise, not just the current one.
