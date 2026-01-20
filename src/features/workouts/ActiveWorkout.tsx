@@ -537,22 +537,6 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
         >
           Done
         </button>
-
-        {/* Skip to next exercise */}
-        {state.currentSetIndex < currentExercise.targetSets - 1 && (
-          <button
-            onClick={handleSkipExercise}
-            className="mt-4 text-sm transition-colors"
-            style={{ 
-              color: 'var(--color-zinc)',
-              fontFamily: 'var(--font-mono)'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-chalk)'}
-            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-zinc)'}
-          >
-            Skip to next exercise →
-          </button>
-        )}
       </div>
 
       {/* Exercise Queue */}
@@ -593,6 +577,22 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
             </div>
           )}
         </div>
+
+        {/* Skip to next exercise - placed below Coming Up, away from Done button */}
+        {state.currentSetIndex < currentExercise.targetSets - 1 && (
+          <button
+            onClick={handleSkipExercise}
+            className="mt-3 text-sm transition-colors"
+            style={{ 
+              color: 'var(--color-graphite)',
+              fontFamily: 'var(--font-mono)'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-zinc)'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-graphite)'}
+          >
+            Skip remaining sets →
+          </button>
+        )}
       </div>
     </div>
   )
