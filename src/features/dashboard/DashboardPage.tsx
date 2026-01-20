@@ -26,8 +26,9 @@ export function DashboardPage() {
   const today = new Date().getDay()
   const todaysWorkouts = scheduledWorkouts.filter((w) => w.day_of_week === today)
 
-  // Check which templates were completed today
-  const todayDateStr = new Date().toISOString().split('T')[0]
+  // Check which templates were completed today (use local date, not UTC)
+  const now = new Date()
+  const todayDateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
   const completedTodayTemplateIds = new Set(
     recentWorkouts
       .filter((w) => w.date === todayDateStr && w.templateId)

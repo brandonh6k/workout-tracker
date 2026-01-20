@@ -12,12 +12,16 @@ export async function startWorkoutSession(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
+  // Use local date, not UTC (avoids off-by-one errors in US timezones)
+  const now = new Date()
+  const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+
   const { data, error } = await supabase
     .from('workout_sessions')
     .insert({
       user_id: user.id,
       template_id: scheduledWorkout.template_id,
-      date: new Date().toISOString().split('T')[0],
+      date: localDate,
       completed: false,
     })
     .select()
