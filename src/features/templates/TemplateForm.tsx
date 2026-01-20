@@ -354,7 +354,12 @@ function ExerciseRow({
             min={1}
             max={20}
             value={exercise.target_sets}
-            onChange={(e) => onUpdate({ target_sets: parseInt(e.target.value) || 1 })}
+            onChange={(e) => onUpdate({ target_sets: parseInt(e.target.value) || 0 })}
+            onBlur={(e) => {
+              const val = parseInt(e.target.value)
+              if (!val || val < 1) onUpdate({ target_sets: 1 })
+              else if (val > 20) onUpdate({ target_sets: 20 })
+            }}
             className="input w-14 text-center py-1 px-2"
           />
         </div>
@@ -371,7 +376,12 @@ function ExerciseRow({
             min={1}
             max={100}
             value={exercise.target_reps}
-            onChange={(e) => onUpdate({ target_reps: parseInt(e.target.value) || 1 })}
+            onChange={(e) => onUpdate({ target_reps: parseInt(e.target.value) || 0 })}
+            onBlur={(e) => {
+              const val = parseInt(e.target.value)
+              if (!val || val < 1) onUpdate({ target_reps: 1 })
+              else if (val > 100) onUpdate({ target_reps: 100 })
+            }}
             className="input w-14 text-center py-1 px-2"
           />
         </div>
