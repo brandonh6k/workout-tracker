@@ -67,7 +67,14 @@
 
 - [ ] **ActiveWorkout component tests**: Complex component with state management, timers, and API calls. Would benefit from the useReducer refactor first to make state transitions more testable.
 
-- [ ] **Integration tests**: End-to-end flows like "create template -> schedule workout -> complete workout -> view progress". Could use Playwright or Cypress.
+- [ ] **E2E tests with Playwright**: Set up Playwright for end-to-end testing. Priority flows:
+  1. Auth flow (signup, login, logout)
+  2. Template CRUD (create template, add exercises, edit, delete)
+  3. Schedule workflow (assign template to day, set target weights)
+  4. Full workout flow (start workout -> complete sets -> finish -> verify in history)
+  5. Dashboard state (completed workout shows "Completed" badge, stats refresh)
+  
+  Will need test fixtures for auth state and possibly a test Supabase project or local emulator.
 
 ## Active Workout UX (from real usage feedback)
 
