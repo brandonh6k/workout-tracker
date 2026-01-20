@@ -353,8 +353,9 @@ function ExerciseRow({
             type="number"
             min={1}
             max={20}
-            value={exercise.target_sets}
+            value={exercise.target_sets || ''}
             onChange={(e) => onUpdate({ target_sets: parseInt(e.target.value) || 0 })}
+            onFocus={(e) => e.target.select()}
             onBlur={(e) => {
               const val = parseInt(e.target.value)
               if (!val || val < 1) onUpdate({ target_sets: 1 })
@@ -375,8 +376,9 @@ function ExerciseRow({
             type="number"
             min={1}
             max={100}
-            value={exercise.target_reps}
+            value={exercise.target_reps || ''}
             onChange={(e) => onUpdate({ target_reps: parseInt(e.target.value) || 0 })}
+            onFocus={(e) => e.target.select()}
             onBlur={(e) => {
               const val = parseInt(e.target.value)
               if (!val || val < 1) onUpdate({ target_reps: 1 })
