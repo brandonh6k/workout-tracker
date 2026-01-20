@@ -98,7 +98,7 @@
 
 - [x] **Refactor rest screen from overlay to state**: Currently rest timer is an overlay on the workout screen, which causes positioning issues ("up next" too low, etc.). Should be a separate render state - you're either in "active set" state or "resting" state. Cleaner mental model, fixes multiple UX issues, and makes it easier to add features like changeover notes.
 
-- [ ] **Skip remaining sets / advance to next exercise**: Button to skip remaining sets of current exercise and move to the next one. For time-crunched workouts where you can only do 2 of 3 scheduled sets.
+- [x] **Skip remaining sets / advance to next exercise**: Button to skip remaining sets of current exercise and move to the next one. For time-crunched workouts where you can only do 2 of 3 scheduled sets.
 
 - [x] **Extend rest button**: Add "+30s" button on rest screen to extend rest period. Sometimes you need a bit more recovery.
 

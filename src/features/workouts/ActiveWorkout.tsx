@@ -279,6 +279,23 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
     })
   }
 
+  const handleSkipExercise = () => {
+    if (!state || !currentExercise) return
+    // Only skip if there are remaining sets (otherwise just complete normally)
+    const remainingSets = currentExercise.sets.filter((s, idx) => idx >= state.currentSetIndex && !s.completed)
+    if (remainingSets.length === 0) return
+
+    setState((prev) => {
+      if (!prev) return null
+      return {
+        ...prev,
+        currentExerciseIndex: prev.currentExerciseIndex + 1,
+        currentSetIndex: 0,
+        phase: { type: 'active-set' },
+      }
+    })
+  }
+
   const handleFinishWorkout = async () => {
     if (!state) return
     try {
@@ -499,6 +516,16 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
         >
           Done
         </button>
+
+        {/* Skip to next exercise - only show if there are remaining sets */}
+        {state.currentSetIndex < currentExercise.targetSets - 1 && (
+          <button
+            onClick={handleSkipExercise}
+            className="mt-3 text-gray-400 hover:text-gray-200 text-sm"
+          >
+            Skip to next exercise
+          </button>
+        )}
       </div>
 
       {/* Exercise Queue */}
