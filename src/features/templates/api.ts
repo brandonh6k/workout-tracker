@@ -97,6 +97,7 @@ export async function createTemplate(
       is_amrap: ex.is_amrap ?? false,
       order_index: ex.order_index ?? index,
       notes: ex.notes ?? null,
+      rest_seconds: ex.rest_seconds ?? 90,
     }))
 
     const { data: newExercises, error: exercisesError } = await supabase
@@ -153,6 +154,7 @@ export async function updateTemplate(
         is_amrap: ex.is_amrap ?? false,
         order_index: ex.order_index ?? index,
         notes: ex.notes ?? null,
+        rest_seconds: ex.rest_seconds ?? 90,
       }))
 
       const { data: newExercises, error: exercisesError } = await supabase
