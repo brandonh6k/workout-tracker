@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { calculateEstimated1RM } from './api'
+import { calculateEstimated1RM } from '../../lib/utils'
 
 describe('calculateEstimated1RM', () => {
   it('returns weight when reps is 1 (actual 1RM)', () => {

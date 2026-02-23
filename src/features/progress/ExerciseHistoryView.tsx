@@ -12,9 +12,9 @@ import {
   getExerciseHistory,
   getExerciseStats,
   getExerciseProgressData,
-  calculateEstimated1RM,
-} from './api'
-import type { ExerciseHistoryEntry, ExerciseStats, ProgressDataPoint } from './api'
+} from './exerciseApi'
+import type { ExerciseHistoryEntry, ExerciseStats, ProgressDataPoint } from './exerciseApi'
+import { calculateEstimated1RM } from '../../lib/utils'
 import type { ExerciseType } from '../../types'
 import { formatShortDate, formatWorkoutDate } from '../../lib/utils'
 

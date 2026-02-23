@@ -62,6 +62,15 @@ export function formatWorkoutDate(date: Date | string): string {
 }
 
 /**
+ * Epley formula: 1RM = weight * (1 + reps/30)
+ */
+export function calculateEstimated1RM(weight: number, reps: number): number {
+  if (reps === 1) return weight
+  if (reps === 0 || weight === 0) return 0
+  return Math.round(weight * (1 + reps / 30))
+}
+
+/**
  * Formats a date for charts/compact display (e.g., "Dec 30")
  */
 export function formatShortDate(date: Date | string): string {
