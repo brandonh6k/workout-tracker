@@ -18,6 +18,9 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
   const [adjustMode, setAdjustMode] = useState<'weight' | 'reps' | null>(null)
   const [, setTick] = useState(0)
   const [showAbandonConfirm, setShowAbandonConfirm] = useState(false)
+  const [rpe, setRpe] = useState<number | null>(null)
+  const [setNotes, setSetNotes] = useState('')
+  const [showNotes, setShowNotes] = useState(false)
 
   // Initialize workout
   useEffect(() => {
@@ -69,10 +72,15 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
         set_number: state.currentSetIndex + 1,
         weight: currentSet.weight,
         reps: currentSet.reps,
+        rpe: rpe ?? undefined,
+        notes: setNotes.trim() || undefined,
       })
 
       dispatch({ type: 'COMPLETE_SET', payload: { loggedSetId: loggedSet.id } })
       setAdjustMode(null)
+      setRpe(null)
+      setSetNotes('')
+      setShowNotes(false)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to log set')
     }
@@ -513,6 +521,61 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
           onAdjustWeight={handleAdjustWeight}
           onAdjustReps={handleAdjustReps}
         />
+
+        {/* RPE selector */}
+        <div className="flex items-center gap-2 mb-4">
+          <span
+            className="text-xs uppercase tracking-wider mr-1"
+            style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-display)' }}
+          >
+            RPE
+          </span>
+          {[6, 7, 8, 9, 10].map((value) => (
+            <button
+              key={value}
+              onClick={() => setRpe(rpe === value ? null : value)}
+              className="w-9 h-9 text-sm font-semibold transition-all"
+              style={{
+                background: rpe === value ? 'var(--color-ember)' : 'var(--color-steel)',
+                color: rpe === value ? 'var(--color-void)' : 'var(--color-ash)',
+                borderRadius: 'var(--radius-sm)',
+                fontFamily: 'var(--font-mono)',
+              }}
+            >
+              {value}
+            </button>
+          ))}
+        </div>
+
+        {/* Set notes */}
+        {showNotes ? (
+          <div className="w-full max-w-xs mb-4">
+            <input
+              type="text"
+              value={setNotes}
+              onChange={(e) => setSetNotes(e.target.value)}
+              placeholder="Set note..."
+              autoFocus
+              className="w-full px-3 py-2 text-sm"
+              style={{
+                background: 'var(--color-steel)',
+                color: 'var(--color-chalk)',
+                border: '1px solid var(--color-concrete)',
+                borderRadius: 'var(--radius-sm)',
+                fontFamily: 'var(--font-mono)',
+                outline: 'none',
+              }}
+            />
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowNotes(true)}
+            className="mb-4 text-xs transition-colors hover-text-zinc"
+            style={{ color: 'var(--color-graphite)', fontFamily: 'var(--font-mono)' }}
+          >
+            + add note
+          </button>
+        )}
 
         {/* Complete Set Button */}
         <button
