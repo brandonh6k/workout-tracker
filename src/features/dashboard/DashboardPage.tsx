@@ -1,30 +1,19 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSchedule, type ScheduledWorkoutWithDetails } from '../schedule'
 import { WeeklyCalendar } from '../templates'
 import { ActiveWorkout } from '../workouts'
-import {
-  getProgressComparison,
-  getRecentWorkouts,
-  getWeeklyVolumeComparison,
-  getTodayCompletedSessionData,
-  type ExerciseComparison,
-  type RecentWorkout,
-  type WeeklyVolumeComparison,
-  type CompletedSessionData,
-} from '../progress'
+import type { ExerciseComparison, RecentWorkout } from '../progress'
 import { formatWorkoutDate, toLocalDateString } from '../../lib/utils'
 import { ErrorMessage } from '../../components/ErrorMessage'
 import { useWorkoutMode } from '../../lib/WorkoutModeContext'
+import { useDashboardData } from './useDashboardData'
 
 export function DashboardPage() {
   const { scheduledWorkouts, isLoading, error, refresh } = useSchedule()
+  const { comparison, recentWorkouts, weeklyVolume, completedData, refresh: refreshDashboard } = useDashboardData()
   const navigate = useNavigate()
   const [activeWorkout, setActiveWorkout] = useState<ScheduledWorkoutWithDetails | null>(null)
-  const [comparison, setComparison] = useState<ExerciseComparison[]>([])
-  const [recentWorkouts, setRecentWorkouts] = useState<RecentWorkout[]>([])
-  const [weeklyVolume, setWeeklyVolume] = useState<WeeklyVolumeComparison | null>(null)
-  const [completedData, setCompletedData] = useState<CompletedSessionData>(new Map())
   const [expandedWorkouts, setExpandedWorkouts] = useState<Set<string>>(new Set())
 
   const today = new Date().getDay()
@@ -38,28 +27,6 @@ export function DashboardPage() {
       .map((w) => w.templateId)
   )
 
-  // Load comparison and recent workouts data
-  const loadDashboardData = useCallback(async () => {
-    try {
-      const [comparisonData, recentData, volumeData, completedSessionData] = await Promise.all([
-        getProgressComparison(4),
-        getRecentWorkouts(5),
-        getWeeklyVolumeComparison(),
-        getTodayCompletedSessionData(),
-      ])
-      setComparison(comparisonData)
-      setRecentWorkouts(recentData)
-      setWeeklyVolume(volumeData)
-      setCompletedData(completedSessionData)
-    } catch (err) {
-      console.error('Failed to load dashboard data:', err)
-    }
-  }, [])
-
-  useEffect(() => {
-    loadDashboardData()
-  }, [loadDashboardData])
-
   const { setWorkoutActive } = useWorkoutMode()
 
   const handleStartWorkout = (workout: ScheduledWorkoutWithDetails) => {
@@ -71,7 +38,7 @@ export function DashboardPage() {
     setActiveWorkout(null)
     setWorkoutActive(false)
     refresh()
-    await loadDashboardData()
+    await refreshDashboard()
   }
 
   const handleWorkoutCancel = () => {
