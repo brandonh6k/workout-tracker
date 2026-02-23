@@ -7,9 +7,11 @@ import {
   getProgressComparison,
   getRecentWorkouts,
   getWeeklyVolumeComparison,
+  getTodayCompletedSessionData,
   type ExerciseComparison,
   type RecentWorkout,
   type WeeklyVolumeComparison,
+  type CompletedSessionData,
 } from '../progress'
 import { formatWorkoutDate } from '../../lib/utils'
 import { ErrorMessage } from '../../components/ErrorMessage'
@@ -22,6 +24,7 @@ export function DashboardPage() {
   const [comparison, setComparison] = useState<ExerciseComparison[]>([])
   const [recentWorkouts, setRecentWorkouts] = useState<RecentWorkout[]>([])
   const [weeklyVolume, setWeeklyVolume] = useState<WeeklyVolumeComparison | null>(null)
+  const [completedData, setCompletedData] = useState<CompletedSessionData>(new Map())
   const [expandedWorkouts, setExpandedWorkouts] = useState<Set<string>>(new Set())
 
   const today = new Date().getDay()
@@ -39,14 +42,16 @@ export function DashboardPage() {
   // Load comparison and recent workouts data
   const loadDashboardData = useCallback(async () => {
     try {
-      const [comparisonData, recentData, volumeData] = await Promise.all([
+      const [comparisonData, recentData, volumeData, completedSessionData] = await Promise.all([
         getProgressComparison(4),
         getRecentWorkouts(5),
         getWeeklyVolumeComparison(),
+        getTodayCompletedSessionData(),
       ])
       setComparison(comparisonData)
       setRecentWorkouts(recentData)
       setWeeklyVolume(volumeData)
+      setCompletedData(completedSessionData)
     } catch (err) {
       console.error('Failed to load dashboard data:', err)
     }
@@ -214,19 +219,25 @@ export function DashboardPage() {
                           const scheduledEx = workout.scheduled_exercises.find(
                             (se) => se.exercise_name === ex.exercise_name
                           )
+                          const loggedEx = isCompleted
+                            ? completedData.get(workout.template_id)?.find((l) => l.exerciseName === ex.exercise_name)
+                            : null
                           return (
-                            <li 
-                              key={ex.id} 
+                            <li
+                              key={ex.id}
                               className="flex justify-between py-1 border-b"
-                              style={{ 
+                              style={{
                                 borderColor: 'var(--color-concrete)',
                                 fontFamily: 'var(--font-mono)',
                                 fontSize: '0.8125rem'
                               }}
                             >
                               <span style={{ color: 'var(--color-ash)' }}>{ex.exercise_name}</span>
-                              <span style={{ color: 'var(--color-zinc)' }}>
-                                {scheduledEx?.target_weight ?? 0}# · {ex.target_sets}×{ex.target_reps}
+                              <span style={{ color: loggedEx ? 'var(--color-chalk)' : 'var(--color-zinc)' }}>
+                                {loggedEx
+                                  ? `${loggedEx.weight}# · ${loggedEx.sets}×${loggedEx.reps}`
+                                  : `${scheduledEx?.target_weight ?? 0}# · ${ex.target_sets}×${ex.target_reps}`
+                                }
                               </span>
                             </li>
                           )

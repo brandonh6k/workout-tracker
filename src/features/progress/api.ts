@@ -600,3 +600,63 @@ export async function getWeeklyVolumeComparison(): Promise<WeeklyVolumeCompariso
     lastWeekSessions: lastWeekSessions.length,
   }
 }
+
+// Per-exercise summary of what was actually logged in a session
+export type LoggedExerciseSummary = {
+  exerciseName: string
+  sets: number
+  reps: number  // reps from the last set (representative)
+  weight: number  // weight from the last set (representative)
+}
+
+// Map from templateId to array of exercise summaries
+export type CompletedSessionData = Map<string, LoggedExerciseSummary[]>
+
+export async function getTodayCompletedSessionData(): Promise<CompletedSessionData> {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+
+  const now = new Date()
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+
+  const { data: sessions } = await supabase
+    .from('workout_sessions')
+    .select('id, template_id')
+    .eq('user_id', user.id)
+    .eq('completed', true)
+    .eq('date', todayStr)
+
+  if (!sessions || sessions.length === 0) return new Map()
+
+  const sessionIds = sessions.map((s) => s.id)
+
+  const { data: sets } = await supabase
+    .from('logged_sets')
+    .select('session_id, exercise_name, set_number, weight, reps')
+    .in('session_id', sessionIds)
+    .order('set_number', { ascending: true })
+
+  if (!sets) return new Map()
+
+  const result: CompletedSessionData = new Map()
+
+  for (const session of sessions) {
+    if (!session.template_id) continue
+    const sessionSets = sets.filter((s) => s.session_id === session.id)
+    const byExercise = groupBy(sessionSets, (s) => s.exercise_name)
+
+    const summaries: LoggedExerciseSummary[] = []
+    for (const [exerciseName, exSets] of Object.entries(byExercise)) {
+      const lastSet = exSets[exSets.length - 1]
+      summaries.push({
+        exerciseName,
+        sets: exSets.length,
+        reps: lastSet.reps,
+        weight: lastSet.weight,
+      })
+    }
+    result.set(session.template_id, summaries)
+  }
+
+  return result
+}
