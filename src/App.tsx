@@ -1,14 +1,17 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { AuthProvider, LoginPage, SignupPage } from './features/auth'
 import { DashboardPage } from './features/dashboard'
-import { TemplatesPage } from './features/templates'
-import { SchedulePage } from './features/schedule'
-import { HistoryPage } from './features/workouts'
-import { AdminPage } from './features/admin'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { Layout } from './components/Layout'
 import { WorkoutModeProvider } from './lib/WorkoutModeContext'
+
+// Lazy-load non-critical routes
+const TemplatesPage = lazy(() => import('./features/templates/TemplatesPage').then((m) => ({ default: m.TemplatesPage })))
+const SchedulePage = lazy(() => import('./features/schedule/SchedulePage').then((m) => ({ default: m.SchedulePage })))
+const HistoryPage = lazy(() => import('./features/workouts/HistoryPage').then((m) => ({ default: m.HistoryPage })))
+const AdminPage = lazy(() => import('./features/admin/AdminPage').then((m) => ({ default: m.AdminPage })))
 
 function App() {
   return (
@@ -36,10 +39,10 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
               <Route path="/" element={<DashboardPage />} />
-              <Route path="/templates" element={<TemplatesPage />} />
-              <Route path="/schedule" element={<SchedulePage />} />
-              <Route path="/history" element={<HistoryPage />} />
-              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/templates" element={<Suspense fallback={null}><TemplatesPage /></Suspense>} />
+              <Route path="/schedule" element={<Suspense fallback={null}><SchedulePage /></Suspense>} />
+              <Route path="/history" element={<Suspense fallback={null}><HistoryPage /></Suspense>} />
+              <Route path="/admin" element={<Suspense fallback={null}><AdminPage /></Suspense>} />
             </Route>
           </Route>
         </Routes>

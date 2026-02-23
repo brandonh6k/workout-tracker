@@ -1,10 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { toast } from 'sonner'
 import { getWorkoutSessionsWithSets, abandonWorkoutSession, type WorkoutSessionWithSets } from './api'
-import { getLoggedExercises, ExerciseHistoryView, type LoggedExerciseInfo } from '../progress'
+import { getLoggedExercises, type LoggedExerciseInfo } from '../progress'
 import type { ExerciseType } from '../../types'
 import { formatWorkoutDate, groupBy } from '../../lib/utils'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
+
+const ExerciseHistoryView = lazy(() =>
+  import('../progress/ExerciseHistoryView').then((m) => ({ default: m.ExerciseHistoryView }))
+)
 
 type ViewMode = { type: 'list' } | { type: 'exercise'; name: string; exerciseType: ExerciseType }
 
@@ -51,11 +55,26 @@ export function HistoryPage() {
   // Exercise detail view
   if (view.type === 'exercise') {
     return (
-      <ExerciseHistoryView
-        exerciseName={view.name}
-        exerciseType={view.exerciseType}
-        onBack={() => setView({ type: 'list' })}
-      />
+      <Suspense fallback={
+        <div className="flex items-center justify-center py-16">
+          <div
+            className="text-center"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+          >
+            <div
+              className="w-8 h-8 mx-auto mb-3 border-2 border-t-transparent rounded-full animate-spin"
+              style={{ borderColor: 'var(--color-graphite)', borderTopColor: 'transparent' }}
+            />
+            Loading...
+          </div>
+        </div>
+      }>
+        <ExerciseHistoryView
+          exerciseName={view.name}
+          exerciseType={view.exerciseType}
+          onBack={() => setView({ type: 'list' })}
+        />
+      </Suspense>
     )
   }
 
