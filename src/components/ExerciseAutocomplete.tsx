@@ -138,33 +138,50 @@ export function ExerciseAutocomplete({
         }}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        className="input w-full"
         autoComplete="off"
       />
 
       {isOpen && (suggestions.length > 0 || showCreateOption) && (
         <ul
           ref={listRef}
-          className="absolute z-10 w-full mt-1 bg-white border border-gray-200 dark:border-gray-700 rounded-md shadow-lg max-h-60 overflow-auto"
+          className="absolute z-10 w-full mt-1 rounded shadow-lg max-h-60 overflow-auto"
+          style={{
+            background: 'var(--color-iron)',
+            border: '1px solid var(--color-steel)',
+          }}
         >
           {suggestions.map((exercise, index) => (
             <li
               key={exercise.id}
               onClick={() => handleSelect(exercise.name)}
-              className={`px-3 py-2 cursor-pointer ${
-                index === highlightedIndex
-                  ? 'bg-blue-50 text-blue-900'
-                  : 'hover:bg-gray-50 dark:bg-gray-900'
-              }`}
+              className="px-3 py-2 cursor-pointer transition-colors"
+              style={{
+                background: index === highlightedIndex ? 'var(--color-steel)' : 'transparent',
+                color: index === highlightedIndex ? 'var(--color-chalk)' : 'var(--color-ash)',
+              }}
             >
-              <span className="font-medium">{exercise.name}</span>
+              <span
+                className="text-sm"
+                style={{ fontFamily: 'var(--font-mono)' }}
+              >
+                {exercise.name}
+              </span>
               {exercise.category && (
-                <span className="ml-2 text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                <span
+                  className="ml-2 text-xs"
+                  style={{ color: 'var(--color-zinc)' }}
+                >
                   {exercise.category}
                 </span>
               )}
               {exercise.is_custom && (
-                <span className="ml-2 text-xs text-gray-400 dark:text-gray-500">(custom)</span>
+                <span
+                  className="ml-2 text-[10px] uppercase"
+                  style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)' }}
+                >
+                  (custom)
+                </span>
               )}
             </li>
           ))}
@@ -172,13 +189,16 @@ export function ExerciseAutocomplete({
           {showCreateOption && (
             <li
               onClick={handleCreateCustom}
-              className={`px-3 py-2 cursor-pointer border-t border-gray-100 ${
-                highlightedIndex === suggestions.length
-                  ? 'bg-blue-50 text-blue-900'
-                  : 'hover:bg-gray-50 dark:bg-gray-900'
-              }`}
+              className="px-3 py-2 cursor-pointer transition-colors"
+              style={{
+                borderTop: '1px solid var(--color-steel)',
+                background: highlightedIndex === suggestions.length ? 'var(--color-steel)' : 'transparent',
+                color: 'var(--color-ember)',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.875rem',
+              }}
             >
-              <span className="text-blue-600">+ Create "{value.trim()}"</span>
+              + Create "{value.trim()}"
             </li>
           )}
         </ul>
@@ -186,46 +206,62 @@ export function ExerciseAutocomplete({
 
       {isLoading && (
         <div className="absolute right-3 top-1/2 -translate-y-1/2">
-          <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
+          <div
+            className="w-4 h-4 border-2 rounded-full animate-spin"
+            style={{ borderColor: 'var(--color-graphite)', borderTopColor: 'var(--color-ember)' }}
+          />
         </div>
       )}
 
       {/* Type selector modal for new exercises */}
       {showTypeSelector && (
-        <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 dark:border-gray-700 rounded-md shadow-lg p-3">
-          <div className="text-sm font-medium text-gray-700 mb-2">
+        <div
+          className="absolute z-20 w-full mt-1 rounded shadow-lg p-3"
+          style={{
+            background: 'var(--color-iron)',
+            border: '1px solid var(--color-steel)',
+          }}
+        >
+          <div
+            className="text-sm mb-2"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ash)' }}
+          >
             Create "{pendingName}" as:
           </div>
           <div className="flex flex-col gap-2">
             <button
               type="button"
               onClick={() => handleConfirmCreate('weighted')}
-              className="w-full px-3 py-2 text-left text-sm rounded hover:bg-gray-100 dark:bg-gray-700 flex items-center gap-2"
+              className="w-full px-3 py-2 text-left text-sm rounded transition-colors flex items-center gap-2 hover:bg-[var(--color-steel)]"
+              style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ash)' }}
             >
-              <span className="w-2 h-2 rounded-full bg-gray-400" />
+              <span className="w-2 h-2 rounded-full" style={{ background: 'var(--color-zinc)' }} />
               Weighted (barbells, dumbbells, machines)
             </button>
             <button
               type="button"
               onClick={() => handleConfirmCreate('bodyweight')}
-              className="w-full px-3 py-2 text-left text-sm rounded hover:bg-gray-100 dark:bg-gray-700 flex items-center gap-2"
+              className="w-full px-3 py-2 text-left text-sm rounded transition-colors flex items-center gap-2 hover:bg-[var(--color-steel)]"
+              style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ash)' }}
             >
-              <span className="w-2 h-2 rounded-full bg-green-500" />
+              <span className="w-2 h-2 rounded-full" style={{ background: 'var(--color-success)' }} />
               Bodyweight (dips, pull-ups, push-ups)
             </button>
             <button
               type="button"
               onClick={() => handleConfirmCreate('cardio')}
-              className="w-full px-3 py-2 text-left text-sm rounded hover:bg-gray-100 dark:bg-gray-700 flex items-center gap-2"
+              className="w-full px-3 py-2 text-left text-sm rounded transition-colors flex items-center gap-2 hover:bg-[var(--color-steel)]"
+              style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ash)' }}
             >
-              <span className="w-2 h-2 rounded-full bg-blue-500" />
+              <span className="w-2 h-2 rounded-full" style={{ background: 'var(--color-info)' }} />
               Cardio (running, rowing, cycling)
             </button>
           </div>
           <button
             type="button"
             onClick={handleCancelCreate}
-            className="w-full mt-2 px-3 py-1 text-sm text-gray-500 hover:text-gray-700"
+            className="w-full mt-2 px-3 py-1 text-sm transition-colors hover-text-chalk"
+            style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)' }}
           >
             Cancel
           </button>
