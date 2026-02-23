@@ -1,15 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { ScheduledWorkoutWithDetails } from '../schedule'
-
-const DAYS_OF_WEEK = [
-  { value: 0, label: 'Sunday', short: 'Sun' },
-  { value: 1, label: 'Monday', short: 'Mon' },
-  { value: 2, label: 'Tuesday', short: 'Tue' },
-  { value: 3, label: 'Wednesday', short: 'Wed' },
-  { value: 4, label: 'Thursday', short: 'Thu' },
-  { value: 5, label: 'Friday', short: 'Fri' },
-  { value: 6, label: 'Saturday', short: 'Sat' },
-]
+import { DAYS_OF_WEEK } from '../../lib/utils'
 
 type Props = {
   scheduledWorkouts: ScheduledWorkoutWithDetails[]

@@ -70,13 +70,6 @@ export async function getScheduledWorkouts(): Promise<ScheduledWorkoutWithDetail
   }))
 }
 
-export async function getScheduledWorkoutsByDay(
-  dayOfWeek: number
-): Promise<ScheduledWorkoutWithDetails[]> {
-  const all = await getScheduledWorkouts()
-  return all.filter((s) => s.day_of_week === dayOfWeek)
-}
-
 export async function scheduleWorkout(
   templateId: string,
   dayOfWeek: number,

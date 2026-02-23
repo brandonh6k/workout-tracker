@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
-import { getRecentWorkouts, abandonWorkoutSession, type WorkoutSessionWithSets } from './api'
+import { getWorkoutSessionsWithSets, abandonWorkoutSession, type WorkoutSessionWithSets } from './api'
 import { getLoggedExercises, ExerciseHistoryView, type LoggedExerciseInfo } from '../progress'
 import type { ExerciseType } from '../../types'
 import { formatWorkoutDate, groupBy } from '../../lib/utils'
@@ -19,7 +19,7 @@ export function HistoryPage() {
     setIsLoading(true)
     try {
       const [workoutsData, exercisesData] = await Promise.all([
-        getRecentWorkouts(20),
+        getWorkoutSessionsWithSets(20),
         getLoggedExercises(),
       ])
       setWorkouts(workoutsData)

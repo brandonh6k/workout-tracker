@@ -3,16 +3,7 @@ import { useSchedule, type ScheduledWorkoutWithDetails } from './index'
 import { useTemplates } from '../templates'
 import { ScheduleForm } from './ScheduleForm'
 import * as api from './api'
-
-const DAYS_OF_WEEK = [
-  { value: 0, label: 'Sunday', short: 'SUN' },
-  { value: 1, label: 'Monday', short: 'MON' },
-  { value: 2, label: 'Tuesday', short: 'TUE' },
-  { value: 3, label: 'Wednesday', short: 'WED' },
-  { value: 4, label: 'Thursday', short: 'THU' },
-  { value: 5, label: 'Friday', short: 'FRI' },
-  { value: 6, label: 'Saturday', short: 'SAT' },
-]
+import { DAYS_OF_WEEK } from '../../lib/utils'
 
 export function SchedulePage() {
   const { scheduledWorkouts, isLoading: scheduleLoading, refresh: refreshSchedule } = useSchedule()

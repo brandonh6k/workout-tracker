@@ -32,6 +32,24 @@ export function parseLocalDate(date: Date | string): Date {
 }
 
 /**
+ * Returns today's date as a local YYYY-MM-DD string.
+ * Avoids the UTC midnight pitfall of toISOString().split('T')[0].
+ */
+export function toLocalDateString(date: Date = new Date()): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+}
+
+export const DAYS_OF_WEEK = [
+  { value: 0, label: 'Sunday', short: 'SUN' },
+  { value: 1, label: 'Monday', short: 'MON' },
+  { value: 2, label: 'Tuesday', short: 'TUE' },
+  { value: 3, label: 'Wednesday', short: 'WED' },
+  { value: 4, label: 'Thursday', short: 'THU' },
+  { value: 5, label: 'Friday', short: 'FRI' },
+  { value: 6, label: 'Saturday', short: 'SAT' },
+] as const
+
+/**
  * Formats a date for display in workout contexts (e.g., "Mon, Dec 30")
  */
 export function formatWorkoutDate(date: Date | string): string {

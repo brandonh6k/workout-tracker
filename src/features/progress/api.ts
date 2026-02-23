@@ -1,5 +1,5 @@
 import { supabase } from '../../lib/supabase'
-import { groupBy, parseLocalDate } from '../../lib/utils'
+import { groupBy, parseLocalDate, toLocalDateString } from '../../lib/utils'
 import type { LoggedSet, ExerciseType } from '../../types'
 
 export type ExerciseHistoryEntry = {
@@ -167,18 +167,6 @@ export async function getLoggedExercises(): Promise<LoggedExerciseInfo[]> {
       exerciseType: typeMap.get(name) ?? 'weighted',
     }))
     .sort((a, b) => a.name.localeCompare(b.name))
-}
-
-// Get the exercise type for a specific exercise
-export async function getExerciseType(exerciseName: string): Promise<ExerciseType> {
-  const { data, error } = await supabase
-    .from('exercises')
-    .select('exercise_type')
-    .eq('name', exerciseName)
-    .single()
-
-  if (error || !data) return 'weighted' // Default fallback
-  return data.exercise_type as ExerciseType
 }
 
 // Check if a set is a PR (personal record)
@@ -616,8 +604,7 @@ export async function getTodayCompletedSessionData(): Promise<CompletedSessionDa
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
-  const now = new Date()
-  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+  const todayStr = toLocalDateString()
 
   const { data: sessions } = await supabase
     .from('workout_sessions')

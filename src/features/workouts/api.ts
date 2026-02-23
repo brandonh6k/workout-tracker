@@ -1,4 +1,5 @@
 import { supabase } from '../../lib/supabase'
+import { toLocalDateString } from '../../lib/utils'
 import type { WorkoutSession, LoggedSet, LoggedSetInsert } from '../../types'
 import type { ScheduledWorkoutWithDetails } from '../schedule'
 
@@ -12,9 +13,7 @@ export async function startWorkoutSession(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
-  // Use local date, not UTC (avoids off-by-one errors in US timezones)
-  const now = new Date()
-  const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+  const localDate = toLocalDateString()
 
   const { data, error } = await supabase
     .from('workout_sessions')
@@ -133,7 +132,7 @@ export async function getWorkoutSession(sessionId: string): Promise<WorkoutSessi
   }
 }
 
-export async function getRecentWorkouts(limit = 10): Promise<WorkoutSessionWithSets[]> {
+export async function getWorkoutSessionsWithSets(limit = 10): Promise<WorkoutSessionWithSets[]> {
   const { data: sessions, error: sessionsError } = await supabase
     .from('workout_sessions')
     .select('*')
