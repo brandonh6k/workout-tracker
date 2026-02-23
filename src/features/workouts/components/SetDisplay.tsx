@@ -3,8 +3,6 @@ type AdjustMode = 'weight' | 'reps' | null
 type Props = {
   weight: number
   reps: number
-  setNumber: number
-  totalSets: number
   adjustMode: AdjustMode
   onAdjustModeChange: (mode: AdjustMode) => void
   onAdjustWeight: (delta: number) => void
@@ -14,8 +12,6 @@ type Props = {
 export function SetDisplay({
   weight,
   reps,
-  setNumber,
-  totalSets,
   adjustMode,
   onAdjustModeChange,
   onAdjustWeight,
@@ -91,19 +87,6 @@ export function SetDisplay({
         </div>
       )}
 
-      {/* Set counter */}
-      <div 
-        className="mt-6 px-3 py-1"
-        style={{ 
-          background: 'var(--color-steel)',
-          borderRadius: 'var(--radius-sm)',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.875rem',
-          color: 'var(--color-zinc)'
-        }}
-      >
-        SET <span style={{ color: 'var(--color-chalk)' }}>{setNumber}</span> / {totalSets}
-      </div>
     </div>
   )
 }

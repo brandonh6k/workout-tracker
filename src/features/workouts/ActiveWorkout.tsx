@@ -500,8 +500,6 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
         <SetDisplay
           weight={currentSet.weight}
           reps={currentSet.reps}
-          setNumber={state.currentSetIndex + 1}
-          totalSets={currentExercise.targetSets}
           adjustMode={adjustMode}
           onAdjustModeChange={setAdjustMode}
           onAdjustWeight={handleAdjustWeight}
