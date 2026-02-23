@@ -7,7 +7,7 @@ Personal workout tracking app. Basement gym use case - single user, offline-frie
 - **Stack**: React 19 + TypeScript + Tailwind CSS v4 + Supabase
 - **Deployment**: Vercel (auto-deploy on push to main)
 - **Repo**: https://github.com/brandonh6k/workout-tracker
-- **Test runner**: Vitest (49 tests currently)
+- **Test runner**: Vitest (49 unit + 40 integration tests)
 
 ## Domain Model
 
@@ -87,17 +87,22 @@ Each feature has:
 
 - Unit tests in `*.test.ts` files alongside source
 - Vitest + React Testing Library + jsdom
-- Currently 49 tests covering utils, reducer, API functions, and key components
-- Run: `npm run test:run`
+- Currently 49 unit tests covering utils, reducer, API functions, and key components
+- Integration tests in `src/test/integration/` — 40 tests against local Supabase
+  - Auth, templates, workouts, schedule, exercises, RLS isolation
+  - Require local Supabase running (`npm run db:start`)
+  - Separate Vitest config (`vitest.integration.config.ts`): Node env, sequential, 15s timeout
 
 ## Commands
 
 ```bash
-npm run dev      # Start dev server (port 5173)
-npm run build    # TypeScript check + Vite build
-npm run lint     # ESLint
-npm run test:run # Run tests once
-npm run test     # Watch mode
+npm run dev              # Start dev server (port 5173)
+npm run build            # TypeScript check + Vite build
+npm run lint             # ESLint
+npm run test:run         # Unit tests only (49)
+npm run test             # Unit tests in watch mode
+npm run test:integration # Integration tests (40, needs local Supabase)
+npm run test:all         # Both unit + integration
 ```
 
 ## Database Migrations
@@ -113,7 +118,7 @@ Located in `supabase/migrations/`. Applied in order:
 ## Known Tech Debt
 
 - Bundle is ~890KB (Recharts is ~300KB) - needs lazy loading
-- No API layer tests (would need Supabase mocking)
+- Integration tests cover Supabase API + RLS; no mocked API-layer unit tests yet
 - Some components still use inline styles for design system colors instead of utility classes
 
 ## Backlog Location

@@ -13,13 +13,13 @@
 
 - [x] **Simplify rep target in templates**: Change from rep range (min-max) to single rep target. Ranges add complexity without value - you know what you're aiming for.
 
-- [ ] **Remove rep ranges from logging**: You did X reps, not a range. Simplify to single value.
+- [x] **Remove rep ranges from logging**: You did X reps, not a range. Simplify to single value.
 
 - [x] **Configurable rest periods**: Rest time should be set per-exercise in the template (not hardcoded 90s). Compounds may need 3min, isolation 60s. Add `rest_seconds` column to `template_exercises`.
 
 - [x] **Dark mode toggle**: Add light/dark theme toggle. Save preference to localStorage. Because OMG MY EYES.
 
-- [ ] **Rest day marking**: Visual indicator on weekly calendar for intentional rest days vs. unscheduled days.
+- [x] **Rest day marking**: Visual indicator on weekly calendar for intentional rest days vs. unscheduled days.
 
 ## Content / Exercise Library
 
@@ -27,7 +27,7 @@
 
 ## Workflow Design (Phase 2)
 
-- [ ] **1-button-per-set logging flow**: Gold standard is Next/Done button for 95% of sets. Pre-filled from scheduled weights. Only tap into details for exceptions (weight change, rep variance, notes). Rest timer starts automatically on set completion.
+- [x] **1-button-per-set logging flow**: Gold standard is Next/Done button for 95% of sets. Pre-filled from scheduled weights. Only tap into details for exceptions (weight change, rep variance, notes). Rest timer starts automatically on set completion.
 
 ## Cardio Support
 
@@ -55,26 +55,19 @@
 
 - [x] **useReducer for ActiveWorkout**: The `ActiveWorkout` component has complex nested state with 12+ setState calls. Refactoring to `useReducer` would centralize state mutations, simplify rollback logic, and make the component easier to test.
 
-- [ ] **Data fetching hooks for Dashboard/Progress**: Extract `useDashboardData()` and `useExerciseHistory(exerciseName)` hooks to separate data fetching concerns from UI components. Currently, `DashboardPage` and `ExerciseHistoryView` have parallel API calls mixed into the component.
+- [x] **Data fetching hooks for Dashboard/Progress**: Extract `useDashboardData()` and `useExerciseHistory(exerciseName)` hooks to separate data fetching concerns from UI components. Currently, `DashboardPage` and `ExerciseHistoryView` have parallel API calls mixed into the component.
 
 ## Performance
 
-- [ ] **Code splitting / lazy loading**: Bundle is ~850KB which triggers Vite's size warning. Use `React.lazy()` to split by route and lazy-load heavy dependencies (Recharts is ~300KB). Target: under 500KB initial bundle.
+- [x] **Code splitting / lazy loading**: Bundle is ~850KB which triggers Vite's size warning. Use `React.lazy()` to split by route and lazy-load heavy dependencies (Recharts is ~300KB). Target: under 500KB initial bundle.
 
 ## Testing
 
-- [ ] **API layer tests**: Add tests for API functions with Supabase mocking. Would require setting up a mock Supabase client or using MSW (Mock Service Worker) to intercept requests.
+- [x] **API layer tests**: Covered by integration tests against local Supabase (40 tests across auth, templates, workouts, schedule, exercises, RLS).
 
 - [x] **ActiveWorkout component tests**: Complex component with state management, timers, and API calls. Would benefit from the useReducer refactor first to make state transitions more testable.
 
-- [ ] **E2E tests with Playwright**: Set up Playwright for end-to-end testing. Priority flows:
-  1. Auth flow (signup, login, logout)
-  2. Template CRUD (create template, add exercises, edit, delete)
-  3. Schedule workflow (assign template to day, set target weights)
-  4. Full workout flow (start workout -> complete sets -> finish -> verify in history)
-  5. Dashboard state (completed workout shows "Completed" badge, stats refresh)
-  
-  Will need test fixtures for auth state and possibly a test Supabase project or local emulator.
+- [x] **E2E tests with Playwright**: Basic smoke tests in `e2e/smoke.spec.ts`. Expand coverage for full workflows (template CRUD, workout flow, schedule).
 
 - [ ] **Acceptance tests on Vercel preview deployments**: Gate PR merges with Playwright tests running against Vercel preview URLs. Free tier approach (no custom environments):
   1. Push to feature branch triggers Vercel preview deployment
@@ -120,7 +113,7 @@
 
 - [ ] **Supersets**: Group exercises to be performed back-to-back with minimal rest between, then longer rest after the superset.
 
-- [ ] **"+Create exercise" button not working**: The create exercise option in autocomplete isn't clickable/functional.
+- [x] **"+Create exercise" button not working**: The create exercise option in autocomplete isn't clickable/functional.
 
 ## Navigation / Layout
 
