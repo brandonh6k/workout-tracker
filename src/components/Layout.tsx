@@ -68,10 +68,8 @@ export function Layout() {
               {/* Theme toggle */}
               <button
                 onClick={toggleTheme}
-                className="p-2 transition-colors"
+                className="p-2 transition-colors hover-text-chalk"
                 style={{ color: 'var(--color-zinc)' }}
-                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-chalk)'}
-                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-zinc)'}
                 title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
               >
                 {theme === 'light' ? (
@@ -96,20 +94,8 @@ export function Layout() {
               {/* Sign out */}
               <button
                 onClick={signOut}
-                className="text-xs font-mono px-3 py-1.5 transition-all"
-                style={{ 
-                  color: 'var(--color-slate)',
-                  background: 'var(--color-steel)',
-                  borderRadius: 'var(--radius-sm)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = 'var(--color-chalk)'
-                  e.currentTarget.style.background = 'var(--color-concrete)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = 'var(--color-slate)'
-                  e.currentTarget.style.background = 'var(--color-steel)'
-                }}
+                className="text-xs font-mono px-3 py-1.5 transition-all text-subtle bg-steel hover-text-chalk hover-bg-concrete"
+                style={{ borderRadius: 'var(--radius-sm)' }}
               >
                 SIGN OUT
               </button>
@@ -124,30 +110,13 @@ export function Layout() {
                 <Link
                   key={to}
                   to={to}
-                  className="flex items-center gap-2 px-4 py-2 text-sm transition-all whitespace-nowrap"
-                  style={{ 
+                  className={`flex items-center gap-2 px-4 py-2 text-sm transition-all whitespace-nowrap nav-link ${isActive ? 'nav-link-active' : ''}`}
+                  style={{
                     fontFamily: 'var(--font-display)',
                     fontWeight: 500,
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
                     borderRadius: 'var(--radius-sm)',
-                    color: isActive ? 'var(--color-void)' : 'var(--color-slate)',
-                    background: isActive 
-                      ? 'linear-gradient(135deg, var(--color-ember) 0%, var(--color-flame) 100%)'
-                      : 'transparent',
-                    boxShadow: isActive ? 'var(--shadow-glow)' : 'none'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.color = 'var(--color-chalk)'
-                      e.currentTarget.style.background = 'var(--color-steel)'
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.color = 'var(--color-slate)'
-                      e.currentTarget.style.background = 'transparent'
-                    }
                   }}
                 >
                   <span className="text-base">{icon}</span>

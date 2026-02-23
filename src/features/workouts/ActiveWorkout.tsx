@@ -417,13 +417,11 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
           {!isLastExercise && (
             <button
               onClick={handleSkipExercise}
-              className="mt-6 text-sm transition-colors"
-              style={{ 
+              className="mt-6 text-sm transition-colors hover-text-zinc"
+              style={{
                 color: 'var(--color-graphite)',
                 fontFamily: 'var(--font-mono)'
               }}
-              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-zinc)'}
-              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-graphite)'}
             >
               Skip remaining sets →
             </button>
@@ -583,13 +581,11 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
         >
           <button
             onClick={handleSkipExercise}
-            className="text-sm transition-colors"
-            style={{ 
+            className="text-sm transition-colors hover-text-zinc"
+            style={{
               color: 'var(--color-graphite)',
               fontFamily: 'var(--font-mono)'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-zinc)'}
-            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-graphite)'}
           >
             Skip remaining sets →
           </button>
@@ -627,12 +623,10 @@ function WorkoutHeader({
         borderBottom: '1px solid var(--color-steel)'
       }}
     >
-      <button 
-        onClick={onAbandon} 
-        className="transition-colors"
+      <button
+        onClick={onAbandon}
+        className="transition-colors hover-text-danger"
         style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)', fontSize: '0.875rem' }}
-        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-danger)'}
-        onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-zinc)'}
       >
         ✕ CANCEL
       </button>

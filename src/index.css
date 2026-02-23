@@ -427,6 +427,29 @@ h1, h2, h3, h4, h5, h6 {
 .border-graphite { border-color: var(--color-graphite); }
 .border-ember { border-color: var(--color-ember); }
 
+/* Hover utilities for design system CSS variables */
+.hover-text-chalk:hover { color: var(--color-chalk); }
+.hover-text-zinc:hover { color: var(--color-zinc); }
+.hover-text-danger:hover { color: var(--color-danger); }
+.hover-bg-concrete:hover { background-color: var(--color-concrete); }
+
+/* Navigation links */
+.nav-link {
+  color: var(--color-slate);
+  background: transparent;
+  box-shadow: none;
+}
+.nav-link:hover {
+  color: var(--color-chalk);
+  background: var(--color-steel);
+}
+.nav-link-active,
+.nav-link-active:hover {
+  color: var(--color-void);
+  background: linear-gradient(135deg, var(--color-ember) 0%, var(--color-flame) 100%);
+  box-shadow: var(--shadow-glow);
+}
+
 /* Divider line */
 .divider {
   height: 1px;
