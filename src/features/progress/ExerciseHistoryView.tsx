@@ -331,17 +331,42 @@ function HistoryEntry({
   )
 }
 
-function SetBadge({ set, isBest }: { set: { weight: number; reps: number; set_number: number }; isBest: boolean }) {
+function SetBadge({ set, isBest }: { set: { weight: number; reps: number; set_number: number; rpe?: number | null; notes?: string | null }; isBest: boolean }) {
+  const hasDetails = set.rpe != null || (set.notes != null && set.notes.length > 0)
+
   return (
     <span
-      className="text-xs px-2 py-1 rounded tabular-nums"
-      style={{ 
+      className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded tabular-nums"
+      style={{
         fontFamily: 'var(--font-mono)',
         background: isBest ? 'var(--color-ember)' : 'var(--color-steel)',
         color: isBest ? 'var(--color-void)' : 'var(--color-ash)'
       }}
+      title={hasDetails ? [
+        set.rpe != null ? `RPE ${set.rpe}` : '',
+        set.notes || '',
+      ].filter(Boolean).join(' — ') : undefined}
     >
       {set.weight}# × {set.reps}
+      {set.rpe != null && (
+        <span
+          className="text-[10px] ml-0.5 px-1 rounded"
+          style={{
+            background: isBest ? 'rgba(0,0,0,0.2)' : 'var(--color-concrete)',
+            color: isBest ? 'var(--color-void)' : 'var(--color-zinc)',
+          }}
+        >
+          @{set.rpe}
+        </span>
+      )}
+      {set.notes != null && set.notes.length > 0 && (
+        <span
+          className="text-[10px]"
+          style={{ color: isBest ? 'rgba(0,0,0,0.5)' : 'var(--color-graphite)' }}
+        >
+          *
+        </span>
+      )}
     </span>
   )
 }
