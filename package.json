@@ -10,6 +10,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:all": "vitest run && vitest run --config vitest.integration.config.ts",
     "test:e2e": "playwright test",
     "db:start": "supabase start",
     "db:stop": "supabase stop",
