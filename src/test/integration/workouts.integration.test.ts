@@ -219,6 +219,187 @@ describe('Workouts', () => {
     expect(orphanSets).toEqual([])
   })
 
+  it('logs a set with RPE and notes', async () => {
+    const { data: session } = await user.client
+      .from('workout_sessions')
+      .insert({
+        user_id: user.id,
+        template_id: templateId,
+        date: '2025-01-21',
+        completed: false,
+      })
+      .select()
+      .single()
+
+    const { data: set, error } = await user.client
+      .from('logged_sets')
+      .insert({
+        session_id: session!.id,
+        exercise_name: 'Bench Press',
+        set_number: 1,
+        weight: 185,
+        reps: 8,
+        rpe: 8,
+        notes: 'Felt strong, good arch',
+      })
+      .select()
+      .single()
+
+    expect(error).toBeNull()
+    expect(set!.rpe).toBe(8)
+    expect(set!.notes).toBe('Felt strong, good arch')
+
+    await user.client.from('workout_sessions').delete().eq('id', session!.id)
+  })
+
+  it('defaults RPE and notes to null when not provided', async () => {
+    const { data: session } = await user.client
+      .from('workout_sessions')
+      .insert({
+        user_id: user.id,
+        template_id: templateId,
+        date: '2025-01-22',
+        completed: false,
+      })
+      .select()
+      .single()
+
+    const { data: set } = await user.client
+      .from('logged_sets')
+      .insert({
+        session_id: session!.id,
+        exercise_name: 'Squat',
+        set_number: 1,
+        weight: 225,
+        reps: 5,
+      })
+      .select()
+      .single()
+
+    expect(set!.rpe).toBeNull()
+    expect(set!.notes).toBeNull()
+
+    await user.client.from('workout_sessions').delete().eq('id', session!.id)
+  })
+
+  it('updates RPE and notes on an existing set', async () => {
+    const { data: session } = await user.client
+      .from('workout_sessions')
+      .insert({
+        user_id: user.id,
+        template_id: templateId,
+        date: '2025-01-23',
+        completed: false,
+      })
+      .select()
+      .single()
+
+    const { data: set } = await user.client
+      .from('logged_sets')
+      .insert({
+        session_id: session!.id,
+        exercise_name: 'Bench Press',
+        set_number: 1,
+        weight: 185,
+        reps: 8,
+      })
+      .select()
+      .single()
+
+    // Add RPE and notes after the fact
+    const { data: updated, error } = await user.client
+      .from('logged_sets')
+      .update({ rpe: 9, notes: 'Grinder rep' })
+      .eq('id', set!.id)
+      .select()
+      .single()
+
+    expect(error).toBeNull()
+    expect(updated!.rpe).toBe(9)
+    expect(updated!.notes).toBe('Grinder rep')
+
+    // Clear them
+    const { data: cleared } = await user.client
+      .from('logged_sets')
+      .update({ rpe: null, notes: null })
+      .eq('id', set!.id)
+      .select()
+      .single()
+
+    expect(cleared!.rpe).toBeNull()
+    expect(cleared!.notes).toBeNull()
+
+    await user.client.from('workout_sessions').delete().eq('id', session!.id)
+  })
+
+  it('RPE and notes persist through session completion and retrieval', async () => {
+    const { data: session } = await user.client
+      .from('workout_sessions')
+      .insert({
+        user_id: user.id,
+        template_id: templateId,
+        date: '2025-01-24',
+        completed: false,
+      })
+      .select()
+      .single()
+
+    // Log sets with varying RPE/notes
+    await user.client.from('logged_sets').insert([
+      {
+        session_id: session!.id,
+        exercise_name: 'Bench Press',
+        set_number: 1,
+        weight: 185,
+        reps: 8,
+        rpe: 7,
+        notes: 'Warm-up feel',
+      },
+      {
+        session_id: session!.id,
+        exercise_name: 'Bench Press',
+        set_number: 2,
+        weight: 185,
+        reps: 8,
+        rpe: 9,
+      },
+      {
+        session_id: session!.id,
+        exercise_name: 'Bench Press',
+        set_number: 3,
+        weight: 185,
+        reps: 6,
+        notes: 'Failed rep 7',
+      },
+    ])
+
+    // Complete the session
+    await user.client
+      .from('workout_sessions')
+      .update({ completed: true, duration_minutes: 30 })
+      .eq('id', session!.id)
+
+    // Retrieve sets the way the history view does
+    const { data: sets } = await user.client
+      .from('logged_sets')
+      .select('*')
+      .eq('session_id', session!.id)
+      .order('set_number')
+
+    expect(sets).toHaveLength(3)
+
+    expect(sets![0].rpe).toBe(7)
+    expect(sets![0].notes).toBe('Warm-up feel')
+
+    expect(sets![1].rpe).toBe(9)
+    expect(sets![1].notes).toBeNull()
+
+    expect(sets![2].rpe).toBeNull()
+    expect(sets![2].notes).toBe('Failed rep 7')
+
+    await user.client.from('workout_sessions').delete().eq('id', session!.id)
+  })
+
   it('fetches completed sessions ordered by date desc', async () => {
     // Seed two completed sessions with different dates
     const { data: s1 } = await user.client
