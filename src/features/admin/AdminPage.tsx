@@ -307,7 +307,8 @@ function CloseButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="absolute top-3 right-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xl leading-none"
+      className="absolute top-3 right-3 text-xl leading-none transition-colors hover-text-chalk"
+      style={{ color: 'var(--color-zinc)' }}
       title="Close"
     >
       ×
@@ -340,14 +341,27 @@ function MergeDialog({
     <div className="fixed inset-0 z-40 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onCancel} />
 
-      <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4">
+      <div
+        className="relative rounded shadow-xl w-full max-w-md mx-4"
+        style={{ background: 'var(--color-iron)', border: '1px solid var(--color-steel)' }}
+      >
         <CloseButton onClick={onCancel} />
 
         {step === 'select' ? (
           <>
-            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 pr-10">
-              <h3 className="font-semibold text-gray-900 dark:text-white">Merge Exercise</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Merge "{source.name}" into another exercise</p>
+            <div className="px-4 py-3 pr-10" style={{ borderBottom: '1px solid var(--color-steel)' }}>
+              <h3
+                className="text-sm tracking-wide"
+                style={{ fontFamily: 'var(--font-display)', color: 'var(--color-bone)' }}
+              >
+                MERGE EXERCISE
+              </h3>
+              <p
+                className="text-xs mt-0.5"
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+              >
+                Merge "{source.name}" into another exercise
+              </p>
             </div>
 
             <div className="p-4 space-y-3">
@@ -359,46 +373,67 @@ function MergeDialog({
                   setSearchQuery(e.target.value)
                   setSelectedTarget(null)
                 }}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                className="input w-full text-sm"
                 autoFocus
               />
 
-              <div className="max-h-60 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+              <div
+                className="max-h-60 overflow-y-auto rounded"
+                style={{ border: '1px solid var(--color-steel)' }}
+              >
                 {filteredExercises.length === 0 ? (
-                  <div className="p-3 text-sm text-gray-500 dark:text-gray-400 italic">No exercises found</div>
+                  <div
+                    className="p-3 text-sm italic"
+                    style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+                  >
+                    No exercises found
+                  </div>
                 ) : (
                   filteredExercises.map((exercise) => (
                     <button
                       key={exercise.id}
                       onClick={() => setSelectedTarget(exercise.name)}
-                      className={`w-full px-3 py-2 text-left text-sm flex items-center justify-between ${
-                        selectedTarget === exercise.name 
-                          ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-900 dark:text-blue-100' 
-                          : 'hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white'
-                      }`}
+                      className="w-full px-3 py-2 text-left text-sm flex items-center justify-between transition-colors"
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        background: selectedTarget === exercise.name ? 'var(--color-steel)' : 'transparent',
+                        color: selectedTarget === exercise.name ? 'var(--color-ember)' : 'var(--color-ash)',
+                      }}
                     >
                       <span>{exercise.name}</span>
-                      {exercise.is_custom && <span className="text-xs text-gray-400 dark:text-gray-500">custom</span>}
+                      {exercise.is_custom && (
+                        <span className="text-xs" style={{ color: 'var(--color-zinc)' }}>custom</span>
+                      )}
                     </button>
                   ))
                 )}
               </div>
 
               {selectedTarget && (
-                <div className="text-sm text-gray-600 dark:text-gray-300 bg-yellow-50 dark:bg-yellow-900/30 p-2 rounded">
-                  Will merge <strong>{source.name}</strong> → <strong>{selectedTarget}</strong>
+                <div
+                  className="text-sm p-2 rounded"
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    background: 'var(--color-steel)',
+                    color: 'var(--color-ash)',
+                  }}
+                >
+                  Will merge <strong style={{ color: 'var(--color-chalk)' }}>{source.name}</strong> → <strong style={{ color: 'var(--color-ember)' }}>{selectedTarget}</strong>
                 </div>
               )}
             </div>
 
-            <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
-              <button onClick={onCancel} className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm">
+            <div className="px-4 py-3 flex justify-end gap-2" style={{ borderTop: '1px solid var(--color-steel)' }}>
+              <button
+                onClick={onCancel}
+                className="btn-ghost text-sm"
+              >
                 Cancel
               </button>
               <button
                 onClick={() => setStep('confirm')}
                 disabled={!selectedTarget}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
               </button>
@@ -406,35 +441,62 @@ function MergeDialog({
           </>
         ) : (
           <>
-            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 pr-10">
-              <h3 className="font-semibold text-gray-900 dark:text-white">Confirm Merge</h3>
+            <div className="px-4 py-3 pr-10" style={{ borderBottom: '1px solid var(--color-steel)' }}>
+              <h3
+                className="text-sm tracking-wide"
+                style={{ fontFamily: 'var(--font-display)', color: 'var(--color-bone)' }}
+              >
+                CONFIRM MERGE
+              </h3>
             </div>
 
             <div className="p-4 space-y-4">
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                Are you sure you want to merge <strong>"{source.name}"</strong> into{' '}
-                <strong>"{selectedTarget}"</strong>?
+              <p
+                className="text-sm"
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ash)' }}
+              >
+                Merge <strong style={{ color: 'var(--color-chalk)' }}>"{source.name}"</strong> into{' '}
+                <strong style={{ color: 'var(--color-ember)' }}>"{selectedTarget}"</strong>?
               </p>
 
-              <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 space-y-2">
-                <p className="text-sm text-yellow-800 dark:text-yellow-200 font-medium">This will update:</p>
-                <ul className="text-sm text-yellow-700 dark:text-yellow-300 list-disc list-inside space-y-1">
+              <div
+                className="rounded p-3 space-y-2"
+                style={{ background: 'var(--color-steel)', border: '1px solid var(--color-concrete)' }}
+              >
+                <p
+                  className="text-sm"
+                  style={{ fontFamily: 'var(--font-display)', color: 'var(--color-ember)' }}
+                >
+                  This will update:
+                </p>
+                <ul
+                  className="text-sm list-disc list-inside space-y-1"
+                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ash)' }}
+                >
                   <li>All logged sets with this exercise</li>
                   <li>All template exercises</li>
                   <li>All scheduled exercises</li>
                 </ul>
               </div>
 
-              <p className="text-sm text-red-600 dark:text-red-400 font-medium">This action cannot be undone.</p>
+              <p
+                className="text-sm"
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-danger)' }}
+              >
+                This action cannot be undone.
+              </p>
             </div>
 
-            <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
-              <button onClick={() => setStep('select')} className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm">
+            <div className="px-4 py-3 flex justify-end gap-2" style={{ borderTop: '1px solid var(--color-steel)' }}>
+              <button
+                onClick={() => setStep('select')}
+                className="btn-ghost text-sm"
+              >
                 Back
               </button>
               <button
                 onClick={() => onConfirm(selectedTarget!)}
-                className="px-4 py-2 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700"
+                className="btn-danger text-sm"
               >
                 Confirm Merge
               </button>
@@ -478,34 +540,52 @@ function EditDialog({
     <div className="fixed inset-0 z-40 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onCancel} />
 
-      <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4">
+      <div
+        className="relative rounded shadow-xl w-full max-w-md mx-4"
+        style={{ background: 'var(--color-iron)', border: '1px solid var(--color-steel)' }}
+      >
         <CloseButton onClick={onCancel} />
 
-        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 pr-10">
-          <h3 className="font-semibold text-gray-900 dark:text-white">Edit Exercise</h3>
+        <div className="px-4 py-3 pr-10" style={{ borderBottom: '1px solid var(--color-steel)' }}>
+          <h3
+            className="text-sm tracking-wide"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-bone)' }}
+          >
+            EDIT EXERCISE
+          </h3>
         </div>
 
         <div className="p-4 space-y-4">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
+            <label
+              className="block text-xs uppercase tracking-wider mb-1"
+              style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+            >
+              Name
+            </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="input w-full text-sm"
             />
           </div>
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
+            <label
+              className="block text-xs uppercase tracking-wider mb-1"
+              style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+            >
+              Category
+            </label>
             <input
               type="text"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               placeholder="e.g., push, pull, core, lower"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+              className="input w-full text-sm"
               list="category-suggestions"
             />
             <datalist id="category-suggestions">
@@ -517,11 +597,16 @@ function EditDialog({
 
           {/* Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type</label>
+            <label
+              className="block text-xs uppercase tracking-wider mb-1"
+              style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+            >
+              Type
+            </label>
             <select
               value={exerciseType}
               onChange={(e) => setExerciseType(e.target.value as ExerciseType)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="input w-full text-sm"
             >
               <option value="weighted">Weighted</option>
               <option value="bodyweight">Bodyweight</option>
@@ -530,18 +615,23 @@ function EditDialog({
           </div>
 
           {exercise.is_custom && (
-            <p className="text-xs text-gray-500 dark:text-gray-400">This is a custom exercise you created.</p>
+            <p
+              className="text-xs"
+              style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
+            >
+              This is a custom exercise you created.
+            </p>
           )}
         </div>
 
-        <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
-          <button onClick={onCancel} className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm">
+        <div className="px-4 py-3 flex justify-end gap-2" style={{ borderTop: '1px solid var(--color-steel)' }}>
+          <button onClick={onCancel} className="btn-ghost text-sm">
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={!name.trim() || !hasChanges}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Save
           </button>
