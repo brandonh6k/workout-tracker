@@ -18,7 +18,7 @@ export function groupBy<T>(
  * Parses a date string as local time (not UTC).
  * Handles "YYYY-MM-DD" format which JavaScript would otherwise interpret as UTC.
  */
-function parseLocalDate(date: Date | string): Date {
+export function parseLocalDate(date: Date | string): Date {
   if (date instanceof Date) return date
   
   // Check if it's a date-only string (YYYY-MM-DD)

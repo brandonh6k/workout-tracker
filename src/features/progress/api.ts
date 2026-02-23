@@ -1,5 +1,5 @@
 import { supabase } from '../../lib/supabase'
-import { groupBy } from '../../lib/utils'
+import { groupBy, parseLocalDate } from '../../lib/utils'
 import type { LoggedSet, ExerciseType } from '../../types'
 
 export type ExerciseHistoryEntry = {
@@ -550,10 +550,10 @@ export async function getWeeklyVolumeComparison(): Promise<WeeklyVolumeCompariso
   }
 
   const thisWeekSessions = sessions.filter(
-    (s) => new Date(s.date) >= thisWeekStart
+    (s) => parseLocalDate(s.date) >= thisWeekStart
   )
   const lastWeekSessions = sessions.filter(
-    (s) => new Date(s.date) >= lastWeekStart && new Date(s.date) < thisWeekStart
+    (s) => parseLocalDate(s.date) >= lastWeekStart && parseLocalDate(s.date) < thisWeekStart
   )
 
   const sessionIds = sessions.map((s) => s.id)
