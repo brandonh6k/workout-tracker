@@ -147,56 +147,55 @@ export function DashboardPage() {
                       borderRadius: 'var(--radius-md)'
                     }}
                   >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <h3 
-                          className="text-lg truncate"
-                          style={{ 
-                            fontFamily: 'var(--font-display)',
-                            fontWeight: 600,
-                            color: 'var(--color-chalk)',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          {workout.template.name}
-                        </h3>
-                        <p 
-                          className="text-sm mt-1"
+                    <div>
+                      <h3
+                        className="text-lg"
+                        style={{
+                          fontFamily: 'var(--font-display)',
+                          fontWeight: 600,
+                          color: 'var(--color-chalk)',
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        {workout.template.name}
+                      </h3>
+                      <div className="flex items-center justify-between gap-4 mt-2">
+                        <p
+                          className="text-sm"
                           style={{ color: 'var(--color-zinc)', fontFamily: 'var(--font-mono)' }}
                         >
                           {workout.template.template_exercises.length} exercises
                         </p>
+                        {isCompleted ? (
+                          <div
+                            className="flex items-center gap-2 px-4 py-2"
+                            style={{
+                              background: 'var(--color-success-muted)',
+                              color: 'var(--color-success)',
+                              borderRadius: 'var(--radius-sm)',
+                              fontFamily: 'var(--font-display)',
+                              fontWeight: 600,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.05em',
+                              fontSize: '0.875rem'
+                            }}
+                          >
+                            <span>✓</span>
+                            <span>Completed</span>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => handleStartWorkout(workout)}
+                            className="btn-primary animate-pulse-glow"
+                            style={{
+                              padding: '0.75rem 1.5rem',
+                              fontSize: '0.875rem'
+                            }}
+                          >
+                            Start Workout
+                          </button>
+                        )}
                       </div>
-                      
-                      {isCompleted ? (
-                        <div 
-                          className="flex items-center gap-2 px-4 py-2"
-                          style={{ 
-                            background: 'var(--color-success-muted)',
-                            color: 'var(--color-success)',
-                            borderRadius: 'var(--radius-sm)',
-                            fontFamily: 'var(--font-display)',
-                            fontWeight: 600,
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.05em',
-                            fontSize: '0.875rem'
-                          }}
-                        >
-                          <span>✓</span>
-                          <span>Completed</span>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => handleStartWorkout(workout)}
-                          className="btn-primary animate-pulse-glow"
-                          style={{ 
-                            padding: '0.75rem 1.5rem',
-                            fontSize: '0.875rem'
-                          }}
-                        >
-                          Start Workout
-                        </button>
-                      )}
                     </div>
 
                     {/* Exercise list */}

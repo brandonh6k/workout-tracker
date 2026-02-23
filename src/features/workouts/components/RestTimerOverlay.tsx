@@ -21,7 +21,7 @@ export function RestTimerOverlay({
 
   return (
     <div className="absolute inset-0 bg-gray-900/95 flex flex-col items-center justify-center z-10">
-      <div className="text-gray-400 text-3xl font-bold mb-4">Rest</div>
+      <div className="text-gray-400 text-5xl font-bold mb-4 uppercase tracking-widest">Rest</div>
       <div
         className={`font-bold mb-4 transition-all ${
           isLastTenSeconds
