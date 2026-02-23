@@ -413,7 +413,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
           </div>
 
           {/* Skip Exercise - placed below Up Next, away from other buttons */}
-          {!isLastExercise && nextSetNumber < nextExercise.targetSets && (
+          {!isLastExercise && (
             <button
               onClick={handleSkipExercise}
               className="mt-6 text-sm transition-colors"
@@ -568,7 +568,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
       </div>
 
       {/* Skip to next exercise - separate from Coming Up, away from Done button */}
-      {state.currentSetIndex < currentExercise.targetSets - 1 && (
+      {state.currentExerciseIndex < state.exercises.length - 1 && (
         <div 
           className="px-4 py-3"
           style={{ borderTop: '1px solid var(--color-steel)' }}
