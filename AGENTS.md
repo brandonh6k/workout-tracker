@@ -7,7 +7,7 @@ Personal workout tracking app. Basement gym use case - single user, offline-frie
 - **Stack**: React 19 + TypeScript + Tailwind CSS v4 + Supabase
 - **Deployment**: Vercel (auto-deploy on push to main)
 - **Repo**: https://github.com/brandonh6k/workout-tracker
-- **Test runner**: Vitest (28 tests currently)
+- **Test runner**: Vitest (49 tests currently)
 
 ## Domain Model
 
@@ -42,7 +42,7 @@ This distinction is fundamental to the app's design:
 
 ### State Management
 
-Currently using `useState` throughout. The `ActiveWorkout` component has grown complex (12+ setState calls) and is a candidate for `useReducer` refactor - see backlog.
+`ActiveWorkout` uses `useReducer` with a dedicated `workoutReducer.ts`. Dashboard data fetching is extracted into `useDashboardData` hook. Other pages use `useState` directly.
 
 ### Admin Access Control
 
@@ -50,7 +50,7 @@ Simple email whitelist in `src/components/Layout.tsx`. Only `brandon.hunt@gmail.
 
 ### Dashboard Data Refresh
 
-`DashboardPage` extracts `loadDashboardData()` as a callable function so it can refresh stats after workout completion. Otherwise volume/comparison data goes stale until page reload.
+`useDashboardData` hook encapsulates all dashboard data fetching (comparison, recent workouts, weekly volume, completed session data). Exposes a `refresh()` function called after workout completion.
 
 ## File Organization
 
@@ -70,8 +70,8 @@ src/
 ```
 
 Each feature has:
-- `index.ts` - Public exports
-- `api.ts` - Supabase queries
+- `index.ts` - Public exports (barrel file)
+- `*Api.ts` or `api.ts` - Supabase queries (progress/ split into exerciseApi.ts + volumeApi.ts)
 - `*Page.tsx` - Page components
 - `use*.ts` - Custom hooks (where applicable)
 
@@ -80,14 +80,14 @@ Each feature has:
 - **Functional over OOP** - No classes, use functions and hooks
 - **Types in database.ts** - Mirror Supabase schema, export convenience types
 - **API functions throw on error** - Callers handle with try/catch
-- **Dark mode support** - All components use `dark:` Tailwind variants
+- **Design system** - CSS custom properties (`var(--color-ember)`, `var(--font-display)`, etc.) defined in `index.css`, not Tailwind `dark:` variants. Hover utilities: `hover-text-chalk`, `hover-text-zinc`, `hover-text-danger`, `hover-bg-concrete`, `nav-link`/`nav-link-active`
 - **Toast notifications** - Using `sonner` for user feedback
 
 ## Testing
 
 - Unit tests in `*.test.ts` files alongside source
 - Vitest + React Testing Library + jsdom
-- Currently 28 tests covering utils, API functions, and key components
+- Currently 49 tests covering utils, reducer, API functions, and key components
 - Run: `npm run test:run`
 
 ## Commands
@@ -112,10 +112,9 @@ Located in `supabase/migrations/`. Applied in order:
 
 ## Known Tech Debt
 
-- `ActiveWorkout` needs `useReducer` refactor (complex state)
-- Dashboard/Progress pages mix data fetching with UI (extract hooks)
-- Bundle is ~850KB (Recharts is ~300KB) - needs code splitting
+- Bundle is ~890KB (Recharts is ~300KB) - needs lazy loading
 - No API layer tests (would need Supabase mocking)
+- Some components still use inline styles for design system colors instead of utility classes
 
 ## Backlog Location
 

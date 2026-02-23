@@ -12,6 +12,20 @@ See [AGENTS.md](./AGENTS.md) for full project context: domain model, architectur
 - **Lint**: `npm run lint`
 - **Issue tracker**: Beads (`bd` CLI) - issues stored in `.beads/`
 
+## Beads Workflow
+
+When closing a bead and committing, always do it as a **single commit**:
+
+```bash
+bd close <id>
+bd sync
+git add <changed-files> .beads/issues.jsonl
+git commit -m "Description\n\nCloses <id>"
+git push
+```
+
+Never create a separate "Sync beads issue state" commit.
+
 ## Local Development
 
 Local Supabase runs via Docker. `.env.local` points at `http://127.0.0.1:54321`.
