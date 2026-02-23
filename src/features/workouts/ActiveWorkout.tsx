@@ -2,6 +2,7 @@ import { useReducer, useState, useEffect, useCallback } from 'react'
 import type { ScheduledWorkoutWithDetails } from '../schedule'
 import * as api from './api'
 import { SetDisplay } from './components'
+import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { workoutReducer, buildInitialState } from './workoutReducer'
 
 type Props = {
@@ -16,6 +17,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
   const [error, setError] = useState<string | null>(null)
   const [adjustMode, setAdjustMode] = useState<'weight' | 'reps' | null>(null)
   const [, setTick] = useState(0)
+  const [showAbandonConfirm, setShowAbandonConfirm] = useState(false)
 
   // Initialize workout
   useEffect(() => {
@@ -136,7 +138,6 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
 
   const handleAbandon = async () => {
     if (!state) return
-    if (!confirm('Abandon this workout? All logged sets will be deleted.')) return
     try {
       await api.abandonWorkoutSession(state.sessionId)
       onCancel()
@@ -278,7 +279,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
       >
         {/* Header */}
         <WorkoutHeader
-          onAbandon={handleAbandon}
+          onAbandon={() => setShowAbandonConfirm(true)}
           completedExercises={completedExercises}
           totalExercises={totalExercises}
           elapsedMinutes={elapsedMinutes}
@@ -428,6 +429,15 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
             </button>
           )}
         </div>
+        <ConfirmDialog
+          isOpen={showAbandonConfirm}
+          title="Abandon Workout"
+          message="All logged sets will be deleted. Are you sure?"
+          confirmLabel="Abandon"
+          variant="danger"
+          onConfirm={() => { setShowAbandonConfirm(false); handleAbandon() }}
+          onCancel={() => setShowAbandonConfirm(false)}
+        />
       </div>
     )
   }
@@ -440,7 +450,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
     >
       {/* Header */}
       <WorkoutHeader
-        onAbandon={handleAbandon}
+        onAbandon={() => setShowAbandonConfirm(true)}
         completedExercises={completedExercises}
         totalExercises={totalExercises}
         elapsedMinutes={elapsedMinutes}
@@ -585,6 +595,15 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
           </button>
         </div>
       )}
+      <ConfirmDialog
+        isOpen={showAbandonConfirm}
+        title="Abandon Workout"
+        message="All logged sets will be deleted. Are you sure?"
+        confirmLabel="Abandon"
+        variant="danger"
+        onConfirm={() => { setShowAbandonConfirm(false); handleAbandon() }}
+        onCancel={() => setShowAbandonConfirm(false)}
+      />
     </div>
   )
 }

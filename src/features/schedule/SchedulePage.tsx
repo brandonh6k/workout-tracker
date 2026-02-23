@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useSchedule, type ScheduledWorkoutWithDetails } from './index'
 import { useTemplates } from '../templates'
 import { ScheduleForm } from './ScheduleForm'
+import { ConfirmDialog } from '../../components/ConfirmDialog'
 import * as api from './api'
 import { DAYS_OF_WEEK } from '../../lib/utils'
 
@@ -10,13 +11,14 @@ export function SchedulePage() {
   const { templates, isLoading: templatesLoading } = useTemplates()
   const [editingSchedule, setEditingSchedule] = useState<ScheduledWorkoutWithDetails | null>(null)
   const [addingToDay, setAddingToDay] = useState<number | null>(null)
+  const [unscheduleId, setUnscheduleId] = useState<string | null>(null)
 
   const isLoading = scheduleLoading || templatesLoading
 
   const handleUnschedule = async (id: string) => {
-    if (!confirm('Remove this workout from the schedule?')) return
     await api.unscheduleWorkout(id)
     await refreshSchedule()
+    setUnscheduleId(null)
   }
 
   const handleScheduleComplete = async () => {
@@ -254,7 +256,7 @@ export function SchedulePage() {
                                 </svg>
                               </button>
                               <button
-                                onClick={() => handleUnschedule(scheduled.id)}
+                                onClick={() => setUnscheduleId(scheduled.id)}
                                 className="p-1.5 rounded transition-colors hover:bg-[var(--color-danger-muted)]"
                                 style={{ color: 'var(--color-slate)' }}
                                 title="Remove"
@@ -303,6 +305,16 @@ export function SchedulePage() {
           })}
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={unscheduleId !== null}
+        title="Remove Workout"
+        message="Remove this workout from the schedule?"
+        confirmLabel="Remove"
+        variant="danger"
+        onConfirm={() => unscheduleId && handleUnschedule(unscheduleId)}
+        onCancel={() => setUnscheduleId(null)}
+      />
     </div>
   )
 }
