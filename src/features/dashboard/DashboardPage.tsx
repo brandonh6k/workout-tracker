@@ -13,6 +13,7 @@ import {
 } from '../progress'
 import { formatWorkoutDate } from '../../lib/utils'
 import { ErrorMessage } from '../../components/ErrorMessage'
+import { useWorkoutMode } from '../../lib/WorkoutModeContext'
 
 export function DashboardPage() {
   const { scheduledWorkouts, isLoading, error, refresh } = useSchedule()
@@ -55,18 +56,23 @@ export function DashboardPage() {
     loadDashboardData()
   }, [loadDashboardData])
 
+  const { setWorkoutActive } = useWorkoutMode()
+
   const handleStartWorkout = (workout: ScheduledWorkoutWithDetails) => {
     setActiveWorkout(workout)
+    setWorkoutActive(true)
   }
 
   const handleWorkoutComplete = async () => {
     setActiveWorkout(null)
+    setWorkoutActive(false)
     refresh()
     await loadDashboardData()
   }
 
   const handleWorkoutCancel = () => {
     setActiveWorkout(null)
+    setWorkoutActive(false)
   }
 
   // Show active workout in full screen mode

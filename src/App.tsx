@@ -8,11 +8,13 @@ import { HistoryPage } from './features/workouts'
 import { AdminPage } from './features/admin'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { Layout } from './components/Layout'
+import { WorkoutModeProvider } from './lib/WorkoutModeContext'
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+      <WorkoutModeProvider>
         <Toaster 
           position="bottom-right"
           visibleToasts={3}
@@ -41,6 +43,7 @@ function App() {
             </Route>
           </Route>
         </Routes>
+      </WorkoutModeProvider>
       </AuthProvider>
     </BrowserRouter>
   )

@@ -1,6 +1,7 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../features/auth'
 import { useTheme } from '../lib/useTheme'
+import { useWorkoutMode } from '../lib/WorkoutModeContext'
 
 const ADMIN_EMAILS = ['brandon.hunt@gmail.com']
 
@@ -15,6 +16,7 @@ export function Layout() {
   const { user, signOut } = useAuth()
   const location = useLocation()
   const { theme, toggleTheme } = useTheme()
+  const { isWorkoutActive } = useWorkoutMode()
 
   const isAdmin = user?.email && ADMIN_EMAILS.includes(user.email)
   const navItems = isAdmin
@@ -23,8 +25,8 @@ export function Layout() {
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--color-void)' }}>
-      {/* Header */}
-      <header 
+      {/* Header - hidden during active workout */}
+      {!isWorkoutActive && <header
         className="sticky top-0 z-20 border-b"
         style={{ 
           background: 'var(--color-iron)',
@@ -155,7 +157,7 @@ export function Layout() {
             })}
           </nav>
         </div>
-      </header>
+      </header>}
 
       {/* Main content */}
       <main className="max-w-6xl mx-auto px-4 py-6">
