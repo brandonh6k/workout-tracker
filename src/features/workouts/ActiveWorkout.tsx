@@ -84,7 +84,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to log set')
     }
-  }, [state, currentExercise, currentSet])
+  }, [state, currentExercise, currentSet, rpe, setNotes])
 
   const handleAdjustWeight = (delta: number) => {
     dispatch({ type: 'ADJUST_WEIGHT', payload: { delta } })
