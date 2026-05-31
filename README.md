@@ -2,6 +2,8 @@
 
 A no-bullshit workout tracking app for people who actually lift.
 
+Or something to just scratch an itch I had.
+
 ## Setup
 
 1. Create a Supabase project at [supabase.com](https://supabase.com)
