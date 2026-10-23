@@ -154,6 +154,7 @@ export type Database = {
           notes: string | null
           completed: boolean
           created_at: string
+          strava_activity_id: number | null
         }
         Insert: {
           id?: string
@@ -164,6 +165,7 @@ export type Database = {
           notes?: string | null
           completed?: boolean
           created_at?: string
+          strava_activity_id?: number | null
         }
         Update: {
           id?: string
@@ -174,6 +176,7 @@ export type Database = {
           notes?: string | null
           completed?: boolean
           created_at?: string
+          strava_activity_id?: number | null
         }
         Relationships: []
       }

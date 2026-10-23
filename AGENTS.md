@@ -7,7 +7,7 @@ Personal workout tracking app. Basement gym use case - single user, offline-frie
 - **Stack**: React 19 + TypeScript + Tailwind CSS v4 + Supabase
 - **Deployment**: Vercel (auto-deploy on push to main)
 - **Repo**: https://github.com/brandonh6k/workout-tracker
-- **Test runner**: Vitest (49 unit + 40 integration tests)
+- **Test runner**: Vitest (56 unit + 52 integration tests)
 
 ## Domain Model
 
@@ -62,6 +62,7 @@ src/
     dashboard/        # Main dashboard page
     progress/         # Stats, comparisons, history views
     schedule/         # Weekly schedule management
+    strava/           # Strava OAuth + activity upload (edge function: supabase/functions/strava)
     templates/        # Template CRUD, WeeklyCalendar
     workouts/         # ActiveWorkout, HistoryPage
   components/         # Shared UI components
@@ -87,8 +88,8 @@ Each feature has:
 
 - Unit tests in `*.test.ts` files alongside source
 - Vitest + React Testing Library + jsdom
-- Currently 49 unit tests covering utils, reducer, API functions, and key components
-- Integration tests in `src/test/integration/` — 40 tests against local Supabase
+- Currently 56 unit tests covering utils, reducer, API functions, and key components
+- Integration tests in `src/test/integration/` — 52 tests against local Supabase
   - Auth, templates, workouts, schedule, exercises, RLS isolation
   - Require local Supabase running (`npm run db:start`)
   - Separate Vitest config (`vitest.integration.config.ts`): Node env, sequential, 15s timeout
@@ -99,9 +100,9 @@ Each feature has:
 npm run dev              # Start dev server (port 5173)
 npm run build            # TypeScript check + Vite build
 npm run lint             # ESLint
-npm run test:run         # Unit tests only (49)
+npm run test:run         # Unit tests only (56)
 npm run test             # Unit tests in watch mode
-npm run test:integration # Integration tests (40, needs local Supabase)
+npm run test:integration # Integration tests (52, needs local Supabase)
 npm run test:all         # Both unit + integration
 ```
 
@@ -114,6 +115,7 @@ Located in `supabase/migrations/`. Applied in order:
 4. `004_amrap_sets.sql` - AMRAP flag
 5. `005_exercise_types.sql` - Exercise type enum
 6. `006_rest_seconds.sql` - Per-exercise rest time
+7. `007_strava.sql` - Strava tokens (service-role only) + `workout_sessions.strava_activity_id`
 
 ## Known Tech Debt
 
