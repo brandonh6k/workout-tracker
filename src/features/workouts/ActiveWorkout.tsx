@@ -1,6 +1,8 @@
 import { useReducer, useState, useEffect, useCallback } from 'react'
+import { toast } from 'sonner'
 import type { ScheduledWorkoutWithDetails } from '../schedule'
 import * as api from './api'
+import { syncCompletedWorkout } from '../strava'
 import { SetDisplay } from './components'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { workoutReducer, buildInitialState } from './workoutReducer'
@@ -139,6 +141,10 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
       const durationMinutes = Math.round((Date.now() - state.startTime) / 60000)
       await api.completeWorkoutSession(state.sessionId, durationMinutes)
       onComplete()
+      // Fire and forget: a Strava failure must never undo the completed workout
+      syncCompletedWorkout(state.sessionId)
+        .then((activityId) => activityId && toast.success('Sent to Strava'))
+        .catch((err) => toast.error(err instanceof Error ? err.message : 'Strava upload failed'))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to complete workout')
     }

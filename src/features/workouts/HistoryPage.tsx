@@ -1,11 +1,21 @@
-import { useState, useEffect, lazy, Suspense } from 'react'
+import { useState, useEffect, useRef, lazy, Suspense } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { getWorkoutSessionsWithSets, abandonWorkoutSession, type WorkoutSessionWithSets } from './api'
 import { getLoggedExercises, type LoggedExerciseInfo } from '../progress'
 import type { ExerciseType } from '../../types'
 import { formatWorkoutDate, groupBy } from '../../lib/utils'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
-import { formatWorkoutForStrava } from '../strava'
+import {
+  isStravaConfigured,
+  getStravaStatus,
+  startStravaConnect,
+  completeStravaConnect,
+  uploadWorkoutToStrava,
+  disconnectStrava,
+  stravaActivityUrl,
+  formatWorkoutForStrava,
+} from '../strava'
 
 const STRAVA_MANUAL_ENTRY_URL = 'https://www.strava.com/upload/manual'
 
@@ -21,6 +31,10 @@ export function HistoryPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [view, setView] = useState<ViewMode>({ type: 'list' })
   const [deletingWorkout, setDeletingWorkout] = useState<WorkoutSessionWithSets | null>(null)
+  const [stravaConnected, setStravaConnected] = useState(false)
+  const [uploadingId, setUploadingId] = useState<string | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const stravaInitStarted = useRef(false)
 
   const loadData = async () => {
     setIsLoading(true)
@@ -41,6 +55,55 @@ export function HistoryPage() {
   useEffect(() => {
     loadData()
   }, [])
+
+  useEffect(() => {
+    // StrictMode double-runs effects; the OAuth code and state are single-use
+    if (!isStravaConfigured() || stravaInitStarted.current) return
+    stravaInitStarted.current = true
+    const initStrava = async () => {
+      try {
+        const callback = await completeStravaConnect(searchParams)
+        if (callback !== null) {
+          setSearchParams({}, { replace: true })
+          toast.success('Strava connected')
+        }
+        setStravaConnected(callback ?? (await getStravaStatus()))
+      } catch (err) {
+        setSearchParams({}, { replace: true })
+        toast.error(err instanceof Error ? err.message : 'Failed to connect Strava')
+      }
+    }
+    initStrava()
+    // Runs once on mount; the OAuth callback params are only read on arrival
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleSendToStrava = async (workout: WorkoutSessionWithSets) => {
+    setUploadingId(workout.id)
+    try {
+      const activityId = await uploadWorkoutToStrava(workout)
+      setWorkouts((prev) =>
+        prev.map((w) => (w.id === workout.id ? { ...w, strava_activity_id: activityId } : w))
+      )
+      toast.success('Sent to Strava')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Strava upload failed')
+      setStravaConnected(await getStravaStatus().catch(() => false))
+    } finally {
+      setUploadingId(null)
+    }
+  }
+
+  const handleDisconnectStrava = async () => {
+    try {
+      await disconnectStrava()
+      setStravaConnected(false)
+      toast.success('Strava disconnected')
+    } catch (err) {
+      console.error('Failed to disconnect Strava:', err)
+      toast.error('Failed to disconnect Strava')
+    }
+  }
 
   const handleDeleteWorkout = async () => {
     if (!deletingWorkout) return
@@ -97,6 +160,7 @@ export function HistoryPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
+      <div className="flex items-start justify-between gap-3">
       <div>
         <h1 
           className="text-2xl tracking-wide"
@@ -110,6 +174,15 @@ export function HistoryPage() {
         >
           {workouts.length} workout{workouts.length !== 1 ? 's' : ''} logged
         </p>
+      </div>
+      {isStravaConfigured() && (
+        <button
+          onClick={stravaConnected ? handleDisconnectStrava : startStravaConnect}
+          className={`btn ${stravaConnected ? 'btn-ghost' : 'btn-secondary'} text-xs`}
+        >
+          {stravaConnected ? 'Disconnect Strava' : 'Connect Strava'}
+        </button>
+      )}
       </div>
 
       {isLoading ? (
@@ -160,6 +233,8 @@ export function HistoryPage() {
                     key={workout.id}
                     workout={workout}
                     onDelete={() => setDeletingWorkout(workout)}
+                    onSendToStrava={stravaConnected ? () => handleSendToStrava(workout) : undefined}
+                    isUploading={uploadingId === workout.id}
                     onCopyForStrava={() => handleCopyForStrava(workout)}
                     isLast={i === workouts.length - 1}
                   />
@@ -261,11 +336,15 @@ export function HistoryPage() {
 function WorkoutRow({ 
   workout, 
   onDelete, 
+  onSendToStrava,
+  isUploading = false,
   onCopyForStrava,
   isLast = false 
 }: { 
   workout: WorkoutSessionWithSets
   onDelete: () => void
+  onSendToStrava?: () => void
+  isUploading?: boolean
   onCopyForStrava: () => void
   isLast?: boolean 
 }) {
@@ -307,6 +386,30 @@ function WorkoutRow({
           {exerciseCount} ex · {totalSets} sets · {totalVolume.toLocaleString()}#
         </div>
       </div>
+      {workout.strava_activity_id ? (
+        <a
+          href={stravaActivityUrl(workout.strava_activity_id)}
+          target="_blank"
+          rel="noreferrer"
+          className="p-1.5 rounded text-[10px] uppercase tracking-wider"
+          style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ember)' }}
+          title="View on Strava"
+        >
+          Strava
+        </a>
+      ) : onSendToStrava && (
+        <button
+          onClick={onSendToStrava}
+          disabled={isUploading}
+          className="p-1.5 rounded transition-colors opacity-50 group-hover:opacity-100 hover:bg-[var(--color-steel)] disabled:opacity-30"
+          style={{ color: 'var(--color-slate)' }}
+          title="Send to Strava"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0-12l-4 4m4-4l4 4" />
+          </svg>
+        </button>
+      )}
       <button
         onClick={onCopyForStrava}
         className="p-1.5 rounded transition-colors opacity-50 group-hover:opacity-100 hover:bg-[var(--color-steel)]"

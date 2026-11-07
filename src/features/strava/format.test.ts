@@ -28,6 +28,7 @@ function workout(overrides: Partial<WorkoutSessionWithSets> = {}): WorkoutSessio
     duration_minutes: 45,
     notes: null,
     completed: true,
+    strava_activity_id: null,
     created_at: '2026-10-23T13:00:00Z',
     logged_sets: [],
     ...overrides,
