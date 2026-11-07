@@ -5,6 +5,9 @@ import { getLoggedExercises, type LoggedExerciseInfo } from '../progress'
 import type { ExerciseType } from '../../types'
 import { formatWorkoutDate, groupBy } from '../../lib/utils'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
+import { formatWorkoutForStrava } from '../strava'
+
+const STRAVA_MANUAL_ENTRY_URL = 'https://www.strava.com/upload/manual'
 
 const ExerciseHistoryView = lazy(() =>
   import('../progress/ExerciseHistoryView').then((m) => ({ default: m.ExerciseHistoryView }))
@@ -49,6 +52,18 @@ export function HistoryPage() {
     } catch (err) {
       console.error('Failed to delete workout:', err)
       toast.error('Failed to delete workout')
+    }
+  }
+
+  const handleCopyForStrava = async (workout: WorkoutSessionWithSets) => {
+    try {
+      await navigator.clipboard.writeText(formatWorkoutForStrava(workout))
+      toast.success('Copied. Paste it into a Strava Weight Training activity.', {
+        action: { label: 'Open Strava', onClick: () => window.open(STRAVA_MANUAL_ENTRY_URL, '_blank', 'noreferrer') },
+      })
+    } catch (err) {
+      console.error('Failed to copy workout:', err)
+      toast.error('Failed to copy workout')
     }
   }
 
@@ -145,6 +160,7 @@ export function HistoryPage() {
                     key={workout.id}
                     workout={workout}
                     onDelete={() => setDeletingWorkout(workout)}
+                    onCopyForStrava={() => handleCopyForStrava(workout)}
                     isLast={i === workouts.length - 1}
                   />
                 ))}
@@ -245,10 +261,12 @@ export function HistoryPage() {
 function WorkoutRow({ 
   workout, 
   onDelete, 
+  onCopyForStrava,
   isLast = false 
 }: { 
   workout: WorkoutSessionWithSets
   onDelete: () => void
+  onCopyForStrava: () => void
   isLast?: boolean 
 }) {
   const formatted = formatWorkoutDate(workout.date)
@@ -289,6 +307,16 @@ function WorkoutRow({
           {exerciseCount} ex · {totalSets} sets · {totalVolume.toLocaleString()}#
         </div>
       </div>
+      <button
+        onClick={onCopyForStrava}
+        className="p-1.5 rounded transition-colors opacity-50 group-hover:opacity-100 hover:bg-[var(--color-steel)]"
+        style={{ color: 'var(--color-slate)' }}
+        title="Copy for Strava"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        </svg>
+      </button>
       <button
         onClick={onDelete}
         className="p-1.5 rounded transition-colors opacity-50 group-hover:opacity-100 hover:bg-[var(--color-danger-muted)]"
