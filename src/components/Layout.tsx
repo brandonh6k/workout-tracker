@@ -1,7 +1,7 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../features/auth'
 import { useTheme } from '../lib/useTheme'
-import { useWorkoutMode } from '../lib/WorkoutModeContext'
+import { useWorkoutMode } from '../lib/useWorkoutMode'
 
 const ADMIN_EMAILS = ['brandon.hunt@gmail.com']
 

@@ -6,7 +6,7 @@ import { ActiveWorkout } from '../workouts'
 import type { ExerciseComparison, RecentWorkout } from '../progress'
 import { formatWorkoutDate, toLocalDateString } from '../../lib/utils'
 import { ErrorMessage } from '../../components/ErrorMessage'
-import { useWorkoutMode } from '../../lib/WorkoutModeContext'
+import { useWorkoutMode } from '../../lib/useWorkoutMode'
 import { useDashboardData } from './useDashboardData'
 
 export function DashboardPage() {

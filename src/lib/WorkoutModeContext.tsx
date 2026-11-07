@@ -1,14 +1,5 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
-
-type WorkoutModeContextValue = {
-  isWorkoutActive: boolean
-  setWorkoutActive: (active: boolean) => void
-}
-
-const WorkoutModeContext = createContext<WorkoutModeContextValue>({
-  isWorkoutActive: false,
-  setWorkoutActive: () => {},
-})
+import { useState, type ReactNode } from 'react'
+import { WorkoutModeContext } from './useWorkoutMode'
 
 export function WorkoutModeProvider({ children }: { children: ReactNode }) {
   const [isWorkoutActive, setWorkoutActive] = useState(false)
@@ -17,8 +8,4 @@ export function WorkoutModeProvider({ children }: { children: ReactNode }) {
       {children}
     </WorkoutModeContext.Provider>
   )
-}
-
-export function useWorkoutMode() {
-  return useContext(WorkoutModeContext)
 }
