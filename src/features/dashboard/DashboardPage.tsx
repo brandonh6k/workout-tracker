@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSchedule, type ScheduledWorkoutWithDetails } from '../schedule'
 import { WeeklyCalendar } from '../templates'
-import { ActiveWorkout } from '../workouts'
+import { ActiveWorkout, workoutSync, loadActiveWorkout } from '../workouts'
 import type { ExerciseComparison, RecentWorkout } from '../progress'
 import { formatWorkoutDate, toLocalDateString } from '../../lib/utils'
 import { ErrorMessage } from '../../components/ErrorMessage'
@@ -13,7 +13,12 @@ export function DashboardPage() {
   const { scheduledWorkouts, isLoading, error, refresh } = useSchedule()
   const { comparison, recentWorkouts, weeklyVolume, completedData, refresh: refreshDashboard } = useDashboardData()
   const navigate = useNavigate()
-  const [activeWorkout, setActiveWorkout] = useState<ScheduledWorkoutWithDetails | null>(null)
+  // A workout interrupted by a reload or a killed tab picks up where it left off
+  const [saved] = useState(loadActiveWorkout)
+  const [activeWorkout, setActiveWorkout] = useState<ScheduledWorkoutWithDetails | null>(
+    saved?.scheduledWorkout ?? null
+  )
+  const [resumeState, setResumeState] = useState(saved?.state)
   const [expandedWorkouts, setExpandedWorkouts] = useState<Set<string>>(new Set())
 
   const today = new Date().getDay()
@@ -29,20 +34,29 @@ export function DashboardPage() {
 
   const { setWorkoutActive } = useWorkoutMode()
 
+  useEffect(() => {
+    if (saved) setWorkoutActive(true)
+  }, [saved, setWorkoutActive])
+
   const handleStartWorkout = (workout: ScheduledWorkoutWithDetails) => {
+    setResumeState(undefined)
     setActiveWorkout(workout)
     setWorkoutActive(true)
   }
 
   const handleWorkoutComplete = async () => {
     setActiveWorkout(null)
+    setResumeState(undefined)
     setWorkoutActive(false)
+    // Dashboard stats come from the server, so they only change once the workout has synced
+    await workoutSync.whenIdle()
     refresh()
     await refreshDashboard()
   }
 
   const handleWorkoutCancel = () => {
     setActiveWorkout(null)
+    setResumeState(undefined)
     setWorkoutActive(false)
   }
 
@@ -51,6 +65,7 @@ export function DashboardPage() {
     return (
       <ActiveWorkout
         scheduledWorkout={activeWorkout}
+        resumeState={resumeState}
         onComplete={handleWorkoutComplete}
         onCancel={handleWorkoutCancel}
       />

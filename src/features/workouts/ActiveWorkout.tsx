@@ -1,55 +1,56 @@
 import { useReducer, useState, useEffect, useCallback } from 'react'
 import { toast } from 'sonner'
 import type { ScheduledWorkoutWithDetails } from '../schedule'
-import * as api from './api'
 import { syncCompletedWorkout } from '../strava'
 import { SetDisplay } from './components'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
-import { workoutReducer, buildInitialState } from './workoutReducer'
+import { toLocalDateString } from '../../lib/utils'
+import { workoutReducer, buildInitialState, type WorkoutState } from './workoutReducer'
+import { workoutSync, saveActiveWorkout, clearActiveWorkout } from './workoutSync'
 
 type Props = {
   scheduledWorkout: ScheduledWorkoutWithDetails
+  resumeState?: WorkoutState
   onComplete: () => void
   onCancel: () => void
 }
 
-export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props) {
-  const [state, dispatch] = useReducer(workoutReducer, null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+// Every write goes through workoutSync and the UI never waits on the network,
+// so a dropped connection mid-workout costs nothing; the queue catches up later.
+export function ActiveWorkout({ scheduledWorkout, resumeState, onComplete, onCancel }: Props) {
+  const [state, dispatch] = useReducer(
+    workoutReducer,
+    null,
+    () => resumeState ?? buildInitialState(crypto.randomUUID(), scheduledWorkout)
+  )
   const [adjustMode, setAdjustMode] = useState<'weight' | 'reps' | null>(null)
-  const [, setTick] = useState(0)
+  const [now, setNow] = useState(() => Date.now())
   const [showAbandonConfirm, setShowAbandonConfirm] = useState(false)
   const [rpe, setRpe] = useState<number | null>(null)
   const [setNotes, setSetNotes] = useState('')
   const [showNotes, setShowNotes] = useState(false)
 
-  // Initialize workout
+  const sessionId = state?.sessionId
   useEffect(() => {
-    const initWorkout = async () => {
-      try {
-        const session = await api.startWorkoutSession(scheduledWorkout)
-        const initialState = buildInitialState(session.id, scheduledWorkout)
-        dispatch({ type: 'INITIALIZE', payload: initialState })
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to start workout')
-      } finally {
-        setIsLoading(false)
-      }
-    }
+    // A resumed workout's start is already queued or already on the server
+    if (resumeState || !sessionId) return
+    workoutSync.enqueue({
+      kind: 'startSession',
+      session: { id: sessionId, template_id: scheduledWorkout.template_id, date: toLocalDateString() },
+    })
+  }, [sessionId, resumeState, scheduledWorkout.template_id])
 
-    initWorkout()
-  }, [scheduledWorkout])
+  useEffect(() => {
+    if (state) saveActiveWorkout({ scheduledWorkout, state })
+  }, [state, scheduledWorkout])
 
-  // Rest timer countdown
+  // Clock for the rest countdown and elapsed time
   const phase = state?.phase
   useEffect(() => {
-    if (phase?.type !== 'resting') return
-    const restTimerEnd = phase.restTimerEnd
-
     const interval = setInterval(() => {
-      setTick((t) => t + 1)
-      if (Date.now() >= restTimerEnd) {
+      const t = Date.now()
+      setNow(t)
+      if (phase?.type === 'resting' && t >= phase.restTimerEnd) {
         dispatch({ type: 'REST_TIMER_EXPIRED' })
       }
     }, 1000)
@@ -66,27 +67,29 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
       ? state.exercises[state.phase.lastCompletedExerciseIndex]?.sets[state.phase.lastCompletedSetIndex]
       : null
 
-  const handleCompleteSet = useCallback(async () => {
+  const handleCompleteSet = useCallback(() => {
     if (!state || !currentExercise || !currentSet) return
 
-    try {
-      const loggedSet = await api.logSet(state.sessionId, {
+    const loggedSetId = crypto.randomUUID()
+    workoutSync.enqueue({
+      kind: 'logSet',
+      set: {
+        id: loggedSetId,
+        session_id: state.sessionId,
         exercise_name: currentExercise.name,
         set_number: state.currentSetIndex + 1,
         weight: currentSet.weight,
         reps: currentSet.reps,
-        rpe: rpe ?? undefined,
-        notes: setNotes.trim() || undefined,
-      })
+        rpe,
+        notes: setNotes.trim() || null,
+      },
+    })
 
-      dispatch({ type: 'COMPLETE_SET', payload: { loggedSetId: loggedSet.id } })
-      setAdjustMode(null)
-      setRpe(null)
-      setSetNotes('')
-      setShowNotes(false)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to log set')
-    }
+    dispatch({ type: 'COMPLETE_SET', payload: { loggedSetId } })
+    setAdjustMode(null)
+    setRpe(null)
+    setSetNotes('')
+    setShowNotes(false)
   }, [state, currentExercise, currentSet, rpe, setNotes])
 
   const handleAdjustWeight = (delta: number) => {
@@ -98,23 +101,16 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
   }
 
   // Adjust the LAST COMPLETED set (for AMRAP during rest)
-  const handleAdjustLastCompletedReps = async (delta: number) => {
+  const handleAdjustLastCompletedReps = (delta: number) => {
     if (!state || state.phase.type !== 'resting' || !lastCompletedSetData?.id) return
 
-    const originalReps = lastCompletedSetData.reps
-
-    // Update local state immediately (optimistic update)
     dispatch({ type: 'ADJUST_LAST_COMPLETED_REPS', payload: { delta } })
-
-    // Update in DB
-    try {
-      const newReps = Math.max(1, originalReps + delta)
-      await api.updateSet(lastCompletedSetData.id, { reps: newReps })
-    } catch (err) {
-      // Revert on error
-      dispatch({ type: 'REVERT_LAST_COMPLETED_REPS', payload: { originalReps } })
-      setError(err instanceof Error ? err.message : 'Failed to update set')
-    }
+    workoutSync.enqueue({
+      kind: 'updateSet',
+      sessionId: state.sessionId,
+      setId: lastCompletedSetData.id,
+      updates: { reps: Math.max(1, lastCompletedSetData.reps + delta) },
+    })
   }
 
   const handleSkipRest = () => {
@@ -136,96 +132,35 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
     dispatch({ type: 'SKIP_EXERCISE' })
   }
 
-  const handleFinishWorkout = async () => {
+  const handleFinishWorkout = () => {
     if (!state) return
-    try {
-      const durationMinutes = Math.round((Date.now() - state.startTime) / 60000)
-      await api.completeWorkoutSession(state.sessionId, durationMinutes)
-      onComplete()
-      // Fire and forget: a Strava failure must never undo the completed workout
-      syncCompletedWorkout(state.sessionId)
-        .then((activityId) => activityId && toast.success('Sent to Strava'))
-        .catch((err) => toast.error(err instanceof Error ? err.message : 'Strava upload failed'))
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to complete workout')
-    }
+    const { sessionId } = state
+    workoutSync.enqueue({
+      kind: 'completeSession',
+      sessionId,
+      durationMinutes: Math.round((Date.now() - state.startTime) / 60000),
+    })
+    clearActiveWorkout()
+    onComplete()
+    // Strava reads the session back from the server, so wait for it to land.
+    // Fire and forget: a Strava failure must never undo the completed workout
+    workoutSync
+      .whenIdle()
+      .then(() => syncCompletedWorkout(sessionId))
+      .then((activityId) => activityId && toast.success('Sent to Strava'))
+      .catch((err) => toast.error(err instanceof Error ? err.message : 'Strava upload failed'))
   }
 
-  const handleAbandon = async () => {
+  const handleAbandon = () => {
     if (!state) return
-    try {
-      await api.abandonWorkoutSession(state.sessionId)
-      onCancel()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to abandon workout')
-    }
-  }
-
-  // Loading state
-  if (isLoading) {
-    return (
-      <div 
-        className="min-h-screen flex items-center justify-center"
-        style={{ background: 'var(--color-void)' }}
-      >
-        <div 
-          className="text-center"
-          style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-zinc)' }}
-        >
-          <div 
-            className="w-12 h-12 mx-auto mb-4"
-            style={{ 
-              border: '3px solid var(--color-steel)',
-              borderTopColor: 'var(--color-ember)',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite'
-            }}
-          />
-          INITIALIZING...
-        </div>
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      </div>
-    )
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <div 
-        className="min-h-screen flex items-center justify-center p-4"
-        style={{ background: 'var(--color-void)' }}
-      >
-        <div 
-          className="max-w-md p-6 text-center"
-          style={{ 
-            background: 'var(--color-danger-muted)',
-            border: '1px solid var(--color-danger)',
-            borderRadius: 'var(--radius-md)'
-          }}
-        >
-          <div 
-            className="text-4xl mb-4"
-            style={{ color: 'var(--color-danger)' }}
-          >
-            ⚠
-          </div>
-          <p 
-            className="mb-6"
-            style={{ color: 'var(--color-chalk)', fontFamily: 'var(--font-mono)' }}
-          >
-            {error}
-          </p>
-          <button onClick={onCancel} className="btn-danger">
-            Go Back
-          </button>
-        </div>
-      </div>
-    )
+    workoutSync.enqueue({ kind: 'abandonSession', sessionId: state.sessionId })
+    clearActiveWorkout()
+    onCancel()
   }
 
   // Workout complete
   if (!state || state.currentExerciseIndex >= state.exercises.length) {
-    const duration = state ? Math.round((Date.now() - state.startTime) / 60000) : 0
+    const duration = state ? Math.round((now - state.startTime) / 60000) : 0
     return (
       <div 
         className="min-h-screen flex flex-col items-center justify-center p-4"
@@ -275,7 +210,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
 
   const totalExercises = state.exercises.length
   const completedExercises = state.exercises.filter((e) => e.sets.every((s) => s.completed)).length
-  const elapsedMinutes = Math.round((Date.now() - state.startTime) / 60000)
+  const elapsedMinutes = Math.round((now - state.startTime) / 60000)
 
   // Compute next exercise info for rest screen
   const nextExercise = state.exercises[state.currentExerciseIndex]
@@ -284,7 +219,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
 
   // Resting phase - full screen replacement
   if (state.phase.type === 'resting') {
-    const restTimeRemaining = Math.max(0, Math.ceil((state.phase.restTimerEnd - Date.now()) / 1000))
+    const restTimeRemaining = Math.max(0, Math.ceil((state.phase.restTimerEnd - now) / 1000))
     const isUrgent = restTimeRemaining <= 10
 
     return (

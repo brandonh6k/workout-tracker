@@ -73,6 +73,40 @@ describe('Workouts', () => {
     await user.client.from('workout_sessions').delete().eq('id', session!.id)
   })
 
+  it('replaying a client-id insert after a lost response writes nothing new', async () => {
+    const sessionRow = {
+      id: crypto.randomUUID(),
+      user_id: user.id,
+      template_id: templateId,
+      date: '2025-01-16',
+      completed: false,
+    }
+    const setRow = {
+      id: crypto.randomUUID(),
+      session_id: sessionRow.id,
+      exercise_name: 'Bench Press',
+      set_number: 1,
+      weight: 185,
+      reps: 8,
+    }
+
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const { error: sessionError } = await user.client
+        .from('workout_sessions')
+        .upsert(sessionRow, { onConflict: 'id', ignoreDuplicates: true })
+      const { error: setError } = await user.client
+        .from('logged_sets')
+        .upsert(setRow, { onConflict: 'id', ignoreDuplicates: true })
+      expect(sessionError).toBeNull()
+      expect(setError).toBeNull()
+    }
+
+    const { data: sets } = await user.client.from('logged_sets').select('id').eq('session_id', sessionRow.id)
+    expect(sets).toHaveLength(1)
+
+    await user.client.from('workout_sessions').delete().eq('id', sessionRow.id)
+  })
+
   it('updates a logged set', async () => {
     const { data: session } = await user.client
       .from('workout_sessions')

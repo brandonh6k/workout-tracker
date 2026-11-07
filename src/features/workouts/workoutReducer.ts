@@ -2,7 +2,7 @@
 // Extracted for testability and cleaner state mutations
 
 export type SetData = {
-  id?: string // DB id once saved
+  id?: string // Client-generated logged_sets id, assigned when the set is completed
   reps: number
   weight: number
   completed: boolean
@@ -43,7 +43,6 @@ export type WorkoutAction =
   | { type: 'ADJUST_WEIGHT'; payload: { delta: number } }
   | { type: 'ADJUST_REPS'; payload: { delta: number } }
   | { type: 'ADJUST_LAST_COMPLETED_REPS'; payload: { delta: number } }
-  | { type: 'REVERT_LAST_COMPLETED_REPS'; payload: { originalReps: number } }
   | { type: 'SKIP_REST' }
   | { type: 'EXTEND_REST' }
   | { type: 'SKIP_EXERCISE' }
@@ -155,23 +154,6 @@ export function workoutReducer(
       sets[lastCompletedSetIndex] = {
         ...sets[lastCompletedSetIndex],
         reps: newReps,
-      }
-      exercise.sets = sets
-      newExercises[lastCompletedExerciseIndex] = exercise
-      return { ...state, exercises: newExercises }
-    }
-
-    case 'REVERT_LAST_COMPLETED_REPS': {
-      if (!state || state.phase.type !== 'resting') return state
-
-      const { lastCompletedExerciseIndex, lastCompletedSetIndex } = state.phase
-
-      const newExercises = [...state.exercises]
-      const exercise = { ...newExercises[lastCompletedExerciseIndex] }
-      const sets = [...exercise.sets]
-      sets[lastCompletedSetIndex] = {
-        ...sets[lastCompletedSetIndex],
-        reps: action.payload.originalReps,
       }
       exercise.sets = sets
       newExercises[lastCompletedExerciseIndex] = exercise

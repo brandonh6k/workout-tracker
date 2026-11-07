@@ -7,7 +7,7 @@ Personal workout tracking app. Basement gym use case - single user, offline-frie
 - **Stack**: React 19 + TypeScript + Tailwind CSS v4 + Supabase
 - **Deployment**: Vercel (auto-deploy on push to main)
 - **Repo**: https://github.com/brandonh6k/workout-tracker
-- **Test runner**: Vitest (61 unit + 52 integration tests)
+- **Test runner**: Vitest (68 unit + 53 integration tests)
 
 ## Domain Model
 
@@ -64,7 +64,7 @@ src/
     schedule/         # Weekly schedule management
     strava/           # Strava OAuth + activity upload (edge function: supabase/functions/strava), "Copy for Strava" text formatter (API sync needs a paid Strava subscription; off unless VITE_STRAVA_CLIENT_ID is set)
     templates/        # Template CRUD, WeeklyCalendar
-    workouts/         # ActiveWorkout, HistoryPage
+    workouts/         # ActiveWorkout, HistoryPage, workoutSync (offline outbox for active-workout writes)
   components/         # Shared UI components
   lib/                # Utilities, Supabase client
   types/              # TypeScript types, database.ts
@@ -88,8 +88,8 @@ Each feature has:
 
 - Unit tests in `*.test.ts` files alongside source
 - Vitest + React Testing Library + jsdom
-- Currently 61 unit tests covering utils, reducer, API functions, and key components
-- Integration tests in `src/test/integration/` — 52 tests against local Supabase
+- Currently 68 unit tests covering utils, reducer, API functions, and key components
+- Integration tests in `src/test/integration/` — 53 tests against local Supabase
   - Auth, templates, workouts, schedule, exercises, RLS isolation
   - Require local Supabase running (`npm run db:start`)
   - Separate Vitest config (`vitest.integration.config.ts`): Node env, sequential, 15s timeout
@@ -100,9 +100,9 @@ Each feature has:
 npm run dev              # Start dev server (port 5173)
 npm run build            # TypeScript check + Vite build
 npm run lint             # ESLint
-npm run test:run         # Unit tests only (61)
+npm run test:run         # Unit tests only (68)
 npm run test             # Unit tests in watch mode
-npm run test:integration # Integration tests (52, needs local Supabase)
+npm run test:integration # Integration tests (53, needs local Supabase)
 npm run test:all         # Both unit + integration
 ```
 
