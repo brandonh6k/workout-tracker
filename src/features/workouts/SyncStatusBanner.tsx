@@ -7,6 +7,7 @@ export function SyncStatusBanner() {
   return (
     <div
       role="status"
+      title={lastError}
       className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-2"
       style={{
         background: 'var(--color-iron)',
