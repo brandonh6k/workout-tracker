@@ -13,7 +13,7 @@ Or something to just scratch an itch I had.
 
 ## Strava Sync (optional)
 
-Finished workouts post to Strava as Weight Training activities, with your sets in the description. Strava's API is free for personal use.
+Finished workouts post to Strava as Weight Training activities, with your sets in the description. Requires a paid Strava subscription. Without one, leave `VITE_STRAVA_CLIENT_ID` unset: sync stays off, and the **Copy for Strava** button on History copies a text summary to paste into a manual activity.
 
 1. Create an app at [strava.com/settings/api](https://www.strava.com/settings/api). Set **Authorization Callback Domain** to your app's host (e.g. `workout-tracker-gamma-gray.vercel.app`). Strava always allows `localhost`, so local dev works without changing it.
 2. Add `VITE_STRAVA_CLIENT_ID` to `.env.local` (and to Vercel's env vars).

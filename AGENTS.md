@@ -62,7 +62,7 @@ src/
     dashboard/        # Main dashboard page
     progress/         # Stats, comparisons, history views
     schedule/         # Weekly schedule management
-    strava/           # Strava OAuth + activity upload (edge function: supabase/functions/strava), "Copy for Strava" text formatter
+    strava/           # Strava OAuth + activity upload (edge function: supabase/functions/strava), "Copy for Strava" text formatter (API sync needs a paid Strava subscription; off unless VITE_STRAVA_CLIENT_ID is set)
     templates/        # Template CRUD, WeeklyCalendar
     workouts/         # ActiveWorkout, HistoryPage
   components/         # Shared UI components
