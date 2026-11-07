@@ -175,8 +175,7 @@ export type PRCheck = {
 export async function checkSetForPRs(
   exerciseName: string,
   weight: number,
-  reps: number,
-  _excludeSetId?: string // Reserved for future use: exclude current set when checking
+  reps: number
 ): Promise<PRCheck> {
   const stats = await getExerciseStats(exerciseName)
 

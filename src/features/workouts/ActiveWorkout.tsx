@@ -42,9 +42,10 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
   }, [scheduledWorkout])
 
   // Rest timer countdown
+  const phase = state?.phase
   useEffect(() => {
-    if (!state || state.phase.type !== 'resting') return
-    const restTimerEnd = state.phase.restTimerEnd
+    if (phase?.type !== 'resting') return
+    const restTimerEnd = phase.restTimerEnd
 
     const interval = setInterval(() => {
       setTick((t) => t + 1)
@@ -54,7 +55,7 @@ export function ActiveWorkout({ scheduledWorkout, onComplete, onCancel }: Props)
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [state?.phase])
+  }, [phase])
 
   const currentExercise = state?.exercises[state.currentExerciseIndex]
   const currentSet = currentExercise?.sets[state?.currentSetIndex ?? 0]
