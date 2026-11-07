@@ -47,7 +47,7 @@
 
 ## Data & Infrastructure
 
-- [ ] **Offline support / PWA**: Make app installable and functional offline. Use IndexedDB for local storage, sync when back online. Critical for basement/garage gyms with spotty WiFi.
+- [ ] **Offline support / PWA**: Make app installable and functional offline. Use IndexedDB for local storage, sync when back online. Critical for basement/garage gyms with spotty WiFi. *Partly done:* an active workout no longer needs the network. Writes queue in `localStorage` (`workoutSync`) and the workout resumes after a reload. Still to do: service worker, installable app, loading the app cold with no connection.
 
 - [ ] **Data export (CSV/JSON)**: Allow users to export their workout history. User owns their data.
 

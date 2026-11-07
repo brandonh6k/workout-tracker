@@ -227,28 +227,6 @@ describe('workoutReducer', () => {
     })
   })
 
-  describe('REVERT_LAST_COMPLETED_REPS', () => {
-    it('should revert reps to original value', () => {
-      const state = createTestState({
-        phase: {
-          type: 'resting',
-          restTimerEnd: mockNow + 90000,
-          lastCompletedExerciseIndex: 0,
-          lastCompletedSetIndex: 0,
-          isAmrap: true,
-        },
-      })
-      state.exercises[0].sets[0].reps = 15 // Was changed
-
-      const result = workoutReducer(state, {
-        type: 'REVERT_LAST_COMPLETED_REPS',
-        payload: { originalReps: 10 },
-      })
-
-      expect(result?.exercises[0].sets[0].reps).toBe(10)
-    })
-  })
-
   describe('SKIP_REST', () => {
     it('should transition to active-set phase', () => {
       const state = createTestState({

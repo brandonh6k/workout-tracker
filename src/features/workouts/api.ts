@@ -1,70 +1,45 @@
 import { supabase } from '../../lib/supabase'
-import { toLocalDateString } from '../../lib/utils'
 import type { WorkoutSession, LoggedSet, LoggedSetInsert } from '../../types'
-import type { ScheduledWorkoutWithDetails } from '../schedule'
 
 export type WorkoutSessionWithSets = WorkoutSession & {
   logged_sets: LoggedSet[]
 }
 
-export async function startWorkoutSession(
-  scheduledWorkout: ScheduledWorkoutWithDetails
-): Promise<WorkoutSession> {
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Not authenticated')
+// Inserts take client-generated ids and ignore conflicts, so a retry after a lost response is a no-op
+export async function insertWorkoutSession(session: {
+  id: string
+  template_id: string | null
+  date: string
+}): Promise<void> {
+  // getSession reads the stored session; getUser would cost a round trip
+  const { data: { session: auth } } = await supabase.auth.getSession()
+  if (!auth) throw new Error('Not authenticated')
 
-  const localDate = toLocalDateString()
-
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('workout_sessions')
-    .insert({
-      user_id: user.id,
-      template_id: scheduledWorkout.template_id,
-      date: localDate,
-      completed: false,
-    })
-    .select()
-    .single()
+    .upsert({ ...session, user_id: auth.user.id, completed: false }, { onConflict: 'id', ignoreDuplicates: true })
 
   if (error) throw error
-  return data
 }
 
-export async function logSet(
-  sessionId: string,
-  set: Omit<LoggedSetInsert, 'session_id'>
-): Promise<LoggedSet> {
-  const { data, error } = await supabase
+export async function logSet(set: LoggedSetInsert & { id: string }): Promise<void> {
+  const { error } = await supabase
     .from('logged_sets')
-    .insert({
-      session_id: sessionId,
-      exercise_name: set.exercise_name,
-      set_number: set.set_number,
-      weight: set.weight,
-      reps: set.reps,
-      rpe: set.rpe ?? null,
-      notes: set.notes ?? null,
-    })
-    .select()
-    .single()
+    .upsert(set, { onConflict: 'id', ignoreDuplicates: true })
 
   if (error) throw error
-  return data
 }
 
 export async function updateSet(
   setId: string,
   updates: { weight?: number; reps?: number; rpe?: number | null; notes?: string | null }
-): Promise<LoggedSet> {
-  const { data, error } = await supabase
+): Promise<void> {
+  const { error } = await supabase
     .from('logged_sets')
     .update(updates)
     .eq('id', setId)
-    .select()
-    .single()
 
   if (error) throw error
-  return data
 }
 
 export async function deleteSet(setId: string): Promise<void> {

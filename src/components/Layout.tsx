@@ -2,6 +2,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../features/auth'
 import { useTheme } from '../lib/useTheme'
 import { useWorkoutMode } from '../lib/useWorkoutMode'
+import { SyncStatusBanner } from '../features/workouts'
 
 const ADMIN_EMAILS = ['brandon.hunt@gmail.com']
 
@@ -132,6 +133,8 @@ export function Layout() {
       <main className="max-w-6xl mx-auto px-4 py-6">
         <Outlet />
       </main>
+
+      <SyncStatusBanner />
 
       {/* Footer accent line */}
       <div 
